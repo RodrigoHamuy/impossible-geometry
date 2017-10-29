@@ -4,6 +4,7 @@ public class PathPoints : MonoBehaviour {
 
 	public Transform pointPrefab;
 	public Transform vertexPrefab;
+	public Transform upPrefab;
 
 	Transform[] verticesGO = new Transform[3];
 
@@ -21,25 +22,54 @@ public class PathPoints : MonoBehaviour {
 
 		for (var i = 0; i < t.Length/3; i++) {
 
-			triangles[i] = new Vector3[3];
+			triangles[i] = new Vector3[4];
 			triangles[i][0] = transform.localToWorldMatrix.MultiplyVector( vertices [t[i*3]] );
 			triangles[i][1] = transform.localToWorldMatrix.MultiplyVector( vertices [t[i*3+1]] );
 			triangles[i][2] = transform.localToWorldMatrix.MultiplyVector( vertices [t[i*3+2]] );
+
+			var a = triangles[i][0];
+			var b = triangles[i][1];
+			var c = triangles[i][2];
+
+			var sideAB = (a - b).normalized;
+			var sideAC = (a - c).normalized;
+			var sideBC = (b - c).normalized;
+
+			Vector3 cross;
+
+			if (Vector3.Dot(sideAB, sideAC) == 0) {
+
+				cross = Vector3.Cross(sideAB, sideAC);
+
+			}else if (Vector3.Dot(sideAB, sideBC) == 0){
+
+				cross = Vector3.Cross(sideAB, sideBC);
+
+			} else { // if (Vector3.Dot(sideAC, sideBC) == 0){
+
+				cross = Vector3.Cross(sideAC, sideBC);
+
+			}
+
+
+			triangles[i][3] = cross;
 
 		}
 
 		for (var i = 0; i < triangles.Length; i++) {
 
 			var triangle = triangles[i];
-			_AddPoint(triangle[0], triangle[1], triangle[2]);
-			_AddPoint(triangle[0], triangle[2], triangle[1]);
-			_AddPoint(triangle[1], triangle[2], triangle[0]);
+				_AddPoint(triangle[0], triangle[1], triangle[2], triangle[3]);
+				_AddPoint(triangle[0], triangle[2], triangle[1], triangle[3]);
+				_AddPoint(triangle[1], triangle[2], triangle[0], triangle[3]);
 
 		}
 
 	}
 
-	void _AddPoint(Vector3 a, Vector3 b, Vector3 c){
+	void _AddPoint(Vector3 a, Vector3 b, Vector3 c, Vector3 up){
+
+		Vector3 pos;
 
 		if(
 			(
@@ -57,8 +87,11 @@ public class PathPoints : MonoBehaviour {
 			var distance = sideAB.magnitude;
 			var dir = sideAB.normalized;
 			for( var i = 0; i < distance; i++ ) {
-				var pos = a - dir * (i + .5f);
+				pos = a - dir * (i + .5f);
+				// point
 				Instantiate(pointPrefab, pos, Quaternion.identity);
+				// normal
+				Instantiate(upPrefab, pos + up*0.15f, Quaternion.identity);
 			}
 		} else {
 			var sideAC = a - c;
@@ -68,8 +101,11 @@ public class PathPoints : MonoBehaviour {
 			var distanceAC = sideAC.magnitude;
 			var distanceBC = sideBC.magnitude;
 			for( var i = 0; i < distanceAC; i++ ) {
-				var pos = c + dirBC * .5f + dirAC * i;
+				pos = c + dirBC * .5f + dirAC * i;
+				// point
 				Instantiate(pointPrefab, pos, Quaternion.identity);
+				// normal
+				Instantiate(upPrefab, pos + up*0.15f, Quaternion.identity);
 			}
 		}
 
@@ -94,9 +130,9 @@ public class PathPoints : MonoBehaviour {
 		verticesGO[1] = Instantiate(vertexPrefab, triangle[1], Quaternion.identity);
 		verticesGO[2] = Instantiate(vertexPrefab, triangle[2], Quaternion.identity);
 
-		_AddPoint(triangle[0], triangle[1], triangle[2]);
-		_AddPoint(triangle[0], triangle[2], triangle[1]);
-		_AddPoint(triangle[1], triangle[2], triangle[0]);
+		_AddPoint(triangle[0], triangle[1], triangle[2], triangle[3]);
+		_AddPoint(triangle[0], triangle[2], triangle[1], triangle[3]);
+		_AddPoint(triangle[1], triangle[2], triangle[0], triangle[3]);
 
 		index++;
 

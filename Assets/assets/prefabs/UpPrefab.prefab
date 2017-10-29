@@ -22,9 +22,8 @@ GameObject:
   - component: {fileID: 33725126217913630}
   - component: {fileID: 65326298406607944}
   - component: {fileID: 23450529196526804}
-  - component: {fileID: 114475831217487910}
   m_Layer: 0
-  m_Name: PointPrefab
+  m_Name: UpPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38,7 +37,7 @@ Transform:
   m_GameObject: {fileID: 1731001101471404}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 2.34}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -57,7 +56,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 479303c870290d34ba92ae9bba93abf1, type: 2}
+  - {fileID: 2100000, guid: 2b203a89aad2ab042ad963a7dff09657, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -96,14 +95,3 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114475831217487910
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1731001101471404}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b30f239f6727ee64d842c6716ca5aad3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
