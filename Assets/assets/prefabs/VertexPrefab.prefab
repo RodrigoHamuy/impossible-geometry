@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33725126217913630}
   - component: {fileID: 65326298406607944}
   - component: {fileID: 23450529196526804}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: VertexPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}

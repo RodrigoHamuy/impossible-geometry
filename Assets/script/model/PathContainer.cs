@@ -1,31 +1,35 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class PathPoints : MonoBehaviour {
+public class PathContainer{
 
-	public Transform pointPrefab;
-	public Transform vertexPrefab;
-	public Transform upPrefab;
-
-	Transform[] verticesGO = new Transform[3];
+	public UnityEvent unityEvent = new UnityEvent();
 
 	Vector3[][] triangles;
 
-	int index = 0;
+	public List<PathPoint> points = new List<PathPoint>();
 
-	void Start () {
+	public void setTriangles(Transform gameObject){
 
-		Mesh mesh;
-		mesh = GetComponent<MeshFilter>().mesh;
+		var mesh = gameObject.GetComponent<MeshFilter>().mesh;
 		var t = mesh.triangles;
 		var vertices = mesh.vertices;
+
+		setTriangles(t, vertices, gameObject.localToWorldMatrix );
+
+	}
+
+	void setTriangles(int[] t, Vector3[] vertices, Matrix4x4 matrix){
+
 		triangles = new Vector3[ t.Length/3 ][];
 
 		for (var i = 0; i < t.Length/3; i++) {
 
 			triangles[i] = new Vector3[4];
-			triangles[i][0] = transform.localToWorldMatrix.MultiplyVector( vertices [t[i*3]] );
-			triangles[i][1] = transform.localToWorldMatrix.MultiplyVector( vertices [t[i*3+1]] );
-			triangles[i][2] = transform.localToWorldMatrix.MultiplyVector( vertices [t[i*3+2]] );
+			triangles[i][0] = matrix.MultiplyVector( vertices [t[i*3]] );
+			triangles[i][1] = matrix.MultiplyVector( vertices [t[i*3+1]] );
+			triangles[i][2] = matrix.MultiplyVector( vertices [t[i*3+2]] );
 
 			var a = triangles[i][0];
 			var b = triangles[i][1];
@@ -51,10 +55,13 @@ public class PathPoints : MonoBehaviour {
 
 			}
 
-
 			triangles[i][3] = cross;
 
 		}
+
+	}
+
+	public void GeneratePathPoints(){
 
 		for (var i = 0; i < triangles.Length; i++) {
 
@@ -64,6 +71,8 @@ public class PathPoints : MonoBehaviour {
 				_AddPoint(triangle[1], triangle[2], triangle[0], triangle[3]);
 
 		}
+
+		unityEvent.Invoke();
 
 	}
 
@@ -86,13 +95,14 @@ public class PathPoints : MonoBehaviour {
 			var sideAB = a - b;
 			var distance = sideAB.magnitude;
 			var dir = sideAB.normalized;
+
 			for( var i = 0; i < distance; i++ ) {
+
 				pos = a - dir * (i + .5f);
-				// point
-				Instantiate(pointPrefab, pos, Quaternion.identity);
-				// normal
-				Instantiate(upPrefab, pos + up*0.15f, Quaternion.identity);
+				_AddPoint(pos, up);
+
 			}
+
 		} else {
 			var sideAC = a - c;
 			var sideBC = b - c;
@@ -100,45 +110,43 @@ public class PathPoints : MonoBehaviour {
 			var dirBC = sideBC.normalized;
 			var distanceAC = sideAC.magnitude;
 			var distanceBC = sideBC.magnitude;
+
 			for( var i = 0; i < distanceAC; i++ ) {
+
 				pos = c + dirBC * .5f + dirAC * i;
-				// point
-				Instantiate(pointPrefab, pos, Quaternion.identity);
-				// normal
-				Instantiate(upPrefab, pos + up*0.15f, Quaternion.identity);
+				_AddPoint(pos, up);
+
 			}
 		}
 
 	}
 
-	public void AddPoint(){
+	void _AddPoint(Vector3 pos, Vector3 up){
 
-		var i = index;
-		var triangle = triangles[i];
+		var index = points.FindIndex( (PathPoint point) => {
+			return point.position == pos;
+		});
 
-		var dot = Vector3.Dot( triangle[0], triangle[1] );
-		dot = Vector3.Dot( triangle[0], triangle[2] );
-		dot = Vector3.Dot( triangle[1], triangle[2] );
+		if( index > -1 ) {
 
-		if( i>0){
-			Destroy(verticesGO[0].gameObject);
-			Destroy(verticesGO[1].gameObject);
-			Destroy(verticesGO[2].gameObject);
+			var normals = points[index].normals;
+
+			var normalExists = normals.Exists( (Vector3 normal) => {
+				return normal == up;
+			});
+
+			if( ! normalExists ) {
+				normals.Add(up);
+			}
+
+
+		} else {
+
+			var pathPoint = new PathPoint(pos, up);
+			points.Add(pathPoint);
+
 		}
 
-		verticesGO[0] = Instantiate(vertexPrefab, triangle[0], Quaternion.identity);
-		verticesGO[1] = Instantiate(vertexPrefab, triangle[1], Quaternion.identity);
-		verticesGO[2] = Instantiate(vertexPrefab, triangle[2], Quaternion.identity);
-
-		_AddPoint(triangle[0], triangle[1], triangle[2], triangle[3]);
-		_AddPoint(triangle[0], triangle[2], triangle[1], triangle[3]);
-		_AddPoint(triangle[1], triangle[2], triangle[0], triangle[3]);
-
-		index++;
-
 	}
 
-	void Update () {
-
-	}
 }
