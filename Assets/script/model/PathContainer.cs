@@ -6,7 +6,7 @@ public class PathContainer{
 
 	public UnityEvent unityEvent = new UnityEvent();
 
-	Vector3[][] triangles;
+	public Vector3[][] triangles;
 
 	public List<PathPoint> points = new List<PathPoint>();
 
@@ -76,9 +76,28 @@ public class PathContainer{
 
 	}
 
+	public void GeneratePathPoints(int i) {
+
+		var triangle = triangles[i];
+		_AddPoint(triangle[0], triangle[1], triangle[2], triangle[3]);
+		_AddPoint(triangle[0], triangle[2], triangle[1], triangle[3]);
+		_AddPoint(triangle[1], triangle[2], triangle[0], triangle[3]);
+		unityEvent.Invoke();
+
+	}
+
 	void _AddPoint(Vector3 a, Vector3 b, Vector3 c, Vector3 up){
 
 		Vector3 pos;
+		var sideAB = a - b;
+		var sideAC = a - c;
+		var sideBC = b - c;
+		var dirAB = sideAB.normalized;
+		var dirAC = sideAC.normalized;
+		var dirBC = sideBC.normalized;
+		var distanceAB = sideAB.magnitude;
+		var distanceAC = sideAC.magnitude;
+		var distanceBC = sideBC.magnitude;
 
 		if(
 			(
@@ -92,28 +111,20 @@ public class PathContainer{
 				a.z == b.z
 			)
 		){
-			var sideAB = a - b;
-			var distance = sideAB.magnitude;
-			var dir = sideAB.normalized;
 
-			for( var i = 0; i < distance; i++ ) {
+			for( var i = 0; i < distanceAB; i++ ) {
 
-				pos = a - dir * (i + .5f);
-				_AddPoint(pos, up);
+				pos = a - dirAB * (i + .5f);
+				// _AddPoint(pos, up);
 
 			}
 
 		} else {
-			var sideAC = a - c;
-			var sideBC = b - c;
-			var dirAC = sideAC.normalized;
-			var dirBC = sideBC.normalized;
-			var distanceAC = sideAC.magnitude;
-			var distanceBC = sideBC.magnitude;
 
 			for( var i = 0; i < distanceAC; i++ ) {
 
-				pos = c + dirBC * .5f + dirAC * i;
+        // pos = c + dirBC * .5f + dirAC * i;
+				pos = c + dirBC * .5f + dirAC * (i+.5f);
 				_AddPoint(pos, up);
 
 			}
