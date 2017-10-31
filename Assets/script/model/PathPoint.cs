@@ -12,6 +12,27 @@ public class PathPoint {
 		position = pos;
 		normals.Add(normal);
 
+		Vector3[] crossOptions = {
+			Vector3.up,
+			Vector3.down,
+			Vector3.left,
+			Vector3.right,
+			Vector3.forward,
+			Vector3.back
+		};
+
+		for (var i = 0; i < crossOptions.Length; i++) {
+
+			var crossOption = crossOptions[i];
+			if(Vector3.Dot(crossOption, normal) == 0) {
+
+				var connection = pos + crossOption * .5f;
+				connections.Add(connection);
+
+			}
+
+		}
+
 	}
 
 }

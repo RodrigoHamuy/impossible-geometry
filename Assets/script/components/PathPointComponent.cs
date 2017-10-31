@@ -4,11 +4,23 @@ public class PathPointComponent : MonoBehaviour {
 
 	public Transform upPrefab;
 
-  public PathPoint point;
+  private PathPoint _point;
 
-  void Start() {
+  void Start() {}
 
-    point.normals.ForEach( (Vector3 normal) => {
+	public PathPoint point{
+		get {
+			return _point;
+		}
+		set {
+			_point = point;
+			// _initNormal();
+		}
+	}
+
+	void _initNormal(){
+
+		point.normals.ForEach( (Vector3 normal) => {
 
       Instantiate(
       upPrefab,
@@ -18,7 +30,7 @@ public class PathPointComponent : MonoBehaviour {
 
     });
 
-  }
+	}
 
   public void OnTap(){
 

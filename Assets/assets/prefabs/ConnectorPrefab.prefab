@@ -22,9 +22,8 @@ GameObject:
   - component: {fileID: 33725126217913630}
   - component: {fileID: 65326298406607944}
   - component: {fileID: 23450529196526804}
-  - component: {fileID: 114860111218492678}
   m_Layer: 8
-  m_Name: PointPrefab
+  m_Name: ConnectorPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -96,15 +95,3 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114860111218492678
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1731001101471404}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05dc8ff1bcd3d41419fc7668d85676c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  upPrefab: {fileID: 4824232419952624, guid: eb4e73b3db6016c42933c315cb59dbb2, type: 2}

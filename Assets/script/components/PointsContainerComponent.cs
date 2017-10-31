@@ -60,7 +60,9 @@ public class PointsContainerComponent : MonoBehaviour {
 
 		connectors.Clear();
 
-		pathContainer.points.ForEach( ( PathPoint point ) => {
+		var points = pathContainer.points;
+
+		points.ForEach( ( PathPoint point ) => {
 
 			Vector3 forward = Vector3.zero;
 
@@ -83,6 +85,14 @@ public class PointsContainerComponent : MonoBehaviour {
 				point.position,
 				Quaternion.LookRotation( forward, point.normals[0] )
 			).GetComponent<PathPointComponent>();
+
+			point.connections.ForEach( (Vector3 connPos) => {
+				Instantiate(
+					connectorPrefab,
+					connPos,
+					Quaternion.LookRotation( forward, point.normals[0] )
+				);
+			});
 
 			pointComponent.point = point;
 			connectors.Add(pointComponent);
