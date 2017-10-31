@@ -20,7 +20,7 @@ public class PointsContainerComponent : MonoBehaviour {
 
 		pathContainer.setTriangles(transform);
 
-		pathContainer.GeneratePathPoints();
+		// pathContainer.GeneratePathPoints();
 
 	}
 

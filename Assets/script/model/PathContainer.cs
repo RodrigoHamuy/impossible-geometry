@@ -65,10 +65,7 @@ public class PathContainer{
 
 		for (var i = 0; i < triangles.Length; i++) {
 
-			var triangle = triangles[i];
-				_AddPoint(triangle[0], triangle[1], triangle[2], triangle[3]);
-				_AddPoint(triangle[0], triangle[2], triangle[1], triangle[3]);
-				_AddPoint(triangle[1], triangle[2], triangle[0], triangle[3]);
+			GeneratePathPoints(i, false);
 
 		}
 
@@ -76,13 +73,16 @@ public class PathContainer{
 
 	}
 
-	public void GeneratePathPoints(int i) {
+	public void GeneratePathPoints(int i, bool invokeEvent = true) {
 
 		var triangle = triangles[i];
 		_AddPoint(triangle[0], triangle[1], triangle[2], triangle[3]);
 		_AddPoint(triangle[0], triangle[2], triangle[1], triangle[3]);
 		_AddPoint(triangle[1], triangle[2], triangle[0], triangle[3]);
-		unityEvent.Invoke();
+
+		if( invokeEvent ) {
+			unityEvent.Invoke();
+		}
 
 	}
 
