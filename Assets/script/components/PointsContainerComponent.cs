@@ -20,7 +20,7 @@ public class PointsContainerComponent : MonoBehaviour {
 
 		pathContainer.setTriangles(transform);
 
-		// pathContainer.GeneratePathPoints();
+		pathContainer.GeneratePathPoints();
 
 	}
 
@@ -82,14 +82,18 @@ public class PointsContainerComponent : MonoBehaviour {
 
 			var pointComponent = Instantiate(
 				pointPrefab,
-				point.position,
+				point.position + point.normals[0]*0.01f,
 				Quaternion.LookRotation( forward, point.normals[0] )
 			).GetComponent<PathPointComponent>();
 
 			point.connections.ForEach( (Vector3 connPos) => {
+
+				var scale = connectorPrefab.transform.localScale.x * .5f;
+
+				var connToPoint = (point.position - connPos).normalized * scale;
 				Instantiate(
 					connectorPrefab,
-					connPos,
+					connPos+point.normals[0] * scale + connToPoint,
 					Quaternion.LookRotation( forward, point.normals[0] )
 				);
 			});

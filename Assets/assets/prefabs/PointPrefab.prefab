@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4027610804730166}
   - component: {fileID: 114331724380096694}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: PointPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 64625191004145094}
   - component: {fileID: 23023490795993630}
   - component: {fileID: 114939887862145776}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Quad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,7 +87,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 479303c870290d34ba92ae9bba93abf1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -16,20 +16,25 @@ public class PathContainer{
 		var t = mesh.triangles;
 		var vertices = mesh.vertices;
 
-		setTriangles(t, vertices, gameObject.localToWorldMatrix );
+		setTriangles(
+			t,
+			vertices,
+			gameObject.localToWorldMatrix,
+			gameObject.transform.position
+		);
 
 	}
 
-	void setTriangles(int[] t, Vector3[] vertices, Matrix4x4 matrix){
+	void setTriangles(int[] t, Vector3[] vertices, Matrix4x4 matrix, Vector3 pos){
 
 		triangles = new Vector3[ t.Length/3 ][];
 
 		for (var i = 0; i < t.Length/3; i++) {
 
 			triangles[i] = new Vector3[4];
-			triangles[i][0] = matrix.MultiplyVector( vertices [t[i*3]] );
-			triangles[i][1] = matrix.MultiplyVector( vertices [t[i*3+1]] );
-			triangles[i][2] = matrix.MultiplyVector( vertices [t[i*3+2]] );
+			triangles[i][0] = pos + matrix.MultiplyVector( vertices [t[i*3]] );
+			triangles[i][1] = pos + matrix.MultiplyVector( vertices [t[i*3+1]] );
+			triangles[i][2] = pos + matrix.MultiplyVector( vertices [t[i*3+2]] );
 
 			var a = triangles[i][0];
 			var b = triangles[i][1];
