@@ -1,6 +1,17 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PathFinder {
+
+	List<PathPoint> _points;
+
+	public void GenerateGrid(){
+
+		_points = new List<PathPoint>();
+
+		var points = Object.FindObjectsOfType<PathPointComponent>();
+
+	}
 
 	public void OnTap(Vector3 tapPos){
 

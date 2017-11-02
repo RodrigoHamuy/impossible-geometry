@@ -143,20 +143,7 @@ public class PathContainer{
 			return point.position == pos;
 		});
 
-		if( index > -1 ) {
-
-			var normals = points[index].normals;
-
-			var normalExists = normals.Exists( (Vector3 normal) => {
-				return normal == up;
-			});
-
-			if( ! normalExists ) {
-				normals.Add(up);
-			}
-
-
-		} else {
+		if( index == -1 ) {
 
 			var pathPoint = new PathPoint(pos, up);
 			points.Add(pathPoint);

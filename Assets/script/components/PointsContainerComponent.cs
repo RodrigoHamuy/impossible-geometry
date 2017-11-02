@@ -66,24 +66,24 @@ public class PointsContainerComponent : MonoBehaviour {
 
 			Vector3 forward = Vector3.zero;
 
-			if( point.normals[0] == Vector3.forward) {
+			if( point.normal == Vector3.forward) {
 				forward = Vector3.up;
-			} else  if( point.normals[0] == Vector3.back) {
+			} else  if( point.normal == Vector3.back) {
 				forward = Vector3.down;
-			} else  if( point.normals[0] == Vector3.up) {
+			} else  if( point.normal == Vector3.up) {
 				forward = Vector3.left;
-			} else  if( point.normals[0] == Vector3.down) {
+			} else  if( point.normal == Vector3.down) {
 				forward = Vector3.right;
-			} else  if( point.normals[0] == Vector3.left) {
+			} else  if( point.normal == Vector3.left) {
 				forward = Vector3.forward;
-			} else  if( point.normals[0] == Vector3.right) {
+			} else  if( point.normal == Vector3.right) {
 				forward = Vector3.back;
 			}
 
 			var pointComponent = Instantiate(
 				pointPrefab,
-				point.position + point.normals[0]*0.01f,
-				Quaternion.LookRotation( forward, point.normals[0] )
+				point.position + point.normal*0.01f,
+				Quaternion.LookRotation( forward, point.normal )
 			).GetComponent<PathPointComponent>();
 
 			point.connections.ForEach( (Vector3 connPos) => {
@@ -93,8 +93,8 @@ public class PointsContainerComponent : MonoBehaviour {
 				var connToPoint = (point.position - connPos).normalized * scale;
 				Instantiate(
 					connectorPrefab,
-					connPos+point.normals[0] * scale + connToPoint,
-					Quaternion.LookRotation( forward, point.normals[0] )
+					connPos+point.normal * scale + connToPoint,
+					Quaternion.LookRotation( forward, point.normal )
 				);
 			});
 

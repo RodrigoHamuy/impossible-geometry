@@ -4,13 +4,13 @@ using UnityEngine;
 public class PathPoint {
 
 	public Vector3 position;
-	public List<Vector3> normals = new List<Vector3>();
+	public Vector3 normal;
 	public List<Vector3> connections = new List<Vector3>();
 
 	public PathPoint( Vector3 pos,  Vector3 normal){
 
 		position = pos;
-		normals.Add(normal);
+		this.normal = normal;
 
 		Vector3[] crossOptions = {
 			Vector3.up,

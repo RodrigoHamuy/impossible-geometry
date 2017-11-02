@@ -20,15 +20,11 @@ public class PathPointComponent : MonoBehaviour {
 
 	void _initNormal(){
 
-		point.normals.ForEach( (Vector3 normal) => {
-
-      Instantiate(
-      upPrefab,
-      point.position + normal*0.15f,
-      Quaternion.identity
-      );
-
-    });
+		Instantiate(
+			upPrefab,
+			point.position + point.normal*0.15f,
+			Quaternion.identity
+		);
 
 	}
 
