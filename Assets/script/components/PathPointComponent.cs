@@ -4,20 +4,10 @@ public class PathPointComponent : MonoBehaviour {
 
 	public Transform upPrefab;
 
-  private PathPoint _point;
+  public PathPoint point;
 
   void Start() {}
-
-	public PathPoint point{
-		get {
-			return _point;
-		}
-		set {
-			_point = point;
-			// _initNormal();
-		}
-	}
-
+	
 	void _initNormal(){
 
 		Instantiate(

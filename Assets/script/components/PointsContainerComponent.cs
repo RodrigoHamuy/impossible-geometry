@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+// using System.Collections.Generic;
 using UnityEngine;
 
 public class PointsContainerComponent : MonoBehaviour {
@@ -8,7 +8,6 @@ public class PointsContainerComponent : MonoBehaviour {
 	public Transform vertexPrefab;
 
 	Transform[] vertices = new Transform[3];
-	List<PathPointComponent> connectors = new List<PathPointComponent>();
 
 	PathContainer pathContainer = new PathContainer();
 
@@ -54,15 +53,13 @@ public class PointsContainerComponent : MonoBehaviour {
 
 	void UpdatePointsGameObject(){
 
-		connectors.ForEach( (PathPointComponent connector) => {
-			Destroy(connector.gameObject);
-		});
-
-		connectors.Clear();
-
 		var points = pathContainer.points;
 
-		points.ForEach( ( PathPoint point ) => {
+		foreach( var point in points ){
+
+			if( point.component ) {
+				Destroy(point.component.gameObject);
+			}
 
 			Vector3 forward = Vector3.zero;
 
@@ -98,10 +95,10 @@ public class PointsContainerComponent : MonoBehaviour {
 				);
 			});
 
+			point.component = pointComponent;
 			pointComponent.point = point;
-			connectors.Add(pointComponent);
 
-		});
+		}
 
 	}
 }

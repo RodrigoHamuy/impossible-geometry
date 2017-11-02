@@ -3,14 +3,30 @@ using UnityEngine;
 
 public class PathPoint {
 
+	public enum State{ New, Open, Closed };
+
 	public Vector3 position;
 	public Vector3 normal;
+
+	public State state;
+	public PathPoint prev;
+	public PathPoint target;
+
+	public PathPointComponent component;
+
+	public float estimatedDistanceToTarget;
+	public float distanceFromStart = 0;
+
 	public List<Vector3> connections = new List<Vector3>();
+
+	Vector3 camPosition;
 
 	public PathPoint( Vector3 pos,  Vector3 normal){
 
 		position = pos;
 		this.normal = normal;
+
+		camPosition = Camera.main.WorldToScreenPoint(pos);
 
 		Vector3[] crossOptions = {
 			Vector3.up,
@@ -32,7 +48,34 @@ public class PathPoint {
 			}
 
 		}
+	}
 
+	public void Reset(PathPoint target){
+
+		state = State.New;
+		prev = null;
+		this.target = target;
+		estimatedDistanceToTarget = (target.camPosition - camPosition).sqrMagnitude;
+		distanceFromStart = 0;
+
+	}
+
+	public void setPrev(PathPoint prev){
+		this.prev = prev;
+		distanceFromStart = prev.distanceFromStart + (prev.camPosition - camPosition).sqrMagnitude;
+	}
+
+	public bool isCloser(PathPoint point){
+
+		var newDistanceFromStart = point.distanceFromStart + (point.camPosition - camPosition).sqrMagnitude;
+		return newDistanceFromStart < distanceFromStart;
+
+	}
+
+	public float estimatedCost{
+		get{
+			return estimatedDistanceToTarget + distanceFromStart;
+		}
 	}
 
 }
