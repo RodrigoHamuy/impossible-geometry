@@ -1,3 +1,4 @@
+// using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -25,42 +26,19 @@ public class PathContainer{
 
 	}
 
-	void setTriangles(int[] t, Vector3[] vertices, Matrix4x4 matrix, Vector3 pos){
+	void setTriangles(int[] triIndexes, Vector3[] vertices, Matrix4x4 matrix, Vector3 pos){
 
-		triangles = new Vector3[ t.Length/3 ][];
+		triangles = new Vector3[ triIndexes.Length/3 ][];
 
-		for (var i = 0; i < t.Length/3; i++) {
+		for (var i = 0; i < triIndexes.Length/3; i++) {
 
-			triangles[i] = new Vector3[4];
-			triangles[i][0] = pos + matrix.MultiplyVector( vertices [t[i*3]] );
-			triangles[i][1] = pos + matrix.MultiplyVector( vertices [t[i*3+1]] );
-			triangles[i][2] = pos + matrix.MultiplyVector( vertices [t[i*3+2]] );
+			var triangle = new Vector3[3];
 
-			var a = triangles[i][0];
-			var b = triangles[i][1];
-			var c = triangles[i][2];
+			triangle[0] = pos + matrix.MultiplyVector( vertices [ triIndexes [i*3]] );
+			triangle[1] = pos + matrix.MultiplyVector( vertices [ triIndexes [i*3+1]] );
+			triangle[2] = pos + matrix.MultiplyVector( vertices [ triIndexes [i*3+2]] );
 
-			var sideAB = (a - b).normalized;
-			var sideAC = (a - c).normalized;
-			var sideBC = (b - c).normalized;
-
-			Vector3 cross;
-
-			if (Vector3.Dot(sideAB, sideAC) == 0) {
-
-				cross = Vector3.Cross(sideAB, sideAC);
-
-			}else if (Vector3.Dot(sideAB, sideBC) == 0){
-
-				cross = Vector3.Cross(sideAB, sideBC);
-
-			} else { // if (Vector3.Dot(sideAC, sideBC) == 0){
-
-				cross = Vector3.Cross(sideAC, sideBC);
-
-			}
-
-			triangles[i][3] = cross;
+			triangles[i] = triangle;
 
 		}
 
@@ -80,10 +58,7 @@ public class PathContainer{
 
 	public void GeneratePathPoints(int i, bool invokeEvent = true) {
 
-		var triangle = triangles[i];
-		_AddPoint(triangle[0], triangle[1], triangle[2], triangle[3]);
-		_AddPoint(triangle[0], triangle[2], triangle[1], triangle[3]);
-		_AddPoint(triangle[1], triangle[2], triangle[0], triangle[3]);
+		_AddPoint(triangles[i]);
 
 		if( invokeEvent ) {
 			unityEvent.Invoke();
@@ -91,48 +66,60 @@ public class PathContainer{
 
 	}
 
-	void _AddPoint(Vector3 a, Vector3 b, Vector3 c, Vector3 up){
+	void _AddPoint(Vector3[] triangle){
 
-		Vector3 pos;
-		var sideAB = a - b;
-		var sideAC = a - c;
-		var sideBC = b - c;
-		var dirAB = sideAB.normalized;
-		var dirAC = sideAC.normalized;
-		var dirBC = sideBC.normalized;
-		var distanceAB = sideAB.magnitude;
-		var distanceAC = sideAC.magnitude;
-		var distanceBC = sideBC.magnitude;
+		var a = triangle[0];
+		var b = triangle[1];
+		var c = triangle[2];
 
-		if(
-			(
-				a.x == b.x &&
-				a.y == b.y
-			) || (
-				a.z == b.z &&
-				a.y == b.y
-			) || (
-				a.x == b.x &&
-				a.z == b.z
-			)
-		){
+		var up = Vector3.Cross(
+			(b-a).normalized,
+			(c-b).normalized
+		).normalized;
 
-			for( var i = 0; i < distanceAB; i++ ) {
+		List<Vector3> sides = new List<Vector3>{
+			(b - a),
+			(c - b),
+			(a - c)
+		};
 
-				pos = a - dirAB * (i + .5f);
-				// _AddPoint(pos, up);
+		List<Vector3> origins = new List<Vector3>{
+			a,
+			b,
+			c
+		};
 
+		int maxIndex = 0;
+
+		for (var i = 0; i < sides.Count; i++) {
+
+			if( sides[i].magnitude > sides[ maxIndex ].magnitude ) {
+				maxIndex = i;
 			}
 
-		} else {
+		}
 
-			for( var i = 0; i < distanceAC; i++ ) {
+		sides.RemoveAt(maxIndex);
+		origins.RemoveAt(maxIndex);
 
-        // pos = c + dirBC * .5f + dirAC * i;
-				pos = c + dirBC * .5f + dirAC * (i+.5f);
+		var sideA = sides[0];
+		var sideB = sides[1];
+
+		var sideALength = sideA.magnitude;
+		var sideBLength = sideB.magnitude;
+
+		var sideADir = sideA.normalized;
+		var sideBDir = sideB.normalized;
+
+		for (var x = 0; x < sideALength; x++) {
+
+			for (var y = 0; y < sideBLength; y++) {
+
+				var pos = origins[0] + sideADir * (x + .5f) + sideBDir * (y+.5f);
 				_AddPoint(pos, up);
 
 			}
+
 		}
 
 	}
