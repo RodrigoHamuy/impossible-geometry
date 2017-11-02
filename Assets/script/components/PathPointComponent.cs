@@ -6,8 +6,6 @@ public class PathPointComponent : MonoBehaviour {
 
   public PathPoint point;
 
-  void Start() {}
-	
 	void _initNormal(){
 
 		Instantiate(
