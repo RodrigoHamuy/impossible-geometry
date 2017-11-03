@@ -121,6 +121,14 @@ public class PathFinder {
 					continue;
 				}
 
+				// Same, but for objects that are bellow
+				if(
+					nextPoint.position.y < point.position.y &&
+					nextPoint.camPosition.y < point.camPosition.y
+				) {
+					continue;
+				}
+
 				// Check if nextPoint is next to a point that is on top of point.
 				if(
 					overlappingPoints.Exists( (overlappingPoint) => {
