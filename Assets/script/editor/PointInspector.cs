@@ -12,7 +12,7 @@ public class PointInspector : Editor {
 		var targetObject = (PathPointComponent) target;
 
 		GUIStyle style = new GUIStyle();
-		style.normal.textColor = Color.green;
+		// style.normal.textColor = Color.green;
 
 		Handles.BeginGUI();
 		Handles.Label(
