@@ -20,13 +20,12 @@ public class PathContainer{
 		setTriangles(
 			t,
 			vertices,
-			gameObject.localToWorldMatrix,
-			gameObject.transform.position
+			gameObject.localToWorldMatrix
 		);
 
 	}
 
-	void setTriangles(int[] triIndexes, Vector3[] vertices, Matrix4x4 matrix, Vector3 pos){
+	void setTriangles(int[] triIndexes, Vector3[] vertices, Matrix4x4 matrix){
 
 		triangles = new Vector3[ triIndexes.Length/3 ][];
 
@@ -34,13 +33,29 @@ public class PathContainer{
 
 			var triangle = new Vector3[3];
 
-			triangle[0] = pos + matrix.MultiplyVector( vertices [ triIndexes [i*3]] );
-			triangle[1] = pos + matrix.MultiplyVector( vertices [ triIndexes [i*3+1]] );
-			triangle[2] = pos + matrix.MultiplyVector( vertices [ triIndexes [i*3+2]] );
+			triangle[0] = matrix.MultiplyPoint(vertices [ triIndexes [i*3]] );
+			triangle[1] = matrix.MultiplyPoint(vertices [ triIndexes [i*3+1]] );
+			triangle[2] = matrix.MultiplyPoint(vertices [ triIndexes [i*3+2]] );
+
+			for (var i2 = 0; i2<triangle.Length; i2++) {
+
+				triangle[i2] = RoundVertex(triangle[i2]);
+
+			}
 
 			triangles[i] = triangle;
 
 		}
+
+	}
+
+	Vector3 RoundVertex(Vector3 v){
+
+		v.x = Mathf.Round(v.x * 2f) * 0.5f;
+		v.y = Mathf.Round(v.y * 2f) * 0.5f;
+		v.z = Mathf.Round(v.z * 2f) * 0.5f;
+
+		return v;
 
 	}
 
