@@ -73,16 +73,19 @@ public class PointInspector : Editor {
 
 	PathPoint getPointAtWorldPos(Vector3 pos){
 
-		var camera = Camera.main.transform;
+		var camera = Camera.main;
 
-		var dir = pos - camera.position;
+		var screenPos = camera.WorldToScreenPoint(pos);
+		var ray = camera.ScreenPointToRay(screenPos);
 
-		Debug.DrawRay(camera.position, dir, Color.green, 25.0f);
+		// var dir = pos - camera.position;
 
-		var ray = new Ray {
-			direction = dir,
-			origin = camera.position
-		};
+		Debug.DrawRay(ray.origin, ray.direction, Color.green, 25.0f);
+
+		// var ray = new Ray {
+		// 	direction = dir,
+		// 	origin = camera.position
+		// };
 		return getPointAtRay(ray);
 	}
 

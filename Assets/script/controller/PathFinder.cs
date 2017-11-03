@@ -45,12 +45,8 @@ public class PathFinder {
 	}
 
 	PathPoint getPointAtWorldPos(Vector3 pos){
-
-		var dir = pos - Camera.main.transform.position;
-		var ray = new Ray {
-			direction = dir,
-			origin = Camera.main.transform.position
-		};
+		var screenPos = Camera.main.WorldToScreenPoint(pos);
+		var ray = Camera.main.ScreenPointToRay(screenPos);
 		return getPointAtRay(ray);
 	}
 
