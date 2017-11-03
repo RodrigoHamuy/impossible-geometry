@@ -35,8 +35,18 @@ public class PathManagerComponent : MonoBehaviour {
 		);
 
 		if( a ) {
+			var b = "";
 			Debug.Log("Path found: " + a);
+			foreach( var point in pathFinder.path){
+
+				// Debug.Log(point.position);
+				PathFinder.setColor(point.component, new Color(1, .8f, 0));
+
+				b+= "\n" + point.position.ToString();
+
+			}
+			Debug.Log(b);
 		}
-		
+
 	}
 }

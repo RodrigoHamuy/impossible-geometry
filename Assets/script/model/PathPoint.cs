@@ -19,7 +19,7 @@ public class PathPoint {
 
 	public List<Vector3> connections = new List<Vector3>();
 
-	Vector3 camPosition;
+	public Vector3 camPosition;
 
 	public PathPoint( Vector3 pos,  Vector3 normal){
 
@@ -55,26 +55,30 @@ public class PathPoint {
 		state = State.New;
 		prev = null;
 		this.target = target;
-		estimatedDistanceToTarget = (target.camPosition - camPosition).sqrMagnitude;
+		estimatedDistanceToTarget = Mathf.Round( (target.camPosition - camPosition).sqrMagnitude );
 		distanceFromStart = 0;
 
 	}
 
 	public void setPrev(PathPoint prev){
 		this.prev = prev;
-		distanceFromStart = prev.distanceFromStart + (prev.camPosition - camPosition).sqrMagnitude;
+		distanceFromStart = Mathf.Round(
+			prev.distanceFromStart + (prev.camPosition - camPosition).sqrMagnitude
+		);
 	}
 
 	public bool isCloser(PathPoint point){
 
-		var newDistanceFromStart = point.distanceFromStart + (point.camPosition - camPosition).sqrMagnitude;
+		var newDistanceFromStart = Mathf.Round(
+			point.distanceFromStart + (point.camPosition - camPosition).sqrMagnitude
+		);
 		return newDistanceFromStart < distanceFromStart;
 
 	}
 
 	public float estimatedCost{
 		get{
-			return estimatedDistanceToTarget + distanceFromStart;
+			return Mathf.Round( estimatedDistanceToTarget + distanceFromStart );
 		}
 	}
 

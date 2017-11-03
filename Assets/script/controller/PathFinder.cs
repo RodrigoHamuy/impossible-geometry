@@ -7,11 +7,20 @@ public class PathFinder {
 	PathPoint target;
 	PathPoint start;
 
+	public List<PathPoint> path = new List<PathPoint>();
+
 	// List<PathPoint> openPoints;
 
 	public bool MovePlayerTo(Vector3 player, Vector3 tapPos){
 
-		var newTarget = getPointAtScreenPos(tapPos);
+		path.Clear();
+
+		// TODO: Find out the most suitable point target. Maybe the one
+		// Maybe the closest to the player level.
+		// Or maybe the closest to the previous point.
+		// This would require to decide the target after the path is found.
+
+		var newTarget = getPointsAtScreenPos(tapPos)[0];
 
 		if(
 			newTarget == null || target == newTarget
@@ -21,7 +30,9 @@ public class PathFinder {
 
 		ResetAll();
 
-		start = getPointAtWorldPos(player);
+		// TODO: Choose the closest point to the player.
+
+		start = getPointsAtWorldPos(player)[0];
 
 		return Search(start, target);
 	}
@@ -36,21 +47,22 @@ public class PathFinder {
 			pointComponent.point.Reset(target);
 			setColor(pointComponent, new Color(0, 0, 1) );
 		}
-
 	}
 
-	PathPoint getPointAtScreenPos(Vector3 pos){
+	List<PathPoint> getPointsAtScreenPos(Vector3 pos){
 		var ray = Camera.main.ScreenPointToRay(pos);
-		return getPointAtRay(ray);
+		return getPointsAtRay(ray);
 	}
 
-	PathPoint getPointAtWorldPos(Vector3 pos){
+	List<PathPoint> getPointsAtWorldPos(Vector3 pos){
 		var screenPos = Camera.main.WorldToScreenPoint(pos);
 		var ray = Camera.main.ScreenPointToRay(screenPos);
-		return getPointAtRay(ray);
+		return getPointsAtRay(ray);
 	}
 
-	PathPoint getPointAtRay(Ray ray){
+	List<PathPoint> getPointsAtRay(Ray ray){
+
+		List<PathPoint> points = new List<PathPoint>();
 
 		var layerMask = LayerMask.GetMask("Debug.Point");
 
@@ -63,17 +75,23 @@ public class PathFinder {
 			// TODO: Replace Vector3.up with dynamic up
 
 			if( point.normal == Vector3.up ){
-				return point;
+				points.Add(point);
 			}
 
 		}
 
-		return null;
+		return points;
 	}
 
 	List<PathPoint> findNextPoints(PathPoint point){
 
 		List<PathPoint> nextPoints = new List<PathPoint>();
+
+		var overlappingPoints = getPointsAtWorldPos(point.position);
+
+		overlappingPoints.RemoveAll( overlappingPoint => {
+			return overlappingPoint.position.y <= point.position.y;
+		});
 
 		Vector3[] directions = {
 			point.component.transform.transform.forward,
@@ -85,40 +103,70 @@ public class PathFinder {
 		foreach( var dir in directions){
 
 			var pos = point.position + dir;
-			var nextPoint = getPointAtWorldPos( pos );
+			var newNextPoints = getPointsAtWorldPos( pos );
 
-			if( nextPoint == null || nextPoint == point.prev)
-			continue;
+			foreach( var nextPoint in newNextPoints ){
 
-			if( nextPoint.state == PathPoint.State.Open ){
-				if( ! nextPoint.isCloser(point) ) {
+				if( nextPoint == point.prev ) continue;
+
+				// TODO: This is checking if the object is above to avoid jumping
+				// to a block when the player is occluded by it sides.
+				// TODO: Add a parameter to tell if the object is a block or a
+				// plane, so this check is skipped on planes.
+
+				if(
+					nextPoint.position.y > point.position.y &&
+					nextPoint.camPosition.y > point.camPosition.y
+				) {
 					continue;
 				}
-			} else {
+
+				// Check if nextPoint is next to a point that is on top of point.
+				if(
+					overlappingPoints.Exists( (overlappingPoint) => {
+						return overlappingPoint.position.y == nextPoint.position.y;
+					})
+				){
+					continue;
+				}
+
+				if( nextPoint.state == PathPoint.State.Open ){
+					if( ! nextPoint.isCloser(point) ) {
+						continue;
+					}
+				} else {
+					nextPoint.state = PathPoint.State.Open;
+				}
+
+				nextPoint.setPrev(point);
+
 				nextPoint.state = PathPoint.State.Open;
+
+				nextPoints.Add(nextPoint);
+				// setColor(nextPoint.component, new Color(1.0f, .2f, 0) );
+
 			}
-			nextPoint.setPrev(point);
-
-			nextPoint.state = PathPoint.State.Open;
-
-			nextPoints.Add(nextPoint);
-			setColor(nextPoint.component, new Color(1.0f, .2f, 0) );
 
 		}
 
-		nextPoints = nextPoints.OrderBy( (PathPoint nextPoint) => {
+		nextPoints = nextPoints
+		.OrderBy( (PathPoint nextPoint) => {
 			return nextPoint.estimatedCost;
-		}).ToList();
+		})
+		.ThenBy( (PathPoint nextPoint) =>{
+			return ( point.position - nextPoint.position ).sqrMagnitude;
+		})
+		.ToList();
 
 		if( nextPoints.Count > 0 ) {
-			setColor(nextPoints[0].component, new Color(1, .8f, 0) );
+			// setColor(nextPoints[0].component, new Color(1, .8f, 0) );
 		}
 
 
 		return nextPoints;
 	}
 
-	void setColor(PathPointComponent point, Color color){
+	public static void setColor(PathPointComponent point, Color color){
 
 		var rend = point.GetComponentsInChildren<Renderer>()[0];
 		rend.material.color = color;
@@ -126,18 +174,22 @@ public class PathFinder {
 
 	bool Search(PathPoint current, PathPoint target){
 
-		if( current == target) return true;
+		if( current == target) {
+			path.Add(target);
+			return true;
+		}
 
 		current.target = target;
 		current.state = PathPoint.State.Closed;
 
 		List<PathPoint> nexts = findNextPoints(current);
 
-		setColor(current.component, new Color(.6f, .13f, .86f) );
-		setColor(target.component, new Color(.2f, .8f, 0) );
+		// setColor(current.component, new Color(.6f, .13f, .86f) );
+		// setColor(target.component, new Color(.2f, .8f, 0) );
 
 		foreach( var next in nexts ) {
 			if( Search(next, target) ){
+				path.Add(next);
 				return true;
 			}
 		}
