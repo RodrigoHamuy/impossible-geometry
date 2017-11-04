@@ -128,7 +128,19 @@ public class PathFinder {
 				// remove if it is the previous point
 				if ( nextPoint == point.prev ) return true;
 
-				// TODO: What is this? Please comment.
+				// Remove if nextPoint is bellow another nextPoint that is at the same
+				// height or bellow the current point.
+				if( nextPoint.camPosition.y > point.camPosition.y ){
+					if(
+						newNextPoints.Exists( nextPoint2 =>{
+							if( nextPoint2.position.y <= point.position.y ){
+								return nextPoint2.position.y > nextPoint.position.y;
+							} else return false;
+						})
+					) return true;
+				}
+
+				// TODO: Maybe remove this? Not sure what it is
 				// if( nextPoint.camPosition.y > point.camPosition.y ){
 				// 	if(
 				// 		newNextPoints.Exists( overlappingNextPoint =>{

@@ -1,5 +1,6 @@
 using UnityEngine.SceneManagement;
 ﻿using UnityEngine;
+using System.Collections.Generic;
 // using UnityEditor;
 using UnityEngine.TestTools;
 using NUnit.Framework;
@@ -32,6 +33,12 @@ public class Issue002 {
 		Assert.IsTrue( HasPath(), "Should find a path." );
 	}
 
+	[UnityTest]
+	public IEnumerator Issue002_004Passes() {
+		yield return LoadScene("issue-002.004");
+		Assert.AreEqual( 5, GetPath().Count, "Should need 5 steps." );
+	}
+
 	IEnumerator LoadScene(string sceneName) {
 		SceneManager.LoadScene(sceneName);
 		yield return null;
@@ -54,6 +61,28 @@ public class Issue002 {
 		);
 
 		return pathFound;
+
+	}
+
+	List<PathPoint> GetPath(){
+
+		PathFinder pathFinder = new PathFinder();
+
+		var player = GameObject.Find("Player");
+		Assert.IsNotNull(player, "Player not found.");
+		var touchPoint = GameObject.Find("TouchPoint");
+		Assert.IsNotNull(touchPoint, "TouchPoint not found.");
+
+		var touchPointPos = Camera.main.WorldToScreenPoint(touchPoint.transform.position);
+
+		var pathFound = pathFinder.MovePlayerTo(
+			player.transform.position,
+			touchPointPos
+		);
+
+		Assert.IsTrue( pathFound, "Should find a path." );
+
+		return pathFinder.path;
 
 	}
 }

@@ -27,6 +27,16 @@ public class PathPoint {
 		this.normal = normal;
 
 		camPosition = Camera.main.WorldToScreenPoint(pos);
+		camPosition.z = 0;
+
+		// We actually get a world position, but where all the objects are at
+		// the same distance from the Camera.
+		camPosition = Camera.main.ScreenToWorldPoint(camPosition);
+
+		for (var i = 0; i < 3; i++) {
+			camPosition[i] = Mathf.Round( camPosition[i] * 10f) * .5f;
+		}
+
 
 		Vector3[] crossOptions = {
 			Vector3.up,

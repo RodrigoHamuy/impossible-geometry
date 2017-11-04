@@ -1,3 +1,4 @@
+using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
@@ -144,25 +145,47 @@ public class PointInspector : Editor {
 	[MenuItem("MyMenu/Add test scenes to Build")]
   static void AddAllTestScenes() {
 
-		Debug.Log("Add test scenes.");
+		var dirName = "Assets/scenes/";
 
-		var dirName = "./Assets/scenes/";
+		var files = GetTestFiles(dirName);
 
-		DirectoryInfo dir = new DirectoryInfo( dirName );
-		FileInfo[] info = dir.GetFiles("issue*.unity");
+		var scenes = EditorBuildSettings.scenes;
 
-		var original = EditorBuildSettings.scenes;
-		var newSettings = new EditorBuildSettingsScene[original.Length + info.Length];
-		System.Array.Copy(original, newSettings, original.Length);
+		var sceneList = EditorBuildSettings.scenes.ToList();
 
-		for (var i = 0; i< info.Length; i++) {
+		files.RemoveAll( file => {
+			return sceneList.Exists( scene => {
+				return scene.path == file;
+			});
+		} );
 
-			var sceneToAdd = new EditorBuildSettingsScene( dirName + info[i].Name, true);
-			newSettings[newSettings.Length - 1] = sceneToAdd;
+		var moreScenes = new EditorBuildSettingsScene[scenes.Length + files.Count];
+		System.Array.Copy(scenes, moreScenes, scenes.Length);
+
+		for (var i = 0; i < files.Count; i++) {
+
+			var sceneToAdd = new EditorBuildSettingsScene( files[i], true);
+			moreScenes[scenes.Length + i] = sceneToAdd;
 
 		}
 
-		EditorBuildSettings.scenes = newSettings;
+		EditorBuildSettings.scenes = moreScenes;
+
+		Debug.Log("Test scenes added.");
   }
+
+	static List<string> GetTestFiles(string dirName){
+
+		var fileList = new List<string>();
+
+		DirectoryInfo dir = new DirectoryInfo( dirName );
+		var files = dir.GetFiles("issue*.unity");
+
+		foreach(var file in files){
+			fileList.Add( dirName + file.Name );
+		}
+
+		return fileList;
+	}
 
 }

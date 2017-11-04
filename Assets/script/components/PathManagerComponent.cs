@@ -36,7 +36,7 @@ public class PathManagerComponent : MonoBehaviour {
 		);
 
 		if( a ) {
-			Debug.Log("Path found");
+			Debug.Log("Path found: " + pathFinder.path.Count + " steps.");
 			foreach( var point in pathFinder.path){
 				PathFinder.setColor(point.component, new Color(1, .8f, 0));
 			}
