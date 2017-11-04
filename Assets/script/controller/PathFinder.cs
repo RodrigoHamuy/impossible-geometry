@@ -13,8 +13,6 @@ public class PathFinder {
 
 	public bool MovePlayerTo(Vector3 player, Vector3 tapPos){
 
-		path.Clear();
-
 		// TODO: Find out the most suitable point target. Maybe the one
 		// Maybe the closest to the player level.
 		// Or maybe the closest to the previous point.
@@ -33,13 +31,14 @@ public class PathFinder {
 		// TODO: Choose the closest point to the player.
 
 		start = getPointsAtWorldPos(player)[0];
+		setColor(start.component, new Color(1, 1, 1) );
 
 		return Search(start, target);
 	}
 
 	void ResetAll(){
 
-		// openPoints.Clear();
+		path.Clear();
 
 		var allPointComponents = Object.FindObjectsOfType<PathPointComponent>();
 
@@ -56,8 +55,7 @@ public class PathFinder {
 
 	List<PathPoint> getPointsAtWorldPos(Vector3 pos){
 		var screenPos = Camera.main.WorldToScreenPoint(pos);
-		var ray = Camera.main.ScreenPointToRay(screenPos);
-		return getPointsAtRay(ray);
+		return getPointsAtScreenPos(screenPos);
 	}
 
 	List<PathPoint> getPointsAtRay(Ray ray){
@@ -87,11 +85,10 @@ public class PathFinder {
 
 		List<PathPoint> nextPoints = new List<PathPoint>();
 
-		var overlappingPoints = getPointsAtWorldPos(point.position);
-
-		overlappingPoints.RemoveAll( overlappingPoint => {
-			return overlappingPoint.position.y <= point.position.y;
-		});
+		// var overlappingPoints = getPointsAtWorldPos(point.position);
+		//
+		// overlappingPoints.RemoveAll( overlappingPoint => {
+		// });
 
 		Vector3[] directions = {
 			point.component.transform.transform.forward,
@@ -105,38 +102,63 @@ public class PathFinder {
 			var pos = point.position + dir;
 			var newNextPoints = getPointsAtWorldPos( pos );
 
-			foreach( var nextPoint in newNextPoints ){
+			// Remove if it is overlapped by another point bellow the same ray.
+			newNextPoints.RemoveAll( nextPoint => {
 
-				if( nextPoint == point.prev ) continue;
+				// Remove if the point has been check already.
+				if (nextPoint.state == PathPoint.State.Closed ) return true;
 
-				// TODO: This is checking if the object is above to avoid jumping
-				// to a block when the player is occluded by it sides.
 				// TODO: Add a parameter to tell if the object is a block or a
 				// plane, so this check is skipped on planes.
 
+				// remove if this nextPoint is above the current point (from camera
+				// perspective) and his block overlaps the current point.
 				if(
-					nextPoint.position.y > point.position.y &&
-					nextPoint.camPosition.y > point.camPosition.y
-				) {
-					continue;
-				}
+					nextPoint.camPosition.y > point.camPosition.y &&
+					nextPoint.position.y > point.position.y
+				) return true;
+
+				// remove if this block is bellow the current point (from camera
+				// perspective) and is being overlapped by the current point.
+				if(
+					nextPoint.camPosition.y < point.camPosition.y &&
+					nextPoint.position.y < point.position.y
+				) return true;
+
+				// remove if it is the previous point
+				if ( nextPoint == point.prev ) return true;
+
+				// TODO: What is this? Please comment.
+				// if( nextPoint.camPosition.y > point.camPosition.y ){
+				// 	if(
+				// 		newNextPoints.Exists( overlappingNextPoint =>{
+				// 			return overlappingNextPoint.position.y > nextPoint.position.y;
+				// 		})
+				// 	) return true;
+				// }
+
+				// default return
+				return false;
+			});
+
+			foreach( var nextPoint in newNextPoints ){
 
 				// Same, but for objects that are bellow
-				if(
-					nextPoint.position.y < point.position.y &&
-					nextPoint.camPosition.y < point.camPosition.y
-				) {
-					continue;
-				}
+				// if(
+				// 	nextPoint.position.y < point.position.y &&
+				// 	nextPoint.camPosition.y < point.camPosition.y
+				// ) {
+				// 	continue;
+				// }
 
 				// Check if nextPoint is next to a point that is on top of point.
-				if(
-					overlappingPoints.Exists( (overlappingPoint) => {
-						return overlappingPoint.position.y == nextPoint.position.y;
-					})
-				){
-					continue;
-				}
+				// if(
+				// 	overlappingPoints.Exists( (overlappingPoint) => {
+				// 		return overlappingPoint.position.y == nextPoint.position.y;
+				// 	})
+				// ){
+				// 	continue;
+				// }
 
 				if( nextPoint.state == PathPoint.State.Open ){
 					if( ! nextPoint.isCloser(point) ) {

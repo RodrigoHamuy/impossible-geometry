@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PathManagerComponent : MonoBehaviour {
@@ -26,27 +27,26 @@ public class PathManagerComponent : MonoBehaviour {
 			return;
 		}
 
-		// if( player.isMoving ) return;
+		if( player.isMoving ) return;
 
 		player.isMoving = true;
-
+		StartCoroutine(ResetPlayerMove());
 		var a = pathFinder.MovePlayerTo(
 			player.transform.position, tapPos
 		);
 
 		if( a ) {
-			var b = "";
-			Debug.Log("Path found: " + a);
+			Debug.Log("Path found");
 			foreach( var point in pathFinder.path){
-
-				// Debug.Log(point.position);
 				PathFinder.setColor(point.component, new Color(1, .8f, 0));
-
-				b+= "\n" + point.position.ToString();
-
 			}
-			Debug.Log(b);
+		} else {
+			Debug.Log("Path not found");
 		}
+	}
 
+	IEnumerator ResetPlayerMove(){
+		yield return new WaitForSeconds(0.1f);
+		player.isMoving = false;
 	}
 }

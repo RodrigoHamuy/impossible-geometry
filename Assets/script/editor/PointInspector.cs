@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -138,6 +139,30 @@ public class PointInspector : Editor {
 			SceneView.lastActiveSceneView.rotation = camera.rotation;
       SceneView.lastActiveSceneView.Repaint();
 
+  }
+
+	[MenuItem("MyMenu/Add test scenes to Build")]
+  static void AddAllTestScenes() {
+
+		Debug.Log("Add test scenes.");
+
+		var dirName = "./Assets/scenes/";
+
+		DirectoryInfo dir = new DirectoryInfo( dirName );
+		FileInfo[] info = dir.GetFiles("issue*.unity");
+
+		var original = EditorBuildSettings.scenes;
+		var newSettings = new EditorBuildSettingsScene[original.Length + info.Length];
+		System.Array.Copy(original, newSettings, original.Length);
+
+		for (var i = 0; i< info.Length; i++) {
+
+			var sceneToAdd = new EditorBuildSettingsScene( dirName + info[i].Name, true);
+			newSettings[newSettings.Length - 1] = sceneToAdd;
+
+		}
+
+		EditorBuildSettings.scenes = newSettings;
   }
 
 }
