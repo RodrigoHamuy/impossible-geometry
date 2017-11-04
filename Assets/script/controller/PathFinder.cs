@@ -7,7 +7,9 @@ public class PathFinder {
 	PathPoint target;
 	PathPoint start;
 
-	public List<PathPoint> path = new List<PathPoint>();
+	public List<PathPoint> path;
+
+	List< List <PathPoint> > possiblePaths = new List< List <PathPoint> >();
 
 	// List<PathPoint> openPoints;
 
@@ -33,12 +35,13 @@ public class PathFinder {
 		start = getPointsAtWorldPos(player)[0];
 		setColor(start.component, new Color(1, 1, 1) );
 
-		return Search(start, target);
+		return Search(start);
 	}
 
 	void ResetAll(){
 
-		path.Clear();
+		path = null;
+		possiblePaths.Clear();
 
 		var allPointComponents = Object.FindObjectsOfType<PathPointComponent>();
 
@@ -214,11 +217,17 @@ public class PathFinder {
 		rend.material.color = color;
 	}
 
-	bool Search(PathPoint current, PathPoint target){
+	bool Search(PathPoint current, List<PathPoint> currentList = null){
 
 		if( current == target) {
-			path.Add(target);
+			path = currentList;
 			return true;
+		}
+
+		if( currentList == null ) {
+			currentList = new List<PathPoint>();
+			possiblePaths.Add( currentList );
+			currentList.Add(current);
 		}
 
 		current.target = target;
@@ -229,14 +238,26 @@ public class PathFinder {
 		// setColor(current.component, new Color(.6f, .13f, .86f) );
 		// setColor(target.component, new Color(.2f, .8f, 0) );
 
+		possiblePaths.Remove(currentList);
+
 		foreach( var next in nexts ) {
-			if( Search(next, target) ){
-				path.Add(next);
-				return true;
-			}
+
+			List<PathPoint> nextList = new List<PathPoint>();
+			nextList.AddRange(currentList);
+			possiblePaths.Add( nextList );
+			nextList.Add(next);
+
 		}
 
-		return false;
+    if (possiblePaths.Count == 0) return false;
+
+		return Search();
+	}
+
+	bool Search(){
+		possiblePaths.OrderBy( eachList => eachList.Last().estimatedCost );
+		var next = possiblePaths[0].Last();
+		return Search( next, possiblePaths[0] );
 	}
 
 
