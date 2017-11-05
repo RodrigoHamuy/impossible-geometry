@@ -16,12 +16,12 @@ TagManager:
   - Debug.Point
   - Debug.Normal
   - Debug
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Debug.up
+  - Debug.down
+  - Debug.left
+  - Debug.right
+  - Debug.forward
+  - Debug.back
   - 
   - 
   - 

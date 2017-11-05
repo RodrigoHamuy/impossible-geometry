@@ -32,7 +32,9 @@ public class PathManagerComponent : MonoBehaviour {
 		player.isMoving = true;
 		StartCoroutine(ResetPlayerMove());
 		var a = pathFinder.MovePlayerTo(
-			player.transform.position, tapPos
+			player.transform.position,
+			tapPos,
+			player.controller.normal
 		);
 
 		if( a ) {

@@ -7,32 +7,42 @@ public class PathFinder {
 	PathPoint target;
 	PathPoint start;
 
+	Vector3 normal;
+
 	public List<PathPoint> path;
 
 	List< List <PathPoint> > possiblePaths = new List< List <PathPoint> >();
 
 	// List<PathPoint> openPoints;
 
-	public bool MovePlayerTo(Vector3 player, Vector3 tapPos){
+	public bool MovePlayerTo(
+		Vector3 player,
+		Vector3 tapPos,
+		Vector3 n = default(Vector3)
+	){
 
+		if( n == Vector3.zero ) n = Vector3.up;
+
+		normal = n;
 		// TODO: Find out the most suitable point target. Maybe the one
 		// Maybe the closest to the player level.
 		// Or maybe the closest to the previous point.
 		// This would require to decide the target after the path is found.
 
-		var newTarget = getPointsAtScreenPos(tapPos)[0];
+		var newTargets = getPointsAtScreenPos(tapPos, normal);
 
 		if(
-			newTarget == null || target == newTarget
+			newTargets.Count == 0 ||
+			newTargets[0] == target
 		) return false;
 
-		target = newTarget;
+		target = newTargets[0];
 
 		ResetAll();
 
 		// TODO: Choose the closest point to the player.
 
-		start = getPointsAtWorldPos(player)[0];
+		start = getPointsAtWorldPos(player, normal)[0];
 		setColor(start.component, new Color(1, 1, 1) );
 
 		return Search(start);
@@ -51,21 +61,23 @@ public class PathFinder {
 		}
 	}
 
-	List<PathPoint> getPointsAtScreenPos(Vector3 pos){
+	static List<PathPoint> getPointsAtScreenPos(Vector3 pos, Vector3 normal){
 		var ray = Camera.main.ScreenPointToRay(pos);
-		return getPointsAtRay(ray);
+		return getPointsAtRay(ray, normal);
 	}
 
-	List<PathPoint> getPointsAtWorldPos(Vector3 pos){
+	static public List<PathPoint> getPointsAtWorldPos(Vector3 pos, Vector3 normal) {
 		var screenPos = Camera.main.WorldToScreenPoint(pos);
-		return getPointsAtScreenPos(screenPos);
+		return getPointsAtScreenPos(screenPos, normal);
 	}
 
-	List<PathPoint> getPointsAtRay(Ray ray){
+	static List<PathPoint> getPointsAtRay(Ray ray, Vector3 normal){
+
+		var layer = PathPoint.layer[ normal ];
 
 		List<PathPoint> points = new List<PathPoint>();
 
-		var layerMask = LayerMask.GetMask("Debug.Point");
+		var layerMask = LayerMask.GetMask(layer);
 
 		var hits = Physics.RaycastAll(ray, 100.0f, layerMask);
 
@@ -73,15 +85,24 @@ public class PathFinder {
 
 			var point = hit.collider.transform.parent.GetComponent<PathPointComponent>().point;
 
-			// TODO: Replace Vector3.up with dynamic up
+			// TODO: Normal should be decided from the last node,
+			// as the player may be able to move on diff normals.
 
-			if( point.normal == Vector3.up ){
+			if( point.normal == normal ){
 				points.Add(point);
 			}
 
 		}
 
 		return points;
+	}
+
+	int GetNormalAxis(Vector3 n){
+		for (var i = 0; i < 3; i++) {
+			if( n[i] != 0 ) return i;
+		}
+		Debug.LogError("This is not a normal");
+		return -1;
 	}
 
 	List<PathPoint> findNextPoints(PathPoint point){
@@ -103,7 +124,9 @@ public class PathFinder {
 		foreach( var dir in directions){
 
 			var pos = point.position + dir;
-			var newNextPoints = getPointsAtWorldPos( pos );
+			var newNextPoints = getPointsAtWorldPos( pos, normal );
+
+			var axis = GetNormalAxis(normal);
 
 			// Remove if it is overlapped by another point bellow the same ray.
 			newNextPoints.RemoveAll( nextPoint => {
@@ -117,15 +140,15 @@ public class PathFinder {
 				// remove if this nextPoint is above the current point (from camera
 				// perspective) and his block overlaps the current point.
 				if(
-					nextPoint.camPosition.y > point.camPosition.y &&
-					nextPoint.position.y > point.position.y
+					nextPoint.camPosition[axis] > point.camPosition[axis] &&
+					nextPoint.position[axis] > point.position[axis]
 				) return true;
 
 				// remove if this block is bellow the current point (from camera
 				// perspective) and is being overlapped by the current point.
 				if(
-					nextPoint.camPosition.y < point.camPosition.y &&
-					nextPoint.position.y < point.position.y
+					nextPoint.camPosition[axis] < point.camPosition[axis] &&
+					nextPoint.position[axis] < point.position[axis]
 				) return true;
 
 				// remove if it is the previous point
