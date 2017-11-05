@@ -8,15 +8,16 @@ using UnityEditor;
 [CustomEditor(typeof(PathPointComponent))]
 public class PointInspector : Editor {
 
+	public bool drawLines = false;
+	public bool paintNeighbours = false;
+
 	bool isDebugDone = false;
 	PathPointComponent lastPoint;
+	GUIStyle style;
 
 	List<Vector3> lineSegments = new List<Vector3>();
 
-	void OnSceneGUI() {
-
-		var targetObject = (PathPointComponent) target;
-
+	void Awake(){
 		var tex2 = new Texture2D(1, 1);
 		var fillColor = new Color( 1, 1, 1, .5f );
 		var fillColorArray =  tex2.GetPixels();
@@ -26,28 +27,50 @@ public class PointInspector : Editor {
 		tex2.SetPixels( fillColorArray );
 		tex2.Apply();
 
-		GUIStyle style = new GUIStyle();
+		style = new GUIStyle();
 		// style.normal.textColor = Color.green;
 		style.normal.background = tex2;
+	}
+
+	void OnSceneGUI() {
+
+		var targetObject = (PathPointComponent) target;
+
+		if ( drawLines || paintNeighbours ) CheckRay(targetObject);
+
+		if (drawLines) {
+			for (var i = 0; i < lineSegments.Count; i += 2 ) {
+				var start = lineSegments[i];
+				var end = lineSegments[i+1];
+				Debug.DrawLine(start, end, Color.red);
+			}
+		}
 
 		Handles.BeginGUI();
+
+		// Handles.DrawLines(lineSegments.ToArray());
+
+		var point = targetObject.point;
+
+		var labelText = point.position.ToString() + "\n" +
+			point.screenPosition.ToString();
+
 		Handles.Label(
 			targetObject.transform.position,
-			targetObject.transform.position.ToString(),
+			labelText,
 			style
 		);
-		// Handles.DrawLines(lineSegments.ToArray());
+
 		Handles.EndGUI();
-
-		// CheckRay(targetObject);
-
 	}
 
 	void CleanAll(){
 		var allPoints = Object.FindObjectsOfType<PathPointComponent>();
 		lineSegments.Clear();
-		foreach( var point in allPoints ){
-			setColor(point, new Color(.4f, .0f, .8f) );
+		if( paintNeighbours ){
+			foreach( var point in allPoints ){
+				PathFinder.setColor(point, new Color(.4f, .0f, .8f) );
+			}
 		}
 	}
 
@@ -75,21 +98,22 @@ public class PointInspector : Editor {
 		foreach( var dir in directions){
 
 			var pos = point.position + dir;
-			Debug.Log(pos);
-			var nextPoints = getPointsAtWorldPos( pos );
+			var nextPoints = PathFinder.getPointsAtWorldPos( pos, point.normal );
 
-			foreach( var nextPoint in nextPoints ) {
-				setColor(nextPoint.component, new Color(1.0f, .2f, 0) );
+			var screenPoint = Camera.main.WorldToScreenPoint(pos);
+			screenPoint.z = 0;
+
+			var ray = Camera.main.ScreenPointToRay( screenPoint );
+			AddDebugLine(ray);
+
+			if( paintNeighbours ){
+				foreach( var nextPoint in nextPoints ) {
+					PathFinder.setColor(nextPoint.component, new Color(1.0f, .2f, 0) );
+				}
 			}
 
 		}
 
-	}
-
-	List<PathPoint> getPointsAtWorldPos(Vector3 pos){
-		var screenPos = Camera.main.WorldToScreenPoint(pos);
-		var ray = Camera.main.ScreenPointToRay(screenPos);
-		return getPointsAtRay(ray);
 	}
 
 	void AddDebugLine(Ray ray){
@@ -97,38 +121,6 @@ public class PointInspector : Editor {
 		var end =  ray.origin + ray.direction * (lastPoint.transform.position-ray.origin).magnitude;
 		lineSegments.Add(start);
 		lineSegments.Add(end);
-	}
-
-
-	List<PathPoint> getPointsAtRay(Ray ray){
-
-		List<PathPoint> points = new List<PathPoint>();
-
-		AddDebugLine(ray);
-
-		var layerMask = LayerMask.GetMask("Debug.Point");
-
-		var hits = Physics.RaycastAll(ray, 100.0f, layerMask);
-
-		foreach( var hit in hits ) {
-
-			var point = hit.collider.transform.parent.GetComponent<PathPointComponent>().point;
-
-			// TODO: Replace Vector3.up with dynamic up
-
-			if( point.normal == Vector3.up ){
-				points.Add(point);
-			}
-
-		}
-
-		return points;
-	}
-
-	void setColor(PathPointComponent point, Color color){
-
-		var rend = point.GetComponentsInChildren<Renderer>()[0];
-		rend.material.color = color;
 	}
 
 	[MenuItem("MyMenu/Align camera")]

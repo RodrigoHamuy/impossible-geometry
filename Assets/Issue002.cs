@@ -39,6 +39,12 @@ public class Issue002 {
 		Assert.AreEqual( 5, GetPath().Count, "Should need 5 steps." );
 	}
 
+	[UnityTest]
+	public IEnumerator Issue005_000Passes() {
+		yield return LoadScene("issue-005.000");
+		Assert.IsFalse( HasPath(), "Should not find a path." );
+	}
+
 	IEnumerator LoadScene(string sceneName) {
 		SceneManager.LoadScene(sceneName);
 		yield return null;

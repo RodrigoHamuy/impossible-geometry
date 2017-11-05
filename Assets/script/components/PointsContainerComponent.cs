@@ -95,8 +95,7 @@ public class PointsContainerComponent : MonoBehaviour {
 				);
 			});
 
-			point.component = pointComponent;
-			pointComponent.point = point;
+			point.SetComponent(pointComponent);
 
 		}
 

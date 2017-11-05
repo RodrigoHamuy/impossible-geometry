@@ -92,7 +92,9 @@ public class PathContainer{
 			(c-b).normalized
 		).normalized;
 
-		if ( up != Vector3.up ) return;
+		up = PathPoint.CleanNormal(up);
+
+		// if ( up != Vector3.up ) return;
 
 		List<Vector3> sides = new List<Vector3>{
 			(b - a),
