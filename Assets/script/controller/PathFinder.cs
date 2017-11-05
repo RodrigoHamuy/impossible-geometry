@@ -40,11 +40,13 @@ public class PathFinder {
 
 		ResetAll();
 
-		// TODO: Choose the closest point to the player.
+		var start = getPointsAtWorldPos(player, normal)
+		.OrderBy( point => {
+			return (point.position - player).sqrMagnitude;
+		})
+		.ElementAt(0);
 
-		start = getPointsAtWorldPos(player, normal)[0];
 		setColor(start.component, new Color(1, 1, 1) );
-
 		return Search(start);
 	}
 
@@ -63,6 +65,11 @@ public class PathFinder {
 
 	static List<PathPoint> getPointsAtScreenPos(Vector3 pos, Vector3 normal){
 		var ray = Camera.main.ScreenPointToRay(pos);
+		if ( IsBehind(normal) ) {
+			ray.origin = ray.origin - ray.direction*100;
+			ray.direction = - ray.direction;
+
+		}
 		return getPointsAtRay(ray, normal);
 	}
 
@@ -97,7 +104,12 @@ public class PathFinder {
 		return points;
 	}
 
-	int GetNormalAxis(Vector3 n){
+	static bool IsBehind(Vector3 n){
+		var angle = Vector3.Angle( Camera.main.transform.forward, n );
+		return angle < 90 ;
+	}
+
+	static int GetNormalAxis(Vector3 n){
 		for (var i = 0; i < 3; i++) {
 			if( n[i] != 0 ) return i;
 		}
@@ -109,10 +121,14 @@ public class PathFinder {
 
 		List<PathPoint> nextPoints = new List<PathPoint>();
 
-		// var overlappingPoints = getPointsAtWorldPos(point.position);
-		//
-		// overlappingPoints.RemoveAll( overlappingPoint => {
-		// });
+		var overlappingPoints = getPointsAtWorldPos(point.position, normal);
+
+		overlappingPoints.RemoveAll( overlappingPoint => {
+			return (
+				overlappingPoint.position.y < point.position.y ||
+				overlappingPoint == point
+			);
+		});
 
 		Vector3[] directions = {
 			point.component.transform.transform.forward,
@@ -166,6 +182,16 @@ public class PathFinder {
 					) return true;
 				}
 
+				// Check if nextPoint is next to a point that is on top of point.
+				if (
+					overlappingPoints.Exists( (overlappingPoint) => {
+						return (
+							overlappingPoint.position.y <= nextPoint.position.y &&
+							overlappingPoint.screenPosition.y > nextPoint.screenPosition.y
+						);
+					})
+				) return true;
+
 				// TODO: Maybe remove this? Not sure what it is
 				// if( nextPoint.camPosition.y > point.camPosition.y ){
 				// 	if(
@@ -192,7 +218,7 @@ public class PathFinder {
 				// Check if nextPoint is next to a point that is on top of point.
 				// if(
 				// 	overlappingPoints.Exists( (overlappingPoint) => {
-				// 		return overlappingPoint.position.y == nextPoint.position.y;
+				// 		return overlappingPoint.position.y <= nextPoint.position.y;
 				// 	})
 				// ){
 				// 	continue;

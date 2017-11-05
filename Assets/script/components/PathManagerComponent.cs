@@ -1,4 +1,4 @@
-using System.Collections;
+// using System.Collections;
 using UnityEngine;
 
 public class PathManagerComponent : MonoBehaviour {
@@ -7,7 +7,7 @@ public class PathManagerComponent : MonoBehaviour {
 
 	PathFinder pathFinder = new PathFinder();
 
-	void Update () {
+	void FixedUpdate () {
 
 		Vector3 tapPos;
 
@@ -29,15 +29,19 @@ public class PathManagerComponent : MonoBehaviour {
 
 		if( player.isMoving ) return;
 
-		player.isMoving = true;
-		StartCoroutine(ResetPlayerMove());
+		// player.isMoving = true;
+		// StartCoroutine(ResetPlayerMove());
 		var a = pathFinder.MovePlayerTo(
 			player.transform.position,
 			tapPos,
 			player.controller.normal
 		);
 
+		// pathFinder.path.RemoveAt(0);
+
+
 		if( a ) {
+			player.Walk( pathFinder.path );
 			Debug.Log("Path found: " + pathFinder.path.Count + " steps.");
 			foreach( var point in pathFinder.path){
 				PathFinder.setColor(point.component, new Color(1, .8f, 0));
@@ -47,8 +51,8 @@ public class PathManagerComponent : MonoBehaviour {
 		}
 	}
 
-	IEnumerator ResetPlayerMove(){
-		yield return new WaitForSeconds(0.1f);
-		player.isMoving = false;
-	}
+	// IEnumerator ResetPlayerMove(){
+	// 	yield return new WaitForSeconds(0.1f);
+	// 	player.isMoving = false;
+	// }
 }
