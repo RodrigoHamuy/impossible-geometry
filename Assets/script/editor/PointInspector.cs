@@ -8,8 +8,8 @@ using UnityEditor;
 [CustomEditor(typeof(PathPointComponent))]
 public class PointInspector : Editor {
 
-	public bool drawLines = true;
-	public bool paintNeighbours = true;
+	public bool drawLines = !true;
+	public bool paintNeighbours = !true;
 
 	bool isDebugDone = false;
 	PathPointComponent lastPoint;

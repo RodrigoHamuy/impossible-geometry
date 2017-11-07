@@ -117,6 +117,25 @@ public class PathFinder {
 		return -1;
 	}
 
+	List<PathPoint> GetCrossOverlaps( Vector3 pos, Vector3 normal, int axis ) {
+
+		// This is to move the ray hal way down, as otherwise
+		// it wont hit a cross overllap.
+
+		var halfDir = Vector3.zero;
+		halfDir[ ( axis + 1 ) % 3 ] = normal[axis] * 0.5f;
+
+		pos += halfDir;
+
+		var crossNormal = Vector3.zero;
+		crossNormal[ ( axis + 2 ) % 3 ] = normal[axis];
+		crossNormal = PathPoint.CleanNormal( crossNormal );
+
+		var crossOverlaps = getPointsAtWorldPos( pos, crossNormal );
+
+		return crossOverlaps;
+	}
+
 	List<PathPoint> findNextPoints(PathPoint point){
 
 		List<PathPoint> nextPoints = new List<PathPoint>();
@@ -140,9 +159,12 @@ public class PathFinder {
 		foreach( var dir in directions){
 
 			var pos = point.position + dir;
-			var newNextPoints = getPointsAtWorldPos( pos, normal );
-
 			var axis = GetNormalAxis(normal);
+
+			var newNextPoints = getPointsAtWorldPos( pos, normal );
+			var crossOverlaps = GetCrossOverlaps( pos, normal, axis );
+
+			// TODO: Work with crossOverlaps
 
 			// Remove if it is overlapped by another point bellow the same ray.
 			newNextPoints.RemoveAll( nextPoint => {

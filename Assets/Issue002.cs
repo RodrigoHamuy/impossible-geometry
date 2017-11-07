@@ -46,6 +46,12 @@ public class Issue002 {
 	}
 
 	[UnityTest]
+	public IEnumerator Issue002_006_ShouldNotFind() {
+		yield return LoadScene("issue-002.006");
+		Assert.IsFalse( HasPath(), "Should not find a path." );
+	}
+
+	[UnityTest]
 	public IEnumerator Issue005_000_ShouldNotFind() {
 		yield return LoadScene("issue-005.000");
 		Assert.IsFalse( HasPath(), "Should not find a path." );
