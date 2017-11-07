@@ -119,16 +119,20 @@ public class PathFinder {
 
 	List<PathPoint> GetCrossOverlaps( Vector3 pos, Vector3 normal, int axis ) {
 
-		// This is to move the ray hal way down, as otherwise
+		// This is to move the ray half way down, as otherwise
 		// it wont hit a cross overllap.
 
+		var axisDir = IsBehind(normal) ? -1 : 1;
+
 		var halfDir = Vector3.zero;
-		halfDir[ ( axis + 1 ) % 3 ] = normal[axis] * 0.5f;
+		halfDir[ ( axis + axisDir ) % 3 ] = normal[axis] * 0.5f;
 
 		pos += halfDir;
 
 		var crossNormal = Vector3.zero;
-		crossNormal[ ( axis + 2 ) % 3 ] = normal[axis];
+		var newAxis = ( axis + axisDir + axisDir ) % 3;
+		if( newAxis < 0) newAxis += 3;
+		crossNormal[ newAxis ] = normal[axis];
 		crossNormal = PathPoint.CleanNormal( crossNormal );
 
 		var crossOverlaps = getPointsAtWorldPos( pos, crossNormal );
@@ -164,7 +168,6 @@ public class PathFinder {
 			var newNextPoints = getPointsAtWorldPos( pos, normal );
 			var crossOverlaps = GetCrossOverlaps( pos, normal, axis );
 
-			// TODO: Work with crossOverlaps
 
 			// Remove if it is overlapped by another point bellow the same ray.
 			newNextPoints.RemoveAll( nextPoint => {
@@ -210,6 +213,17 @@ public class PathFinder {
 						return (
 							overlappingPoint.position.y <= nextPoint.position.y &&
 							overlappingPoint.screenPosition.y > nextPoint.screenPosition.y
+						);
+					})
+				) return true;
+
+
+				// Cross overlaps
+				if(
+					crossOverlaps.Exists( (overlappingPoint) =>{
+						return (
+							overlappingPoint.realCamPosition.z < nextPoint.realCamPosition.z &&
+							overlappingPoint.realCamPosition.z > point.realCamPosition.z
 						);
 					})
 				) return true;
