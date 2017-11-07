@@ -66,7 +66,7 @@ public class PathFinder {
 	static List<PathPoint> getPointsAtScreenPos(Vector3 pos, Vector3 normal){
 		var ray = Camera.main.ScreenPointToRay(pos);
 		if ( IsBehind(normal) ) {
-			ray.origin = ray.origin - ray.direction*100;
+			ray.origin = ray.origin + ray.direction*100;
 			ray.direction = - ray.direction;
 
 		}

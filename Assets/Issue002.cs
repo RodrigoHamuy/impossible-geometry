@@ -57,6 +57,18 @@ public class Issue002 {
 		Assert.IsTrue( HasPath(), "Should find a path." );
 	}
 
+	[UnityTest]
+	public IEnumerator Issue009_000_ShouldFind() {
+		yield return LoadScene("issue-009.000");
+		Assert.IsTrue( HasPath(), "Should find a path." );
+	}
+
+	[UnityTest]
+	public IEnumerator Issue009_001_ShouldFind() {
+		yield return LoadScene("issue-009.001");
+		Assert.IsTrue( HasPath(), "Should find a path." );
+	}
+
 	IEnumerator LoadScene(string sceneName) {
 		SceneManager.LoadScene(sceneName);
 		yield return null;
