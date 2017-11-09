@@ -175,12 +175,10 @@ public class PathFinder {
 				// Remove if the point has been check already.
 				if (nextPoint.state == PathPoint.State.Closed ) return true;
 
-				// TODO: Add a parameter to tell if the object is a block or a
-				// plane, so this check is skipped on planes.
-
 				// remove if this nextPoint is above the current point (from camera
 				// perspective) and his block overlaps the current point.
 				if(
+					! nextPoint.isPrismSide &&
 					nextPoint.camPosition[axis] > point.camPosition[axis] &&
 					nextPoint.position[axis] > point.position[axis]
 				) return true;
@@ -188,6 +186,7 @@ public class PathFinder {
 				// remove if this block is bellow the current point (from camera
 				// perspective) and is being overlapped by the current point.
 				if(
+					! point.isPrismSide &&
 					nextPoint.camPosition[axis] < point.camPosition[axis] &&
 					nextPoint.position[axis] < point.position[axis]
 				) return true;

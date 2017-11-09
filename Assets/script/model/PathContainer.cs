@@ -145,15 +145,17 @@ public class PathContainer{
 
 	void _AddPoint(Vector3 pos, Vector3 up){
 
-		var index = points.FindIndex( (PathPoint point) => {
+		var i = points.FindIndex( (PathPoint point) => {
 			return point.position == pos;
 		});
 
-		if( index == -1 ) {
+		if( i == -1 ) {
 
 			var pathPoint = new PathPoint(pos, up);
 			points.Add(pathPoint);
 
+		} else {
+			points[ i ].isPrismSide = false;
 		}
 
 	}

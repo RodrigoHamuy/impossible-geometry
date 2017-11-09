@@ -36,6 +36,8 @@ public class PathPoint {
 
 	public PathPointComponent component;
 
+	public bool isPrismSide = true;
+
 	public float estimatedDistanceToTarget;
 	public float distanceFromStart = 0;
 

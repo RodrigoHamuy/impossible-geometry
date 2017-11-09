@@ -41,3 +41,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/scenes/issue-prism.000.unity
     guid: c81769cada8069d40bb6dbb34f65cf49
+  - enabled: 1
+    path: Assets/scenes/issue-prism.001.unity
+    guid: c05e6c7139a3b9b47b53193e1207139f
