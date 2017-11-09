@@ -8,55 +8,41 @@ public class PlayerComponent : MonoBehaviour {
 
 	public bool isMoving = false;
 
-	public float toVel = 2.5f;
-	public float maxVel = 5.0f;
-	public float maxForce = 5.0f;
-	public float gain = 5f;
+	public float acceleration = 2.5f;
+	public float maxSpeed = 5.0f;
+	float _speed = 0;
 
-
-	Rigidbody rigidBody;
 	List<PathPoint> path;
-
 	Vector3 targetPos;
 	PathPoint targetPoint;
 	PathPoint prevPoint;
 
 	void Start() {
 		controller = new Player(this);
-		rigidBody = GetComponent<Rigidbody>();
-		rigidBody.detectCollisions = false;
-		rigidBody.freezeRotation = true;
 	}
 
-	void FixedUpdate(){
+	void Update(){
 
 		if( !isMoving ) return;
 
-		Vector3 dist = targetPos - transform.position;
-		dist.y = 0; // ignore height differences
-		// calc a target vel proportional to distance (clamped to maxVel)
-		Vector3 tgtVel = Vector3.ClampMagnitude(toVel * dist, maxVel);
-		// calculate the velocity error
-		Vector3 error = tgtVel - rigidBody.velocity;
-		// calc a force proportional to the error (clamped to maxForce)
-		Vector3 force = Vector3.ClampMagnitude(gain * error, maxForce);
-		rigidBody.AddForce(force);
+		var currTargetPos = targetPos;
+
+		Vector3 dir = (currTargetPos - transform.position).normalized;
+
+		_speed = Mathf.Min( _speed + acceleration, maxSpeed);
+
+		transform.position = transform.position + dir*(_speed*Time.fixedDeltaTime);
 
 		if(
-			(rigidBody.position - targetPos).sqrMagnitude < 0.001f &&
-			error.sqrMagnitude < 0.001f &&
-			rigidBody.velocity.sqrMagnitude < 0.001f
+			(transform.position - targetPos).sqrMagnitude < 0.01f
 		) {
 			if( path.Count > 1) {
-				rigidBody.position = targetPoint.position;
-				rigidBody.velocity = Vector3.zero;
 				MoveToNextPoint();
 			} else{
 				Debug.Log("Target reached");
 				path.Clear();
 				isMoving = false;
-				rigidBody.velocity = Vector3.zero;
-				rigidBody.position = targetPoint.position;
+				transform.position = targetPoint.position;
 			}
 		}
 
@@ -83,9 +69,10 @@ public class PlayerComponent : MonoBehaviour {
 		}
 
 		if( prevPoint.position.y < targetPoint.position.y ) {
-			rigidBody.position = targetPoint.position - dir;
+			transform.position = targetPoint.position - dir;
 			targetPos = targetPoint.position;
 		} else {
+			transform.position = prevPoint.position;
 			targetPos = prevPoint.position + dir;
 		}
 

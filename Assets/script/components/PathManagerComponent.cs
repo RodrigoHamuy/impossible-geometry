@@ -7,7 +7,7 @@ public class PathManagerComponent : MonoBehaviour {
 
 	PathFinder pathFinder = new PathFinder();
 
-	void FixedUpdate () {
+	void Update () {
 
 		Vector3 tapPos;
 
