@@ -75,6 +75,12 @@ public class Issue002 {
 		Assert.IsTrue( HasPath(), "Should find a path." );
 	}
 
+	[UnityTest]
+	public IEnumerator Issueprism_000_ShouldFind() {
+		yield return LoadScene("issue-prism.000");
+		Assert.IsTrue( HasPath(), "Should find a path." );
+	}
+
 	IEnumerator LoadScene(string sceneName) {
 		SceneManager.LoadScene(sceneName);
 		yield return null;
