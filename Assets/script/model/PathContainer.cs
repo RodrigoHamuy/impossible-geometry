@@ -112,7 +112,7 @@ public class PathContainer{
 
 		for (var i = 0; i < sides.Count; i++) {
 
-			if( sides[i].magnitude > sides[ maxIndex ].magnitude ) {
+			if( sides[i].sqrMagnitude > sides[ maxIndex ].sqrMagnitude ) {
 				maxIndex = i;
 			}
 
@@ -134,7 +134,7 @@ public class PathContainer{
 
 			for (var y = 0; y < sideBLength; y++) {
 
-				var pos = origins[0] + sideADir * (x + .5f) + sideBDir * (y+.5f);
+				var pos = origins[ maxIndex % 2 ] + sideADir * (x + .5f) + sideBDir * (y+.5f);
 				_AddPoint(pos, up);
 
 			}
