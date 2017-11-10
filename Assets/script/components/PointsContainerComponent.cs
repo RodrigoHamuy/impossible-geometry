@@ -17,10 +17,19 @@ public class PointsContainerComponent : MonoBehaviour {
 
 		pathContainer.unityEvent.AddListener(UpdatePointsGameObject);
 
-		pathContainer.setTriangles(transform);
+		pathContainer.setTriangles(this);
 
 		pathContainer.GeneratePathPoints();
 
+		initRotation();
+
+	}
+
+	void initRotation(){
+		if ( transform.parent == null ) return;
+
+		var rotate = transform.parent.GetComponent<RotateComponent>();
+		rotate.afterRotate.AddListener(pathContainer.ResetPoints);
 	}
 
 	public void AddPoint(){
@@ -83,21 +92,24 @@ public class PointsContainerComponent : MonoBehaviour {
 				Quaternion.LookRotation( forward, point.normal )
 			).GetComponent<PathPointComponent>();
 
-			point.connections.ForEach( (Vector3 connPos) => {
-
-				var scale = connectorPrefab.transform.localScale.x * .5f;
-
-				var connToPoint = (point.position - connPos).normalized * scale;
-				Instantiate(
-					connectorPrefab,
-					connPos+point.normal * scale + connToPoint,
-					Quaternion.LookRotation( forward, point.normal )
-				);
-			});
+			// UpdateConnections(point, forward);
 
 			point.SetComponent(pointComponent);
 
 		}
 
+	}
+
+	void UpdateConnections(PathPoint point, Vector3 forward){
+		point.connections.ForEach( (Vector3 connPos) => {
+			var scale = connectorPrefab.transform.localScale.x * .5f;
+			var connToPoint = (point.position - connPos).normalized * scale;
+
+			Instantiate(
+				connectorPrefab,
+				connPos+point.normal * scale + connToPoint,
+				Quaternion.LookRotation( forward, point.normal )
+			);
+		});
 	}
 }

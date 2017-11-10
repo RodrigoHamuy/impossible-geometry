@@ -11,16 +11,41 @@ public class PathContainer{
 
 	public List<PathPoint> points = new List<PathPoint>();
 
-	public void setTriangles(Transform gameObject){
+	PointsContainerComponent component;
 
-		var mesh = gameObject.GetComponent<MeshFilter>().mesh;
+	public void ResetPoints(){
+		Debug.Log("Reset points");
+		foreach( var point in points ) {
+			GameObject.Destroy(point.component.gameObject);
+		}
+		points.Clear();
+		setTriangles();
+		GeneratePathPoints();
+	}
+
+	public void setTriangles(PointsContainerComponent component) {
+		this.component = component;
+		setTriangles();
+	}
+
+	public void setTriangles(){
+
+		var transform = component.transform;
+
+		var mesh = transform.GetComponent<MeshFilter>().mesh;
 		var t = mesh.triangles;
 		var vertices = mesh.vertices;
+
+		var matrix = transform.localToWorldMatrix;
+
+		// if( transform.parent != null ) {
+		// 	matrix = matrix * transform.parent.localToWorldMatrix;
+		// }
 
 		setTriangles(
 			t,
 			vertices,
-			gameObject.localToWorldMatrix
+			matrix
 		);
 
 	}

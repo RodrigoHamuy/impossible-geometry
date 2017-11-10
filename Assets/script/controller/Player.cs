@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Player {
 
-	PlayerComponent component;
+	// PlayerComponent component;
 
 	public Vector3 normal;
 
 	public Player( PlayerComponent c ) {
-		component = c;
+		// component = c;
 		normal = PathPoint.CleanNormal( c.transform.up );
 	}
 }
