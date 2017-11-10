@@ -23,6 +23,12 @@ public class PathContainer{
 		GeneratePathPoints();
 	}
 
+	public void onRotationStart() {
+		foreach( var point in points ) {
+			point.rotating = true;
+		}
+	}
+
 	public void setTriangles(PointsContainerComponent component) {
 		this.component = component;
 		setTriangles();
@@ -92,7 +98,30 @@ public class PathContainer{
 
 		}
 
+		FixPrism();
+
 		unityEvent.Invoke();
+
+	}
+
+	void FixPrism(){
+
+		var pos = Vector3.zero;
+		foreach( var point in points ) {
+			if( point.isPrismSide ) {
+				pos = point.position - point.normal;
+				continue;
+			}
+		}
+
+		if( pos == Vector3.zero ) return;
+
+		foreach( var point in points ) {
+			if( point.position == pos ) {
+				point.isPrismSide = true;
+				return;
+			}
+		}
 
 	}
 

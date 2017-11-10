@@ -1,7 +1,11 @@
 // using System.Collections.Generic;
+using UnityEngine.Events;
 using UnityEngine;
 
 public class PointsContainerComponent : MonoBehaviour {
+
+
+	public UnityEvent onMouseDown = new UnityEvent();
 
 	public Transform connectorPrefab;
 	public Transform pointPrefab;
@@ -29,7 +33,8 @@ public class PointsContainerComponent : MonoBehaviour {
 		if ( transform.parent == null ) return;
 
 		var rotate = transform.parent.GetComponent<RotateComponent>();
-		rotate.afterRotate.AddListener(pathContainer.ResetPoints);
+		rotate.onRotationDone.AddListener(pathContainer.ResetPoints);
+		rotate.onRotationStart.AddListener(pathContainer.onRotationStart);
 	}
 
 	public void AddPoint(){
@@ -111,5 +116,9 @@ public class PointsContainerComponent : MonoBehaviour {
 				Quaternion.LookRotation( forward, point.normal )
 			);
 		});
+	}
+
+	void OnMouseDown(){
+		onMouseDown.Invoke();
 	}
 }

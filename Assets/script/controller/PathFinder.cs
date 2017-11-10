@@ -175,6 +175,9 @@ public class PathFinder {
 				// Remove if the point has been check already.
 				if (nextPoint.state == PathPoint.State.Closed ) return true;
 
+				// Remove if the block is in the middle of a rotation.
+				if ( nextPoint.rotating ) return true;
+
 				// remove if this nextPoint is above the current point (from camera
 				// perspective) and his block overlaps the current point.
 				if(

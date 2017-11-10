@@ -7,7 +7,13 @@ public class PathManagerComponent : MonoBehaviour {
 
 	PathFinder pathFinder = new PathFinder();
 
-	void Update () {
+	void Start() {
+		var allBlocks = Object.FindObjectsOfType<PointsContainerComponent>();
+		foreach( var block in allBlocks ) {
+			block.onMouseDown.AddListener(OnBlockMouseDown);
+		}
+	}
+	void OnBlockMouseDown () {
 
 		Vector3 tapPos;
 
@@ -28,17 +34,11 @@ public class PathManagerComponent : MonoBehaviour {
 		}
 
 		if( player.isMoving ) return;
-
-		// player.isMoving = true;
-		// StartCoroutine(ResetPlayerMove());
 		var a = pathFinder.MovePlayerTo(
 			player.transform.position,
 			tapPos,
 			player.controller.normal
 		);
-
-		// pathFinder.path.RemoveAt(0);
-
 
 		if( a ) {
 			player.Walk( pathFinder.path );
@@ -50,9 +50,4 @@ public class PathManagerComponent : MonoBehaviour {
 			Debug.Log("Path not found");
 		}
 	}
-
-	// IEnumerator ResetPlayerMove(){
-	// 	yield return new WaitForSeconds(0.1f);
-	// 	player.isMoving = false;
-	// }
 }

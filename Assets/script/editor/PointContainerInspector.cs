@@ -46,6 +46,7 @@ public class PointContainerInspector : Editor {
 			new Vector3( center, -center, -center),
 			new Vector3(-center,  center, -center),
 			new Vector3( center,  center, -center),
+			new Vector3(-center, -center, -center),
 			// right
 			new Vector3( center,  center,  center),
 			new Vector3(-center,  center,  center),
@@ -57,7 +58,8 @@ public class PointContainerInspector : Editor {
 			 4, 5, 6, // back
 			 7, 4, 6,
 			 8, 9,10, // left
-			11,12,13, // right
+			 8,11, 9,
+			12,13,14, // right
 		};
 		mesh.normals = new Vector3[]{
 			// up
@@ -71,6 +73,7 @@ public class PointContainerInspector : Editor {
 			Vector3.right,
 			Vector3.right,
 			// left
+			Vector3.back,
 			Vector3.back,
 			Vector3.back,
 			Vector3.back,
@@ -94,6 +97,7 @@ public class PointContainerInspector : Editor {
 			new Vector2(0,0),
 			new Vector2(1,0),
 			new Vector2(1,1),
+			new Vector2(0,1),
 			// right
 			new Vector2(0,0),
 			new Vector2(1,0),

@@ -1,8 +1,12 @@
 // using System.Linq;
+using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerComponent : MonoBehaviour {
+
+	public UnityEvent onTargetReached = new UnityEvent();
+	public UnityEvent onStartMoving = new UnityEvent();
 
 	public Player controller;
 
@@ -43,6 +47,7 @@ public class PlayerComponent : MonoBehaviour {
 				path.Clear();
 				isMoving = false;
 				transform.position = targetPoint.position;
+				onTargetReached.Invoke();
 			}
 		}
 
@@ -52,6 +57,7 @@ public class PlayerComponent : MonoBehaviour {
 		this.path = path;
 		MoveToNextPoint();
 		isMoving = true;
+		onStartMoving.Invoke();
 	}
 
 	void MoveToNextPoint(){

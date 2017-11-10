@@ -47,6 +47,8 @@ public class PathPoint {
 	public Vector3 realCamPosition;
 	public Vector3 screenPosition;
 
+	public bool rotating = false;
+
 	public PathPoint( Vector3 pos,  Vector3 normal){
 
 		position = pos;
