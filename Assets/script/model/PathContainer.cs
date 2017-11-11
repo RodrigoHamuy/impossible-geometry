@@ -5,16 +5,15 @@ using UnityEngine.Events;
 
 public class PathContainer{
 
-	public UnityEvent unityEvent = new UnityEvent();
+	public UnityEvent onGeneratePathPointsDone = new UnityEvent();
 
 	public Vector3[][] triangles;
 
 	public List<PathPoint> points = new List<PathPoint>();
 
-	PointsContainerComponent component;
+	public PointsContainerComponent component;
 
 	public void ResetPoints(){
-		Debug.Log("Reset points");
 		foreach( var point in points ) {
 			GameObject.Destroy(point.component.gameObject);
 		}
@@ -100,7 +99,7 @@ public class PathContainer{
 
 		FixPrism();
 
-		unityEvent.Invoke();
+		onGeneratePathPointsDone.Invoke();
 
 	}
 
@@ -130,7 +129,7 @@ public class PathContainer{
 		_AddPoint(triangles[i]);
 
 		if( invokeEvent ) {
-			unityEvent.Invoke();
+			onGeneratePathPointsDone.Invoke();
 		}
 
 	}
@@ -205,7 +204,7 @@ public class PathContainer{
 
 		if( i == -1 ) {
 
-			var pathPoint = new PathPoint(pos, up);
+			var pathPoint = new PathPoint(pos, up, this);
 			points.Add(pathPoint);
 
 		} else {

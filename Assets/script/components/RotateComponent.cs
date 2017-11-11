@@ -20,11 +20,25 @@ public class RotateComponent : MonoBehaviour {
 	public bool canRotate = true;
 
 	void Start(){
+
+		// Set points as rotatable
+		var containerComponents = GetComponentsInChildren<PointsContainerComponent>();
+		foreach( var containerComponent in containerComponents ){
+			var container = containerComponent.pathContainer;
+
+			setPointsAsRotatable(container);
+
+			container.onGeneratePathPointsDone.AddListener( () => {
+				setPointsAsRotatable(container);
+			});
+		}
+
 		handle = GetComponentsInChildren<RotateHandleComponent>()[0];
 		handle.onMouseDown.AddListener(OnHandleMouseDown);
 
 		var player = Object.FindObjectsOfType< PlayerComponent >()[0];
 
+		// Enable/disable rotation during player movement.
 		player.onTargetReached.AddListener( () => {
 			canRotate = true;
 			onCanRotateChange.Invoke();
@@ -33,6 +47,12 @@ public class RotateComponent : MonoBehaviour {
 			canRotate = false;
 			onCanRotateChange.Invoke();
 		});
+	}
+
+	void setPointsAsRotatable( PathContainer container ){
+		foreach( var point in container.points ) {
+			point.canRotate = true;
+		}
 	}
 
 	void Update(){

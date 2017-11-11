@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 18932225}
   - component: {fileID: 18932224}
   - component: {fileID: 18932223}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -257,7 +257,7 @@ GameObject:
   m_Component:
   - component: {fileID: 92910212}
   - component: {fileID: 92910213}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -271,7 +271,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 92910211}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3, y: -1.5, z: -0.5}
+  m_LocalPosition: {x: -3, y: 5.5, z: -7.5}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 18932222}
@@ -314,7 +314,7 @@ GameObject:
   - component: {fileID: 109979157}
   - component: {fileID: 109979156}
   - component: {fileID: 109979155}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Cube (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -587,6 +587,10 @@ Prefab:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 487699190}
+    - target: {fileID: 1247933995559010, guid: 914ac83dd0bc8dd42b61ca24a07299ed, type: 2}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 914ac83dd0bc8dd42b61ca24a07299ed, type: 2}
   m_IsPrefabParent: 0
@@ -602,7 +606,7 @@ GameObject:
   - component: {fileID: 569868766}
   - component: {fileID: 569868765}
   - component: {fileID: 569868764}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -750,7 +754,7 @@ GameObject:
   - component: {fileID: 743883818}
   - component: {fileID: 743883817}
   - component: {fileID: 743883816}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -857,7 +861,7 @@ GameObject:
   - component: {fileID: 814287966}
   - component: {fileID: 814287965}
   - component: {fileID: 814287964}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -973,23 +977,31 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4474325926845420, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
       propertyPath: m_LocalRotation.x
-      value: 0.00000019861236
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4474325926845420, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
       propertyPath: m_LocalRotation.y
-      value: 0.7071068
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4474325926845420, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
       propertyPath: m_LocalRotation.z
-      value: -0.7071068
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4474325926845420, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
       propertyPath: m_LocalRotation.w
-      value: 0.00000019861236
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4474325926845420, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
       propertyPath: m_RootOrder
       value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1786585456104076, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 1227748036576104, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
+      propertyPath: m_Layer
+      value: 17
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
@@ -1038,6 +1050,10 @@ Prefab:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1488316080}
+    - target: {fileID: 1889174851241320, guid: 781f3ce0c2b622448b09291561bb34a0, type: 2}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 781f3ce0c2b622448b09291561bb34a0, type: 2}
   m_IsPrefabParent: 0

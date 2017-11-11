@@ -106,7 +106,7 @@ public class Issue002 {
 		var pathFound = pathFinder.MovePlayerTo(
 			player.transform.position,
 			touchPointPos,
-			player.controller.normal
+			PathPoint.CleanNormal( player.transform.up )
 		);
 
 		return pathFound;

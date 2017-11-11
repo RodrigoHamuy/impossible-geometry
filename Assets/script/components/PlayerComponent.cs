@@ -1,4 +1,4 @@
-// using System.Linq;
+using System.Linq;
 using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,8 +7,6 @@ public class PlayerComponent : MonoBehaviour {
 
 	public UnityEvent onTargetReached = new UnityEvent();
 	public UnityEvent onStartMoving = new UnityEvent();
-
-	public Player controller;
 
 	public bool isMoving = false;
 
@@ -22,7 +20,25 @@ public class PlayerComponent : MonoBehaviour {
 	PathPoint prevPoint;
 
 	void Start() {
-		controller = new Player(this);
+		var screenPos = Camera.main.WorldToScreenPoint( transform.position );
+		var ray = Camera.main.ScreenPointToRay( screenPos );
+		var layerMask = LayerMask.GetMask( "Block" );
+
+		var hits = Physics.RaycastAll(ray, 100.0f, layerMask);
+
+		if ( hits.Length == 0) return;
+
+		hits.OrderBy( (hit) => {
+			return (transform.position - hit.point).sqrMagnitude;
+		});
+
+		var currBlock = hits[0].collider.transform;
+		if(
+			currBlock.parent != null &&
+			currBlock.parent.GetComponent<RotateComponent>() != null
+		) {
+			transform.parent = currBlock.parent;
+		}
 	}
 
 	void Update(){
@@ -47,6 +63,11 @@ public class PlayerComponent : MonoBehaviour {
 				path.Clear();
 				isMoving = false;
 				transform.position = targetPoint.position;
+				if( targetPoint.canRotate ) {
+					transform.parent = targetPoint.container.component.transform.parent;
+				} else {
+					transform.parent = null;
+				}
 				onTargetReached.Invoke();
 			}
 		}

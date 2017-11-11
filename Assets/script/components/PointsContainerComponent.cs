@@ -13,13 +13,13 @@ public class PointsContainerComponent : MonoBehaviour {
 
 	Transform[] vertices = new Transform[3];
 
-	PathContainer pathContainer = new PathContainer();
+	public PathContainer pathContainer = new PathContainer();
 
 	int i = 0;
 
 	void Start () {
 
-		pathContainer.unityEvent.AddListener(UpdatePointsGameObject);
+		pathContainer.onGeneratePathPointsDone.AddListener(UpdatePointsGameObject);
 
 		pathContainer.setTriangles(this);
 

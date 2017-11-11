@@ -35,6 +35,7 @@ public class PathPoint {
 	public PathPoint target;
 
 	public PathPointComponent component;
+	public PathContainer container;
 
 	public bool isPrismSide = true;
 
@@ -48,8 +49,11 @@ public class PathPoint {
 	public Vector3 screenPosition;
 
 	public bool rotating = false;
+	public bool canRotate = false;
 
-	public PathPoint( Vector3 pos,  Vector3 normal){
+	public PathPoint( Vector3 pos,  Vector3 normal, PathContainer container){
+
+		this.container = container;
 
 		position = pos;
 		this.normal = normal;
