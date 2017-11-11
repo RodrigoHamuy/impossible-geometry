@@ -49,7 +49,7 @@ public class PathPoint {
 	public Vector3 screenPosition;
 
 	public bool rotating = false;
-	public bool canRotate = false;
+	public bool canMove = false;
 
 	public PathPoint( Vector3 pos,  Vector3 normal, PathContainer container){
 

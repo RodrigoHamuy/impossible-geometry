@@ -31,6 +31,10 @@ public class RotateComponent : MonoBehaviour {
 			container.onGeneratePathPointsDone.AddListener( () => {
 				setPointsAsRotatable(container);
 			});
+
+			// Update points before/after rotation
+			onRotationDone.AddListener(container.ResetPoints);
+			onRotationStart.AddListener(container.onRotationStart);
 		}
 
 		handle = GetComponentsInChildren<RotateHandleComponent>()[0];
@@ -51,7 +55,7 @@ public class RotateComponent : MonoBehaviour {
 
 	void setPointsAsRotatable( PathContainer container ){
 		foreach( var point in container.points ) {
-			point.canRotate = true;
+			point.canMove = true;
 		}
 	}
 
