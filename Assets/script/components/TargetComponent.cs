@@ -6,9 +6,11 @@ using UnityEngine;
 
 public class TargetComponent : MonoBehaviour {
 
-	PlayerComponent player;
 	public UnityEvent onTargetReached = new UnityEvent();
 	public string nextScene;
+	public Animator fadeAnim;
+
+	PlayerComponent player;
 
 	void Start () {
 
@@ -28,7 +30,7 @@ public class TargetComponent : MonoBehaviour {
 
 	IEnumerator LoadNextLevel() {
 		yield return new WaitForSeconds(1);
-		SceneManager.LoadScene("level03");
+		SceneManager.LoadScene(nextScene);
 	}
 
 
