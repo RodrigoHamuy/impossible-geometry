@@ -64,15 +64,15 @@ public class RotateComponent : MonoBehaviour {
 		if ( canRotate ) CheckInput();
 	}
 
-	public void Rotate(){
-		isRotated = !isRotated;
-		if( isRotated ){
-			transform.eulerAngles = new Vector3( 0, 0, 90 );
-		}else{
-			transform.eulerAngles = Vector3.zero;
-		}
-		onRotationDone.Invoke();
-	}
+	// public void Rotate(){
+	// 	isRotated = !isRotated;
+	// 	if( isRotated ){
+	// 		transform.eulerAngles = new Vector3( 0, 0, 90 );
+	// 	}else{
+	// 		transform.eulerAngles = Vector3.zero;
+	// 	}
+	// 	onRotationDone.Invoke();
+	// }
 
 	bool touchStart = false;
 	bool mouseTouchStart = false;
@@ -162,7 +162,7 @@ public class RotateComponent : MonoBehaviour {
 		}
 
 		var angle = Vector3.SignedAngle(startDir, endDir, Vector3.forward);
-		var targetRotation = Quaternion.AngleAxis( - angle, transform.up);
+		var targetRotation = Quaternion.AngleAxis( - angle, handle.transform.forward);
 
 		targetRotation = targetRotation * startRotation;
 

@@ -8,8 +8,8 @@ public class SlideComponent : MonoBehaviour {
 
 	public UnityEvent onMoveDone = new UnityEvent();
 
-	float snapDistance = 1.0f;
-	float maxMove = 5.0f;
+	public float snapDistance = 1.0f;
+	public float maxMove = 5.0f;
 	public Vector3 dir = Vector3.up;
 
 	float currMove = 0.0f;
