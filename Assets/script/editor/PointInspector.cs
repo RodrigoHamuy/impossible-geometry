@@ -134,6 +134,16 @@ public class PointInspector : Editor {
 
   }
 
+	[MenuItem("MyMenu/Remove all  test scenes from Build")]
+  static void RemoveAllTestScenes() {
+		var sceneList = EditorBuildSettings.scenes.ToList();
+		sceneList.RemoveAll( scene => {
+			return scene.path.Contains("issue");
+		});
+		EditorBuildSettings.scenes = sceneList.ToArray();
+		Debug.Log("Remove all test scenes from Build.");
+	}
+
 	[MenuItem("MyMenu/Add test scenes to Build")]
   static void AddAllTestScenes() {
 
