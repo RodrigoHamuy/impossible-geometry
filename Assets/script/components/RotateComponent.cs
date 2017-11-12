@@ -31,6 +31,10 @@ public class RotateComponent : MonoBehaviour {
 			container.onGeneratePathPointsDone.AddListener( () => {
 				setPointsAsRotatable(container);
 			});
+
+			// Update points before/after rotation
+			onRotationDone.AddListener(container.ResetPoints);
+			onRotationStart.AddListener(container.onRotationStart);
 		}
 
 		handle = GetComponentsInChildren<RotateHandleComponent>()[0];
@@ -51,7 +55,7 @@ public class RotateComponent : MonoBehaviour {
 
 	void setPointsAsRotatable( PathContainer container ){
 		foreach( var point in container.points ) {
-			point.canRotate = true;
+			point.canMove = true;
 		}
 	}
 
@@ -60,15 +64,15 @@ public class RotateComponent : MonoBehaviour {
 		if ( canRotate ) CheckInput();
 	}
 
-	public void Rotate(){
-		isRotated = !isRotated;
-		if( isRotated ){
-			transform.eulerAngles = new Vector3( 0, 0, 90 );
-		}else{
-			transform.eulerAngles = Vector3.zero;
-		}
-		onRotationDone.Invoke();
-	}
+	// public void Rotate(){
+	// 	isRotated = !isRotated;
+	// 	if( isRotated ){
+	// 		transform.eulerAngles = new Vector3( 0, 0, 90 );
+	// 	}else{
+	// 		transform.eulerAngles = Vector3.zero;
+	// 	}
+	// 	onRotationDone.Invoke();
+	// }
 
 	bool touchStart = false;
 	bool mouseTouchStart = false;
@@ -158,7 +162,7 @@ public class RotateComponent : MonoBehaviour {
 		}
 
 		var angle = Vector3.SignedAngle(startDir, endDir, Vector3.forward);
-		var targetRotation = Quaternion.AngleAxis( - angle, transform.up);
+		var targetRotation = Quaternion.AngleAxis( - angle, handle.transform.forward);
 
 		targetRotation = targetRotation * startRotation;
 

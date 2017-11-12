@@ -5,7 +5,6 @@ using UnityEngine;
 public class PathFinder {
 
 	PathPoint target;
-	PathPoint start;
 
 	Vector3 normal;
 
@@ -47,7 +46,12 @@ public class PathFinder {
 		.ElementAt(0);
 
 		setColor(start.component, new Color(1, 1, 1) );
-		return Search(start);
+		if( Search(start) ) {
+			return true;
+		} else {
+			target = null;
+			return false;
+		}
 	}
 
 	void ResetAll(){

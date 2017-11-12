@@ -40,7 +40,7 @@ public class PathManagerComponent : MonoBehaviour {
 			PathPoint.CleanNormal( player.transform.up )
 		);
 
-		if( a ) {
+		if( a &&  pathFinder.path != null && pathFinder.path.Count > 0 ) {
 			player.Walk( pathFinder.path );
 			Debug.Log("Path found: " + pathFinder.path.Count + " steps.");
 			foreach( var point in pathFinder.path){

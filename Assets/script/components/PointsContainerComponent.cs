@@ -25,16 +25,6 @@ public class PointsContainerComponent : MonoBehaviour {
 
 		pathContainer.GeneratePathPoints();
 
-		initRotation();
-
-	}
-
-	void initRotation(){
-		if ( transform.parent == null ) return;
-
-		var rotate = transform.parent.GetComponent<RotateComponent>();
-		rotate.onRotationDone.AddListener(pathContainer.ResetPoints);
-		rotate.onRotationStart.AddListener(pathContainer.onRotationStart);
 	}
 
 	public void AddPoint(){

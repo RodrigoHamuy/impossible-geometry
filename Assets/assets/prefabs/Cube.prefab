@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 65321431358108952}
   - component: {fileID: 23484806663636904}
   - component: {fileID: 114338046726716086}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,6 +107,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 981f024344acf8d459b3461378d3310d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onMouseDown:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   connectorPrefab: {fileID: 4824232419952624, guid: 7fe048ef70b4c7b40a3be62939fe7b99,
     type: 2}
   pointPrefab: {fileID: 4027610804730166, guid: de55a1672b8504944888aa5f36364b1f,

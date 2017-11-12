@@ -20,6 +20,10 @@ public class PlayerComponent : MonoBehaviour {
 	PathPoint prevPoint;
 
 	void Start() {
+		CheckParent();
+	}
+
+	void CheckParent(){
 		var screenPos = Camera.main.WorldToScreenPoint( transform.position );
 		var ray = Camera.main.ScreenPointToRay( screenPos );
 		var layerMask = LayerMask.GetMask( "Block" );
@@ -35,10 +39,14 @@ public class PlayerComponent : MonoBehaviour {
 		var currBlock = hits[0].collider.transform;
 		if(
 			currBlock.parent != null &&
-			currBlock.parent.GetComponent<RotateComponent>() != null
+			(
+				currBlock.parent.GetComponent<RotateComponent>() != null ||
+				currBlock.parent.GetComponent<SlideComponent>() != null
+			)
 		) {
 			transform.parent = currBlock.parent;
 		}
+
 	}
 
 	void Update(){
@@ -63,7 +71,7 @@ public class PlayerComponent : MonoBehaviour {
 				path.Clear();
 				isMoving = false;
 				transform.position = targetPoint.position;
-				if( targetPoint.canRotate ) {
+				if( targetPoint.canMove ) {
 					transform.parent = targetPoint.container.component.transform.parent;
 				} else {
 					transform.parent = null;
