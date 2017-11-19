@@ -8,7 +8,6 @@ public class TargetComponent : MonoBehaviour {
 
 	public UnityEvent onTargetReached = new UnityEvent();
 	public string nextScene;
-	public Animator fadeAnim;
 
 	PlayerComponent player;
 

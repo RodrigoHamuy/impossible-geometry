@@ -17,7 +17,7 @@ public class PointsContainerComponent : MonoBehaviour {
 
 	int i = 0;
 
-	void Start () {
+	void Awake () {
 
 		pathContainer.onGeneratePathPointsDone.AddListener(UpdatePointsGameObject);
 

@@ -144,12 +144,21 @@ public class PointInspector : Editor {
 		Debug.Log("Remove all test scenes from Build.");
 	}
 
+
+
+	[MenuItem("MyMenu/Add level scenes to Build")]
+  static void AddAllLevelScenes() {
+		AddScenes("Assets/scenes/levels/");
+	}
+
 	[MenuItem("MyMenu/Add test scenes to Build")]
   static void AddAllTestScenes() {
+		AddScenes("Assets/scenes/tests/");
+  }
 
-		var dirName = "Assets/scenes/";
+	static void AddScenes(string dirName){
 
-		var files = GetTestFiles(dirName);
+		var files = GetSceneFiles(dirName);
 
 		var scenes = EditorBuildSettings.scenes;
 
@@ -173,15 +182,16 @@ public class PointInspector : Editor {
 
 		EditorBuildSettings.scenes = moreScenes;
 
-		Debug.Log("Test scenes added.");
-  }
+		Debug.Log("Scenes added.");
 
-	static List<string> GetTestFiles(string dirName){
+	}
+
+	static List<string> GetSceneFiles(string dirName){
 
 		var fileList = new List<string>();
 
 		DirectoryInfo dir = new DirectoryInfo( dirName );
-		var files = dir.GetFiles("issue*.unity");
+		var files = dir.GetFiles("*.unity");
 
 		foreach(var file in files){
 			fileList.Add( dirName + file.Name );

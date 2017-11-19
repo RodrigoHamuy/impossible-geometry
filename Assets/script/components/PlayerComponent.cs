@@ -32,11 +32,13 @@ public class PlayerComponent : MonoBehaviour {
 
 		if ( hits.Length == 0) return;
 
-		hits.OrderBy( (hit) => {
-			return (transform.position - hit.point).sqrMagnitude;
-		});
+        var currBlock = hits
+            .OrderBy( 
+                (hit) => (transform.position - hit.point).sqrMagnitude 
+            )
+            .First()
+            .collider.transform;
 
-		var currBlock = hits[0].collider.transform;
 		if(
 			currBlock.parent != null &&
 			(

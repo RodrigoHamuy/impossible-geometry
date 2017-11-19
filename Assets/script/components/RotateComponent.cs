@@ -162,7 +162,7 @@ public class RotateComponent : MonoBehaviour {
 		}
 
 		var angle = Vector3.SignedAngle(startDir, endDir, Vector3.forward);
-		var targetRotation = Quaternion.AngleAxis( - angle, handle.transform.forward);
+		var targetRotation = Quaternion.AngleAxis( - angle, handle.transform.up);
 
 		targetRotation = targetRotation * startRotation;
 

@@ -3,11 +3,14 @@ using UnityEngine;
 
 public class PathManagerComponent : MonoBehaviour {
 
-	public PlayerComponent player;
+	PlayerComponent player;
 
 	PathFinder pathFinder = new PathFinder();
 
 	void Start() {
+
+		player = Object.FindObjectsOfType< PlayerComponent >()[0];
+
 		var allBlocks = Object.FindObjectsOfType<PointsContainerComponent>();
 		foreach( var block in allBlocks ) {
 			block.onMouseDown.AddListener(OnBlockMouseDown);
