@@ -1,5 +1,5 @@
 // ﻿using System.Collections;
-// using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine;
 
@@ -17,7 +17,15 @@ public class SlideComponent : MonoBehaviour {
 
 	PointsContainerComponent block;
 
-	bool isMoving = false;
+	bool _isMoving = false;
+
+	bool isMoving {
+		get { return _isMoving; }
+		set {
+			_isMoving = value;
+			Utility.canPlayerMove = !_isMoving;
+		}
+	}
 	bool isTouching = false;
 
 	float startMove = 0.0f;
@@ -25,23 +33,30 @@ public class SlideComponent : MonoBehaviour {
 	Vector3 startTouchPos;
 	Vector3 startPos;
 
-	public void FastMove(){
-		if ( currMove < maxMove ) {
-			transform.position += dir*snapDistance;
-			currMove += snapDistance;
-		} else {
-			transform.position -= dir*snapDistance;
-			currMove -= snapDistance;
-		}
-		onMoveDone.Invoke();
-	}
+	bool canSlide = true;
 
 	// Use this for initialization
 	void Start () {
 
+		var player = Object.FindObjectsOfType< PlayerComponent >()[0];
+
+		// Enable/disable slide movement during player movement.
+		player.onTargetReached.AddListener( () => {
+			canSlide = true;
+		});
+		player.onStartMoving.AddListener( () => {
+			canSlide = false;
+		});
+
 		startPos = transform.position;
 
-		var containerComponents = GetComponentsInChildren<PointsContainerComponent>();
+		var containerComponents = new List<PointsContainerComponent>(
+			GetComponentsInChildren<PointsContainerComponent>()
+		);
+
+		containerComponents.RemoveAll( c => {
+			return c.gameObject.tag != "slide";
+		});
 
 		foreach( var containerComponent in containerComponents ) {
 			var container = containerComponent.pathContainer;
@@ -66,13 +81,14 @@ public class SlideComponent : MonoBehaviour {
 	}
 
 	void StartMove(){
-		isMoving = true;
 		isTouching = true;
 		startMove = currMove;
 		startTouchPos = GetTouchPosition();
 	}
 
 	void Update () {
+
+		if( !isMoving && isTouching ) CheckIfIsMoving();
 		if( isMoving && isTouching ) Move();
 		if( isMoving && !isTouching ) MoveToSnap();
 	}
@@ -91,6 +107,27 @@ public class SlideComponent : MonoBehaviour {
 			onMoveDone.Invoke();
 		}
 		transform.position = startPos + dir * currMove;
+	}
+
+	void CheckIfIsMoving(){
+
+		if( ! canSlide ) return;
+
+		var camera = Camera.main;
+
+		var currTouchPos = GetTouchPosition();
+
+		if( currTouchPos == Vector3.zero ) {
+			isTouching = false;
+			isMoving = false;
+			return;
+		}
+
+		var startWorldPos = camera.ScreenToWorldPoint( startTouchPos );
+		var currWorldPos = camera.ScreenToWorldPoint( currTouchPos );
+
+		var currDiff = currWorldPos - startWorldPos;
+		isMoving = currDiff.sqrMagnitude > 0.01f;
 	}
 
 	void Move(){

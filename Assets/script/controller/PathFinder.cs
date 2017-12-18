@@ -121,7 +121,7 @@ public class PathFinder {
 		return -1;
 	}
 
-	List<PathPoint> GetCrossOverlaps( Vector3 pos, Vector3 normal, int axis ) {
+	static List<PathPoint> GetCrossOverlaps( Vector3 pos, Vector3 normal, int axis ) {
 
 		// This is to move the ray half way down, as otherwise
 		// it wont hit a cross overllap.
@@ -144,7 +144,7 @@ public class PathFinder {
 		return crossOverlaps;
 	}
 
-	List<PathPoint> findNextPoints(PathPoint point){
+	public static List<PathPoint> findNextPoints(PathPoint point, Vector3 normal){
 
 		List<PathPoint> nextPoints = new List<PathPoint>();
 
@@ -324,7 +324,7 @@ public class PathFinder {
 		current.target = target;
 		current.state = PathPoint.State.Closed;
 
-		List<PathPoint> nexts = findNextPoints(current);
+		List<PathPoint> nexts = findNextPoints(current, normal);
 
 		// setColor(current.component, new Color(.6f, .13f, .86f) );
 		// setColor(target.component, new Color(.2f, .8f, 0) );

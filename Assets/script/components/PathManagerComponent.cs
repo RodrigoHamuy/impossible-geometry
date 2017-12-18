@@ -13,30 +13,19 @@ public class PathManagerComponent : MonoBehaviour {
 
 		var allBlocks = Object.FindObjectsOfType<PointsContainerComponent>();
 		foreach( var block in allBlocks ) {
-			block.onMouseDown.AddListener(OnBlockMouseDown);
+			block.onMouseUp.AddListener(OnBlockMouseUp);
 		}
 	}
-	void OnBlockMouseDown () {
+	void OnBlockMouseUp () {
 
-		Vector3 tapPos;
+		Vector2 tapPos = Utility.getTouchEnd();
 
-		if (
-			(Input.touchCount > 0) &&
-			(Input.GetTouch(0).phase == TouchPhase.Began)
-		) {
-
-			var touch = Input.GetTouch(0);
-			tapPos = touch.position;
-
-		} else if ( Input.GetMouseButton(0) ) {
-
-			tapPos = Input.mousePosition;
-
-		} else {
-			return;
-		}
+		if ( tapPos == Vector2.zero ) return;
 
 		if( player.isMoving ) return;
+
+		if( ! Utility.canPlayerMove ) return;
+
 		var a = pathFinder.MovePlayerTo(
 			player.transform.position,
 			tapPos,

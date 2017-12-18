@@ -6,6 +6,7 @@ public class PointsContainerComponent : MonoBehaviour {
 
 
 	public UnityEvent onMouseDown = new UnityEvent();
+	public UnityEvent onMouseUp = new UnityEvent();
 
 	public Transform connectorPrefab;
 	public Transform pointPrefab;
@@ -110,5 +111,9 @@ public class PointsContainerComponent : MonoBehaviour {
 
 	void OnMouseDown(){
 		onMouseDown.Invoke();
+	}
+
+	void OnMouseUp(){
+		onMouseUp.Invoke();
 	}
 }

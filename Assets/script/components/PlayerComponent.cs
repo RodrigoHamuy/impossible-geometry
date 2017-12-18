@@ -8,16 +8,26 @@ public class PlayerComponent : MonoBehaviour {
 	public UnityEvent onTargetReached = new UnityEvent();
 	public UnityEvent onStartMoving = new UnityEvent();
 
-	public bool isMoving = false;
+	bool _isMoving = false;
+
+	public bool isMoving{
+		get { return _isMoving; }
+	}
 
 	public float acceleration = 2.5f;
 	public float maxSpeed = 5.0f;
 	float _speed = 0;
 
+	public float speed {
+		get { return _speed; }
+	}
+
 	List<PathPoint> path;
 	Vector3 targetPos;
 	PathPoint targetPoint;
 	PathPoint prevPoint;
+
+	public Vector3 nextNodeDir;
 
 	void Start() {
 		CheckParent();
@@ -33,8 +43,8 @@ public class PlayerComponent : MonoBehaviour {
 		if ( hits.Length == 0) return;
 
         var currBlock = hits
-            .OrderBy( 
-                (hit) => (transform.position - hit.point).sqrMagnitude 
+            .OrderBy(
+                (hit) => (transform.position - hit.point).sqrMagnitude
             )
             .First()
             .collider.transform;
@@ -57,11 +67,11 @@ public class PlayerComponent : MonoBehaviour {
 
 		var currTargetPos = targetPos;
 
-		Vector3 dir = (currTargetPos - transform.position).normalized;
+		var dir = (currTargetPos - transform.position).normalized;
 
 		_speed = Mathf.Min( _speed + acceleration, maxSpeed);
 
-		transform.position = transform.position + dir*(_speed*Time.fixedDeltaTime);
+		transform.position = transform.position + dir * _speed * Time.deltaTime;
 
 		if(
 			(transform.position - targetPos).sqrMagnitude < 0.01f
@@ -71,8 +81,8 @@ public class PlayerComponent : MonoBehaviour {
 			} else{
 				Debug.Log("Target reached");
 				path.Clear();
-				isMoving = false;
-				transform.position = targetPoint.position;
+				_isMoving = false;
+				transform.position = targetPos;
 				if( targetPoint.canMove ) {
 					transform.parent = targetPoint.container.component.transform.parent;
 				} else {
@@ -85,10 +95,18 @@ public class PlayerComponent : MonoBehaviour {
 	}
 
 	public void Walk(List<PathPoint> path){
+
 		this.path = path;
+
+		var prevPoint = path[0];
+		var targetPoint = path[1];
+
 		MoveToNextPoint();
-		isMoving = true;
+
+		_isMoving = true;
+
 		onStartMoving.Invoke();
+
 	}
 
 	void MoveToNextPoint(){
@@ -97,23 +115,80 @@ public class PlayerComponent : MonoBehaviour {
 		targetPoint = path[0];
 		var camera = Camera.main;
 
-		var dir = Vector3.ProjectOnPlane(
-			targetPoint.position - prevPoint.position,
-			- camera.transform.forward
-		).normalized;
-		for (var i = 0; i < 3; i++) {
-			dir[i] = Mathf.Round(dir[i]);
-		}
+		// this dir is projected because the two points may be
+		// at different depth from the camera perspective.
+		nextNodeDir = Utility.getDirFromScreenView( prevPoint.position, targetPoint.position );
 
-		if( prevPoint.position.y < targetPoint.position.y ) {
-			transform.position = targetPoint.position - dir;
+		// TODO: I think this is only working when Player normal is up.
+		// Need to make it dynamic to support player walking on walls/roofs.
+
+		Vector3 overlappingPos;
+
+		if( isOverlapped( targetPoint, out overlappingPos ) ){
+
+			var nextDir = Utility.getDirFromScreenView( targetPoint.position, overlappingPos );
+			transform.position = overlappingPos - nextDir - nextNodeDir;
+			targetPos = overlappingPos - nextDir;
+
+		}else if ( isOverlapped( prevPoint, out overlappingPos ) ) {
+
+			var nextDir = Utility.getDirFromScreenView( overlappingPos, prevPoint.position );
+			transform.position = overlappingPos + nextDir;
+			targetPos = overlappingPos + nextDir + nextNodeDir;
+
+		} else if ( prevPoint.position.y < targetPoint.position.y ) {
+
+			transform.position = targetPoint.position - nextNodeDir;
 			targetPos = targetPoint.position;
+
 		} else {
+
 			transform.position = prevPoint.position;
-			targetPos = prevPoint.position + dir;
+			targetPos = prevPoint.position + nextNodeDir;
+
 		}
 
+	}
 
+	bool isOverlapped( PathPoint point, out Vector3 overlappingPos ){
+
+		overlappingPos = Vector3.zero;
+
+		var neighbours = Utility.findNextPoints( point, transform.up );
+
+		var up = point.position + transform.up;
+
+		neighbours.AddRange(
+			Utility.getPointsAtWorldPos(
+				up - Vector3.right * 0.1f,
+				PathPoint.CleanNormal(-Vector3.right)
+			)
+		);
+		neighbours.AddRange(
+			Utility.getPointsAtWorldPos(
+				up - Vector3.forward * 0.1f,
+				PathPoint.CleanNormal(-Vector3.forward )
+			)
+		);
+
+
+		// remove the ones that are bellow player,
+		// as they won't overllap the player0
+		neighbours.RemoveAll( p => {
+			var dir = (p.camPosition - point.camPosition).normalized;
+			return Vector3.Dot( Vector3.up, dir ) < 0;
+		});
+
+		if (neighbours.Count == 0 ) return false;
+
+		var neighbour = neighbours.OrderBy( p => {
+			return p.realCamPosition.z;
+		})
+		.ToList() [0];
+
+		overlappingPos = neighbour.position;
+
+		return neighbour.realCamPosition.z < point.realCamPosition.z;
 
 	}
 

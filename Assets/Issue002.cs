@@ -1,7 +1,9 @@
+/*
 using UnityEngine.SceneManagement;
 ﻿using UnityEngine;
 using System.Collections.Generic;
 // using UnityEditor;
+
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
@@ -141,3 +143,4 @@ public class Issue002 {
 
 	}
 }
+*/

@@ -11,11 +11,16 @@ public class RotateComponent : MonoBehaviour {
 	public UnityEvent onRotationStart = new UnityEvent();
 	public UnityEvent onCanRotateChange = new UnityEvent();
 
-	bool isRotated = false;
-
 	Vector3 startDir;
-	Quaternion startRotation;
-	bool isRotating = false;
+	bool _isRotating = false;
+
+	bool isRotating {
+		get{ return _isRotating; }
+		set{
+			_isRotating = value;
+			Utility.canPlayerMove = ! _isRotating;
+		}
+	}
 
 	public bool canRotate = true;
 
@@ -40,7 +45,9 @@ public class RotateComponent : MonoBehaviour {
 		handle = GetComponentsInChildren<RotateHandleComponent>()[0];
 		handle.onMouseDown.AddListener(OnHandleMouseDown);
 
-		var player = Object.FindObjectsOfType< PlayerComponent >()[0];
+		var player = Object.FindObjectOfType< PlayerComponent >();
+
+        if (player == null) return;
 
 		// Enable/disable rotation during player movement.
 		player.onTargetReached.AddListener( () => {
@@ -117,6 +124,7 @@ public class RotateComponent : MonoBehaviour {
 	Quaternion snapRotation;
 	Vector3 targetForward;
 	bool isRotationTargetSet = false;
+	float rotationSpeed = 12;
 	void SnapRotation(){
 
 		if( ! isRotationTargetSet ) {
@@ -131,7 +139,7 @@ public class RotateComponent : MonoBehaviour {
 			isRotationTargetSet = true;
 		}
 
-		transform.rotation = Quaternion.Slerp(transform.rotation, snapRotation, 4*Time.deltaTime);
+		transform.rotation = Quaternion.Slerp(transform.rotation, snapRotation, 0.5f*rotationSpeed*Time.deltaTime);
 
 		if( Vector3.Dot(transform.forward, targetForward) > 0.999999f ) {
 			transform.rotation = snapRotation;
@@ -142,7 +150,10 @@ public class RotateComponent : MonoBehaviour {
 		}
 
 	}
-	void OnTouch(Vector3 screenTouchPosition, bool startPhase = false){
+
+    float currAngle = 0;
+
+    void OnTouch(Vector3 screenTouchPosition, bool startPhase = false){
 
 		var camera = Camera.main;
 
@@ -153,19 +164,29 @@ public class RotateComponent : MonoBehaviour {
 		endDir.z = 0;
 
 		if ( startPhase ) {
-			startDir = endDir;
-			startRotation = transform.rotation;
+            currAngle = 0;
+            startDir = endDir;
 			isRotating =  true;
 			isRotationTargetSet = false;
 			onRotationStart.Invoke();
 			return;
 		}
 
-		var angle = Vector3.SignedAngle(startDir, endDir, Vector3.forward);
-		var targetRotation = Quaternion.AngleAxis( - angle, handle.transform.up);
+        var angle = Utility.SignedAngle(startDir, endDir, Vector3.forward);
 
-		targetRotation = targetRotation * startRotation;
+        var newAngle = Mathf.LerpAngle(currAngle, -angle, rotationSpeed * Time.deltaTime);
 
-		transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 4*Time.deltaTime);
-	}
+        transform.Rotate(handle.transform.up, newAngle - currAngle, Space.World);
+        currAngle = newAngle;
+    }
+
+		Vector3 GetTouchPosition(){
+			if (Input.touchCount == 1) {
+				var touch = Input.GetTouch (0);
+				return touch.position;
+			} else if (Input.GetMouseButton (0)) {
+				return Input.mousePosition;
+			}
+			return Vector3.zero;
+		}
 }
