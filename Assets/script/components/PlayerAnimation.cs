@@ -48,8 +48,6 @@ public class PlayerAnimation : MonoBehaviour {
 
 	}
 
-	Quaternion headOriginalRotation = new Quaternion();
-
 	Vector3 headUp;
 	Vector3 previousForward;
 	Vector3 currHeadForward;

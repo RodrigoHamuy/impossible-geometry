@@ -1,24 +1,24 @@
-// ﻿using System.Collections;
-// using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class MenuLevelItem : MonoBehaviour {
+public class MenuLevelItem : MonoBehaviour, IPointerClickHandler
+{
 
 	public string level;
 	public Animator fadeAnim;
 
 	bool loadingLevel = false;
 
-	void OnMouseUp() {
+    public void OnPointerClick(PointerEventData eventData){
 
-		if (! Utility.canPlayerMove) return;
+		// if (! Utility.canPlayerMove) return;
 
 		if( loadingLevel ) return;
 
 		if ( ! isFacing() ) return;
 
-		OnTap();
+		StartLoadLevel();
 
 	}
 
@@ -28,7 +28,7 @@ public class MenuLevelItem : MonoBehaviour {
 		return Vector3.Dot( cam.transform.forward, transform.forward ) > 0.1f;
 	}
 
-	public void OnTap(){
+	public void StartLoadLevel(){
 		loadingLevel = true;
 
 		fadeAnim.SetTrigger("onLevelComplete");
