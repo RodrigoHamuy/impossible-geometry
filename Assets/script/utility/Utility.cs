@@ -1,10 +1,47 @@
-// using System.Linq;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Utility {
 
 	public static bool canPlayerMove = true;
+
+	public static List<PathPoint> GetPointsAtPos( Vector3 tapPos, Vector3 normal ) {
+
+        List<PathPoint> points = new List<PathPoint>();
+		var ray = Camera.main.ScreenPointToRay(tapPos);
+        var layerMask = LayerMask.GetMask("Debug");
+		var hits = Physics.RaycastAll(ray, 100.0f, layerMask);
+
+		foreach (var hit in hits)
+        {
+
+            var point = hit.collider.transform.GetComponent<PathPointComponent>().point;
+
+            // TODO: Normal should be decided from the last node,
+            // as the player may be able to move on diff normals.
+
+            if (point.normal == normal)
+            {
+                points.Add(point);
+            }
+
+        }
+
+        return points;
+	}
+
+    public static PathPoint GetCloser( List<PathPoint> points, Vector3 tapPos ) {
+
+		if (points.Count == 0) return null;
+		
+		var closerPoint = points.OrderBy( p => {
+			return ( tapPos - p.screenPosition).sqrMagnitude;
+		})
+		.ElementAt(0);
+
+        return closerPoint;
+    }
 
 	public static float SignedAngle(Vector3 a, Vector3 b, Vector3 axis ) {
 		var angle = Vector3.Angle(a, b);
@@ -27,7 +64,7 @@ public class Utility {
 			var touch = Input.GetTouch(0);
 			tapPos = touch.position;
 
-		} else if( Input.mousePresent ){
+		} else if( Input.mousePresent && Input.GetMouseButtonUp(0) ){
 
 			tapPos = Input.mousePosition;
 

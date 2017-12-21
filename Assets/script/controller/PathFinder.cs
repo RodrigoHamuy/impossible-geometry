@@ -23,19 +23,20 @@ public class PathFinder {
 		if( n == Vector3.zero ) n = Vector3.up;
 
 		normal = n;
-		// TODO: Find out the most suitable point target. Maybe the one
+		// TODO: Find out the most suitable point target.
 		// Maybe the closest to the player level.
 		// Or maybe the closest to the previous point.
 		// This would require to decide the target after the path is found.
 
-		var newTargets = getPointsAtScreenPos(tapPos, normal);
+		var newTarget = Utility.GetCloser(
+			Utility.GetPointsAtPos(tapPos, normal),
+			tapPos
+		);
 
-		if(
-			newTargets.Count == 0 ||
-			newTargets[0] == target
+		if( newTarget == null || newTarget == target
 		) return false;
 
-		target = newTargets[0];
+		target = newTarget;
 
 		ResetAll();
 

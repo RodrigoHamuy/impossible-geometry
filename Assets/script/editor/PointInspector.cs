@@ -52,14 +52,19 @@ public class PointInspector : Editor {
 
 		var point = targetObject.point;
 
-		var labelText = point.position.ToString() + "\n" +
+        if( point != null ) {
+
+            var labelText = point.position.ToString() + "\n" +
 			point.screenPosition.ToString();
 
-		Handles.Label(
-			targetObject.transform.position,
-			labelText,
-			style
-		);
+            Handles.Label(
+                targetObject.transform.position,
+                labelText,
+                style
+            );
+        }
+
+		
 
 		Handles.EndGUI();
 	}

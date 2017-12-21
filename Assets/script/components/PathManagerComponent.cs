@@ -11,20 +11,26 @@ public class PathManagerComponent : MonoBehaviour {
 
 		player = Object.FindObjectsOfType< PlayerComponent >()[0];
 
-		var allBlocks = Object.FindObjectsOfType<PointsContainerComponent>();
-		foreach( var block in allBlocks ) {
-			block.onMouseUp.AddListener(OnBlockMouseUp);
-		}
+		// var allBlocks = Object.FindObjectsOfType<PointsContainerComponent>();
+		// foreach( var block in allBlocks ) {
+		// 	block.onMouseUp.AddListener(OnBlockMouseUp);
+		// }
 	}
-	void OnBlockMouseUp () {
 
-		Vector2 tapPos = Utility.getTouchEnd();
+	void Update(){
+		CheckInput();
+	}
+	void CheckInput(){
+		if (player.isMoving) return;
+        if (!Utility.canPlayerMove) return;
 
-		if ( tapPos == Vector2.zero ) return;
+        Vector2 tapPos = Utility.getTouchEnd();
 
-		if( player.isMoving ) return;
+        if (tapPos == Vector2.zero) return;
 
-		if( ! Utility.canPlayerMove ) return;
+		OnBlockMouseUp( tapPos );
+	}
+	void OnBlockMouseUp ( Vector2 tapPos ) {		
 
 		var a = pathFinder.MovePlayerTo(
 			player.transform.position,
