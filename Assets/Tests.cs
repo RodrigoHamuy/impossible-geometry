@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
+using System.Linq;
 
-public class Issue002 {
+public class Tests {
 
 	[UnityTest]
 	public IEnumerator Issue002_000_ShouldNotFind() {
@@ -17,7 +18,8 @@ public class Issue002 {
 	[UnityTest]
 	public IEnumerator Issue002_001_ShouldNotFind() {
 		yield return LoadScene("issue-002.001");
-		Assert.IsFalse( HasPath(), "Should not find a path." );
+        var path = GetPath();
+        Assert.AreEqual(new Vector3(-4.0f, 1.5f, -4.0f), path.Last().position, "Should be the right target.");
 	}
 
 
@@ -133,7 +135,15 @@ public class Issue002 {
     public IEnumerator Issue010_006_ShouldFind()
     {
         yield return LoadScene("issue-010.006");
-        Assert.IsFalse(HasPath(), "Should not find a path.");
+		var path = GetPath();
+        Assert.AreEqual(new Vector3( 6.0f, -2.5f, 10.0f), path.Last().position, "Should be the right target.");
+    }
+
+    [UnityTest]
+    public IEnumerator IssueSide000_000_ShouldFind()
+    {
+        yield return LoadScene("issue-side-000.000");
+        Assert.IsTrue(HasPath(), "Should find a path.");
     }
 
 	IEnumerator LoadScene(string sceneName) {

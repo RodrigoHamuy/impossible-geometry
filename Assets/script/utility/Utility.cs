@@ -26,10 +26,10 @@ public class Utility {
             // TODO: Normal should be decided from the last node,
             // as the player may be able to move on diff normals.
 
-            if (point.normal == normal)
-            {
-                points.Add(point);
-            }
+            // if (point.normal == normal)
+            // {
+            points.Add(point);
+            // }
 
         }
 
@@ -119,33 +119,32 @@ public class Utility {
             var newNextPoints = getPointsAtWorldPos(pos, normal);
             var newNextPointsCopy = new List<PathPoint>(newNextPoints);
 
-            var CamDirDot = Vector3.Dot(Camera.main.transform.forward, dir);
+            // var CamDirDot = Vector3.Dot(Camera.main.transform.forward, dir);
 
-            List<PathPoint> potentialWalls;
+            var wallsNormals = new List<Vector3>{
+                PathPoint.CleanNormal(dir), 
+                PathPoint.CleanNormal(-dir)
+            };
 
-            if (CamDirDot > 0)
-            {
-                potentialWalls = getPointsAtWorldPos(
-                    pos - dir * 0.75f,
-                    PathPoint.CleanNormal(-dir)
-                );
+            var camForward = Camera.main.transform.forward;
+
+
+            List<PathPoint> potentialWalls = new List<PathPoint>();
+
+            foreach( var wallNormal in wallsNormals ) {
+
+                if (Vector3.Dot(wallNormal, camForward) > 0) continue;
+
                 potentialWalls.AddRange(
                     getPointsAtWorldPos(
-                        pos - dir * 0.25f,
-                        PathPoint.CleanNormal(-dir)
+                        point.position + dir * 0.25f,
+                        wallNormal
                     )
                 );
-            }
-            else
-            {
-                potentialWalls = getPointsAtWorldPos(
-                    pos - dir * 0.25f,
-                    PathPoint.CleanNormal(dir)
-                );
                 potentialWalls.AddRange(
                     getPointsAtWorldPos(
-                        pos - dir * 0.25f,
-                        PathPoint.CleanNormal(dir)
+                        point.position + dir * 0.75f,
+                        wallNormal
                     )
                 );
             }
@@ -195,28 +194,58 @@ public class Utility {
 
 
                 // Detect walls
+                var realDir = nextPoint.position - point.position;
+                var realDirDotNormal = Vector3.Dot( realDir, normal );
                 if (
                     potentialWalls.Exists((overlappingPoint) =>
                     {
-                        if (
+                        var wallToPoint = point.position - overlappingPoint.position;
+                        var wallToNext = nextPoint.position - overlappingPoint.position;
+
+                        var wallToPointDotNormal = Vector3.Dot(wallToPoint, normal);
+                        var wallToNextDotNormal = Vector3.Dot(wallToNext, normal);
+
+                        if ( 
                             (
-                                overlappingPoint.position[axis] > point.position[axis] &&
-                                overlappingPoint.position[axis] < nextPoint.position[axis]
+                                wallToPointDotNormal > 0 &&
+                                wallToNextDotNormal < 0
                             ) || (
-                                overlappingPoint.position[axis] < point.position[axis] &&
-                                overlappingPoint.position[axis] > nextPoint.position[axis]
-                            ) || (
-                                // It is a wall only if it is at the same level as one of the points
-                                overlappingPoint.position[axis] - nextPoint.position[axis] > 0 &&
-                                overlappingPoint.position[axis] - nextPoint.position[axis] < 1
-                            ) || (
-                                overlappingPoint.position[axis] - point.position[axis] > 0 &&
-                                overlappingPoint.position[axis] - point.position[axis] < 1
+                                wallToPointDotNormal < 0 &&
+                                wallToNextDotNormal > 0
                             )
-                        )
-                        {
+                        ){
                             return true;
                         }
+
+                        if( 
+                            (
+                                Vector3.Dot(wallToPoint, camForward) > 0 &&
+                                wallToPoint.sqrMagnitude < 1.0f &&
+                                wallToPointDotNormal < 0
+                            ) ||
+                            (
+                                Vector3.Dot(wallToNext, camForward) > 0 &&
+                                wallToNext.sqrMagnitude < 1.0f &&
+                                wallToNextDotNormal < 0
+                            )
+                        ){
+                            return true;
+                        }
+                        //     if( realDirDotNormal < 0 ) {
+                        //         return true;
+                        //     }
+                        //     else if( wallToPoint.sqrMagnitude < 1.0f  ){
+                        //         return true;
+                        //     }
+                        // }
+
+                        // if (
+                        //     Vector3.Dot(wallToNext, normal) > 0 &&
+                        //     wallToNext.sqrMagnitude < 1.0f
+                        // )
+                        // {
+                        //     return true;
+                        // }
                         return false;
                     })
                 ) return true;

@@ -77,3 +77,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/scenes/tests/issue-010.006.unity
     guid: e6bdc5d412b75304bb3053de48243c8d
+  - enabled: 1
+    path: Assets/scenes/tests/issue-side-000.000.unity
+    guid: 86c8c4cffb31753408213596e8596fee

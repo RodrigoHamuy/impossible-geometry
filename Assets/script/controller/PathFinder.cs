@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PathFinder {
 
-	PathPoint target;
+	PathPoint _target;
 
 	Vector3 normal;
 
@@ -24,34 +24,39 @@ public class PathFinder {
 
 		normal = n;
 
-		var newTarget = Utility.GetCloser(
-			Utility.GetPointsOnTapPos(tapPos, normal),
-			tapPos
-		);
+		var targets = Utility.GetPointsOnTapPos(tapPos, normal);
 
-		if( newTarget == null || newTarget == target
-		) return false;
-
-		target = newTarget;
-
-		ResetAll();
+		targets = targets.OrderBy(t => {
+            return (tapPos - t.screenPosition).sqrMagnitude;
+        }).ToList();
 
 		var start = Utility.getPointsAtWorldPos(player, normal)
-		.OrderBy( point => {
+		.OrderBy(point =>
+		{
 			return (point.position - player).sqrMagnitude;
 		})
 		.ElementAt(0);
 
-		Utility.SetPointColor(start.component, new Color(1, 1, 1) );
-		if( Search(start) ) {
-			return true;
-		} else {
-			target = null;
-			return false;
+        Utility.SetPointColor(start.component, new Color(1, 1, 1));
+
+		foreach( var target in targets){
+
+			if( target == _target) continue;
+
+			if (target == start) continue;
+
+			ResetAll( target );            
+
+            if (Search(start, target)) {
+				_target = target;
+                return true;
+            }
 		}
+        return false;
+		
 	}
 
-	void ResetAll(){
+	void ResetAll(PathPoint target){
 
 		path = null;
 		possiblePaths.Clear();
@@ -101,7 +106,7 @@ public class PathFinder {
 		return nextPoints;
 	}
 
-	bool Search(PathPoint current, List<PathPoint> currentList = null){
+	bool Search(PathPoint current, PathPoint target, List<PathPoint> currentList = null){
 
 		if( current == target) {
 			path = currentList;
@@ -132,13 +137,13 @@ public class PathFinder {
 
     if (possiblePaths.Count == 0) return false;
 
-		return Search();
+		return Search( target );
 	}
 
-	bool Search(){
+	bool Search(PathPoint target){
 		possiblePaths.OrderBy( eachList => eachList.Last().estimatedCost );
 		var next = possiblePaths[0].Last();
-		return Search( next, possiblePaths[0] );
+		return Search( next, target, possiblePaths[0] );
 	}
 
 
