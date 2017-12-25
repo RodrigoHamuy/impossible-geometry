@@ -88,6 +88,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -142,6 +143,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 981f024344acf8d459b3461378d3310d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onMouseDown:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onMouseUp:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   connectorPrefab: {fileID: 4824232419952624, guid: 7fe048ef70b4c7b40a3be62939fe7b99,
     type: 2}
   pointPrefab: {fileID: 4027610804730166, guid: de55a1672b8504944888aa5f36364b1f,
@@ -244,6 +255,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 981f024344acf8d459b3461378d3310d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onMouseDown:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onMouseUp:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   connectorPrefab: {fileID: 4824232419952624, guid: 7fe048ef70b4c7b40a3be62939fe7b99,
     type: 2}
   pointPrefab: {fileID: 4027610804730166, guid: de55a1672b8504944888aa5f36364b1f,
@@ -355,6 +376,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 14
       objectReference: {fileID: 0}
+    - target: {fileID: 20255849638332930, guid: 6a4ee232a2ca2c64b9702db686dda0bf,
+        type: 2}
+      propertyPath: orthographic size
+      value: 10.52
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6a4ee232a2ca2c64b9702db686dda0bf, type: 2}
   m_IsPrefabParent: 0
@@ -388,6 +414,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 981f024344acf8d459b3461378d3310d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onMouseDown:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onMouseUp:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   connectorPrefab: {fileID: 4824232419952624, guid: 7fe048ef70b4c7b40a3be62939fe7b99,
     type: 2}
   pointPrefab: {fileID: 4027610804730166, guid: de55a1672b8504944888aa5f36364b1f,
@@ -487,7 +523,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ff8f8eaaf4334b4d8488e0b54390360, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 1754762711}
 --- !u!4 &648621269
 Transform:
   m_ObjectHideFlags: 0
@@ -531,6 +566,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 981f024344acf8d459b3461378d3310d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onMouseDown:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onMouseUp:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   connectorPrefab: {fileID: 4824232419952624, guid: 7fe048ef70b4c7b40a3be62939fe7b99,
     type: 2}
   pointPrefab: {fileID: 4027610804730166, guid: de55a1672b8504944888aa5f36364b1f,
@@ -633,6 +678,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 981f024344acf8d459b3461378d3310d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onMouseDown:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onMouseUp:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   connectorPrefab: {fileID: 4824232419952624, guid: 7fe048ef70b4c7b40a3be62939fe7b99,
     type: 2}
   pointPrefab: {fileID: 4027610804730166, guid: de55a1672b8504944888aa5f36364b1f,
@@ -730,7 +785,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 946784403}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 236, y: -166.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1073385115}
@@ -993,6 +1048,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 981f024344acf8d459b3461378d3310d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onMouseDown:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onMouseUp:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   connectorPrefab: {fileID: 4824232419952624, guid: 7fe048ef70b4c7b40a3be62939fe7b99,
     type: 2}
   pointPrefab: {fileID: 4027610804730166, guid: de55a1672b8504944888aa5f36364b1f,
@@ -1160,6 +1225,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 981f024344acf8d459b3461378d3310d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onMouseDown:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onMouseUp:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   connectorPrefab: {fileID: 4824232419952624, guid: 7fe048ef70b4c7b40a3be62939fe7b99,
     type: 2}
   pointPrefab: {fileID: 4027610804730166, guid: de55a1672b8504944888aa5f36364b1f,
@@ -1304,6 +1379,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 981f024344acf8d459b3461378d3310d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onMouseDown:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onMouseUp:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   connectorPrefab: {fileID: 4824232419952624, guid: 7fe048ef70b4c7b40a3be62939fe7b99,
     type: 2}
   pointPrefab: {fileID: 4027610804730166, guid: de55a1672b8504944888aa5f36364b1f,
@@ -1458,24 +1543,18 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1659268431}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 344, y: 193.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 946784404}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1754762711 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114646576094980062, guid: 4ae037a1a06f2b64e9e0c097d2a4b5f5,
-    type: 2}
-  m_PrefabInternal: {fileID: 1459128281}
-  m_Script: {fileID: 11500000, guid: d6c41405c1313bc4f8d3f8c76eedaebb, type: 3}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1 &2051998003
 GameObject:
   m_ObjectHideFlags: 0
@@ -1506,6 +1585,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 981f024344acf8d459b3461378d3310d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onMouseDown:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onMouseUp:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   connectorPrefab: {fileID: 4824232419952624, guid: 7fe048ef70b4c7b40a3be62939fe7b99,
     type: 2}
   pointPrefab: {fileID: 4027610804730166, guid: de55a1672b8504944888aa5f36364b1f,

@@ -55,7 +55,7 @@ public class PointInspector : Editor {
         if( point != null ) {
 
             var labelText = point.position.ToString() + "\n" +
-			point.screenPosition.ToString();
+			point.realCamPosition.ToString();
 
             Handles.Label(
                 targetObject.transform.position,

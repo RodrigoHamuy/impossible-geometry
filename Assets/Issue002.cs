@@ -87,11 +87,54 @@ public class Issue002 {
 		Assert.IsTrue( HasPath(), "Should find a path." );
 	}
 
-	[UnityTest]
-	public IEnumerator Issue010_000_ShouldFind() {
-		yield return LoadScene("issue-010.000");
-		Assert.IsTrue( HasPath(), "Should find a path." );
-	}
+    [UnityTest]
+    public IEnumerator Issue010_000_ShouldFind()
+    {
+        yield return LoadScene("issue-010.000");
+        Assert.IsTrue(HasPath(), "Should find a path.");
+    }
+
+    [UnityTest]
+    public IEnumerator Issue010_001_ShouldFind()
+    {
+        yield return LoadScene("issue-010.001");
+        Assert.IsTrue(HasPath(), "Should find a path.");
+    }
+
+    [UnityTest]
+    public IEnumerator Issue010_002_ShouldFind()
+    {
+        yield return LoadScene("issue-010.002");
+        Assert.IsTrue(HasPath(), "Should find a path.");
+    }
+
+    [UnityTest]
+    public IEnumerator Issue010_003_ShouldFind()
+    {
+        yield return LoadScene("issue-010.003");
+        Assert.IsFalse(HasPath(), "Should not find a path.");
+    }
+
+    [UnityTest]
+    public IEnumerator Issue010_004_ShouldFind()
+    {
+        yield return LoadScene("issue-010.004");
+        Assert.IsFalse(HasPath(), "Should not find a path.");
+    }
+
+    [UnityTest]
+    public IEnumerator Issue010_005_ShouldFind()
+    {
+        yield return LoadScene("issue-010.005");
+        Assert.IsFalse(HasPath(), "Should not find a path.");
+    }
+
+    [UnityTest]
+    public IEnumerator Issue010_006_ShouldFind()
+    {
+        yield return LoadScene("issue-010.006");
+        Assert.IsFalse(HasPath(), "Should not find a path.");
+    }
 
 	IEnumerator LoadScene(string sceneName) {
 		SceneManager.LoadScene(sceneName);

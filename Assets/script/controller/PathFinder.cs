@@ -122,29 +122,6 @@ public class PathFinder {
 		return -1;
 	}
 
-	static List<PathPoint> GetCrossOverlaps( Vector3 pos, Vector3 normal, int axis ) {
-
-		// This is to move the ray half way down, as otherwise
-		// it wont hit a cross overllap.
-
-		var axisDir = IsBehind(normal) ? -1 : 1;
-
-		var halfDir = Vector3.zero;
-		halfDir[ ( axis + axisDir ) % 3 ] = normal[axis] * 0.5f;
-
-		pos += halfDir;
-
-		var crossNormal = Vector3.zero;
-		var newAxis = ( axis + axisDir + axisDir ) % 3;
-		if( newAxis < 0) newAxis += 3;
-		crossNormal[ newAxis ] = normal[axis];
-		crossNormal = PathPoint.CleanNormal( crossNormal );
-
-		var crossOverlaps = getPointsAtWorldPos( pos, crossNormal );
-
-		return crossOverlaps;
-	}
-
 	public static List<PathPoint> findNextPoints(PathPoint point, Vector3 normal){
 
 		List<PathPoint> nextPoints = new List<PathPoint>();
@@ -171,11 +148,40 @@ public class PathFinder {
 			var axis = GetNormalAxis(normal);
 
 			var newNextPoints = getPointsAtWorldPos( pos, normal );
-			var crossOverlaps = GetCrossOverlaps( pos, normal, axis );
+			var newNextPointsCopy = new List<PathPoint>( newNextPoints );
+
+			var CamDirDot = Vector3.Dot( Camera.main.transform.forward, dir );
+
+			List<PathPoint> potentialWalls;
+
+			if( CamDirDot > 0 ) {
+				potentialWalls = getPointsAtWorldPos(
+					pos - dir * 0.75f,
+					PathPoint.CleanNormal(-dir)
+				);
+				potentialWalls.AddRange(
+					getPointsAtWorldPos(
+						pos - dir * 0.25f,
+						PathPoint.CleanNormal(-dir)
+					)
+				);
+			}else {
+				potentialWalls = getPointsAtWorldPos(
+                    pos - dir * 0.25f,
+                    PathPoint.CleanNormal(dir)
+                );
+				potentialWalls.AddRange(
+					getPointsAtWorldPos(
+						pos - dir * 0.25f,
+						PathPoint.CleanNormal(dir)
+					)
+				);
+			}
 
 
-			// Remove if it is overlapped by another point bellow the same ray.
-			newNextPoints.RemoveAll( nextPoint => {
+
+            // Remove if it is overlapped by another point bellow the same ray.
+            newNextPoints.RemoveAll( nextPoint => {
 
 				// Remove if the point has been check already.
 				if (nextPoint.state == PathPoint.State.Closed ) return true;
@@ -185,53 +191,99 @@ public class PathFinder {
 
 				// remove if this nextPoint is above the current point (from camera
 				// perspective) and his block overlaps the current point.
-				if(
-					! nextPoint.isPrismSide &&
-					nextPoint.camPosition[axis] > point.camPosition[axis] &&
-					nextPoint.position[axis] > point.position[axis]
-				) return true;
+				// if(
+				// 	! nextPoint.isPrismSide &&
+				// 	nextPoint.camPosition[axis] > point.camPosition[axis] &&
+				// 	nextPoint.position[axis] > point.position[axis]
+				// ) return true;
 
 				// remove if this block is bellow the current point (from camera
 				// perspective) and is being overlapped by the current point.
-				if(
-					! point.isPrismSide &&
-					nextPoint.camPosition[axis] < point.camPosition[axis] &&
-					nextPoint.position[axis] < point.position[axis]
-				) return true;
+				// if(
+				// 	! point.isPrismSide &&
+				// 	nextPoint.camPosition[axis] < point.camPosition[axis] &&
+				// 	nextPoint.position[axis] < point.position[axis]
+				// ) return true;
 
 				// remove if it is the previous point
 				if ( nextPoint == point.prev ) return true;
 
+				// TODO: Replace y with dynamic axis
+
 				// Remove if nextPoint is bellow another nextPoint that is at the same
 				// height or bellow the current point.
-				if( nextPoint.camPosition.y > point.camPosition.y ){
+				// if( nextPoint.camPosition.y > point.camPosition.y ){
 					if(
-						newNextPoints.Exists( nextPoint2 =>{
-							if( nextPoint2.position.y <= point.position.y ){
-								return nextPoint2.position.y > nextPoint.position.y;
+						newNextPointsCopy.Exists( nextPoint2 =>{
+							if( 
+								nextPoint2 != nextPoint &&
+								nextPoint2.position[axis] <= point.position[axis] 
+							){
+								return nextPoint2.position[axis] > nextPoint.position[axis];
 							} else return false;
 						})
 					) return true;
-				}
+				// }
 
 				// Check if nextPoint is next to a point that is on top of point.
+				// if (
+				// 	overlappingPoints.Exists( (overlappingPoint) => {
+				// 		return (
+				// 			overlappingPoint.position.y <= nextPoint.position.y &&
+				// 			overlappingPoint.screenPosition.y > nextPoint.screenPosition.y
+				// 		);
+				// 	})
+				// ) return true;
 				if (
-					overlappingPoints.Exists( (overlappingPoint) => {
-						return (
-							overlappingPoint.position.y <= nextPoint.position.y &&
-							overlappingPoint.screenPosition.y > nextPoint.screenPosition.y
-						);
-					})
-				) return true;
+                    overlappingPoints.Exists((overlappingPoint) =>
+                    {
+                        return (
+                            overlappingPoint.position[axis] <= nextPoint.position[axis] &&
+                            overlappingPoint.position[axis] > point.position[axis]
+                        );
+                    })
+                ) return true;
 
 
 				// Cross overlaps
 				if(
-					crossOverlaps.Exists( (overlappingPoint) =>{
-						return (
-							overlappingPoint.realCamPosition.z < nextPoint.realCamPosition.z &&
-							overlappingPoint.realCamPosition.z > point.realCamPosition.z
-						);
+					potentialWalls.Exists( (overlappingPoint) =>{
+						if( 
+							(
+                                overlappingPoint.position[axis] > point.position[axis] &&
+                                overlappingPoint.position[axis] < nextPoint.position[axis]
+                            ) || (
+                                overlappingPoint.position[axis] < point.position[axis] &&
+                                overlappingPoint.position[axis] > nextPoint.position[axis]
+                            ) || (
+                                overlappingPoint.position[axis] - nextPoint.position[axis] > 0 &&
+                                overlappingPoint.position[axis] - nextPoint.position[axis] < 1
+                            ) || (
+								overlappingPoint.position[axis] - point.position[axis] > 0 &&
+                                overlappingPoint.position[axis] - point.position[axis] < 1
+							)
+							// (
+
+							// )
+							// (
+							// 	overlappingPoint.realCamPosition.z <= point.realCamPosition.z ||
+							// 	overlappingPoint.realCamPosition.z >= nextPoint.realCamPosition.z
+							// )
+						) {
+						// if ((
+						// 	overlappingPoint.realCamPosition.z <= nextPoint.realCamPosition.z &&
+						// 	overlappingPoint.realCamPosition.z >= point.realCamPosition.z &&
+						// 	// true
+						// 	CamDirDot < 0
+						// ) ||(
+                        //     overlappingPoint.realCamPosition.z >= nextPoint.realCamPosition.z &&
+                        //     overlappingPoint.realCamPosition.z <= point.realCamPosition.z &&
+                        //     true
+						// 	// CamDirDot > 0
+                        // )){
+							return true;
+						}
+						return false;
 					})
 				) return true;
 
