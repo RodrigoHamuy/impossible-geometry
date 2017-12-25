@@ -170,7 +170,7 @@ public class RotateComponent : MonoBehaviour {
 			return;
 		}
 
-        var angle = Utility.SignedAngle(startDir, endDir, Vector3.forward);
+        var angle = Vector3.SignedAngle(startDir, endDir, Vector3.forward);
 
         var newAngle = Mathf.LerpAngle(currAngle, -angle, rotationSpeed * Time.deltaTime);
 

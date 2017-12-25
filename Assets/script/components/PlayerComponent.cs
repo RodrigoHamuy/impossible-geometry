@@ -154,7 +154,10 @@ public class PlayerComponent : MonoBehaviour {
 
 		overlappingPos = Vector3.zero;
 
-		var neighbours = Utility.findNextPoints( point, transform.up );
+		var neighbours = Utility.getNextPoints(
+			 point, 
+			 PathPoint.CleanNormal(transform.up)
+		);
 
 		var up = point.position + transform.up;
 

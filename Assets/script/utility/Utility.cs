@@ -6,9 +6,55 @@ public class Utility {
 
 	public static bool canPlayerMove = true;
 
-	public static List<PathPoint> GetPointsAtPos( Vector3 tapPos, Vector3 normal ) {
+	// Get Points
+
+    static List<PathPoint> getPointsAtRay(Ray ray, Vector3 normal) {
+
+        var layer = PathPoint.layer[normal];
 
         List<PathPoint> points = new List<PathPoint>();
+
+        var layerMask = LayerMask.GetMask(layer);
+
+        var hits = Physics.RaycastAll(ray, 100.0f, layerMask);
+
+        foreach (var hit in hits)
+        {
+
+            var point = hit.collider.transform.parent.GetComponent<PathPointComponent>().point;
+
+            // TODO: Normal should be decided from the last node,
+            // as the player may be able to move on diff normals.
+
+            if (point.normal == normal)
+            {
+                points.Add(point);
+            }
+
+        }
+
+        return points;
+    }
+
+    static List<PathPoint> getPointsAtScreenPos(Vector3 pos, Vector3 normal) {
+        var ray = Camera.main.ScreenPointToRay(pos);
+        if (IsBehind(normal))
+        {
+            ray.origin = ray.origin + ray.direction * 100;
+            ray.direction = -ray.direction;
+
+        }
+        return getPointsAtRay(ray, normal);
+    }
+
+    public static List<PathPoint> getPointsAtWorldPos(Vector3 pos, Vector3 normal) {
+        var screenPos = Camera.main.WorldToScreenPoint(pos);
+        return getPointsAtScreenPos(screenPos, normal);
+    }
+
+	public static List<PathPoint> GetPointsOnTapPos( Vector3 tapPos, Vector3 normal ) {
+
+        var points = new List<PathPoint>();
 		var ray = Camera.main.ScreenPointToRay(tapPos);
         var layerMask = LayerMask.GetMask("Debug");
 		var hits = Physics.RaycastAll(ray, 100.0f, layerMask);
@@ -18,11 +64,7 @@ public class Utility {
 
             var point = hit.collider.transform.GetComponent<PathPointComponent>().point;
 
-            // TODO: Normal should be decided from the last node,
-            // as the player may be able to move on diff normals.
-
-            if (point.normal == normal)
-            {
+            if (point.normal == normal) {
                 points.Add(point);
             }
 
@@ -43,177 +85,160 @@ public class Utility {
         return closerPoint;
     }
 
-	public static float SignedAngle(Vector3 a, Vector3 b, Vector3 axis ) {
-		var angle = Vector3.Angle(a, b);
-		var cross = Vector3.Cross(a.normalized, b.normalized);
-		var dot = Vector3.Dot(cross, axis);
-		if (dot < 0) {
-			angle = -angle;
-		}
-		return angle;
-	}
+    public static List<PathPoint> getNextPoints(
+        PathPoint point,
+        Vector3 normal,
+        bool pathFindEnabled = false
+    ) {
 
-	public static Vector2 getTouchEnd(){
-		Vector2 tapPos = Vector2.zero;
+        List<PathPoint> nextPoints = new List<PathPoint>();
 
-		if (
-			(Input.touchCount > 0) &&
-			(Input.GetTouch(0).phase == TouchPhase.Ended)
-		) {
+        var overlappingPoints = getPointsAtWorldPos(point.position, normal);
 
-			var touch = Input.GetTouch(0);
-			tapPos = touch.position;
+        overlappingPoints.RemoveAll(overlappingPoint =>
+        {
+            return (
+                overlappingPoint.position.y < point.position.y ||
+                overlappingPoint == point
+            );
+        });
 
-		} else if( Input.mousePresent && Input.GetMouseButtonUp(0) ){
+        Vector3[] directions = {
+            point.component.transform.transform.forward,
+            point.component.transform.transform.right,
+            - point.component.transform.transform.forward,
+            - point.component.transform.transform.right
+        };
 
-			tapPos = Input.mousePosition;
+        foreach (var dir in directions)
+        {
 
-		}
+            var pos = point.position + dir;
+            var axis = GetNormalAxis(normal);
 
-		return tapPos;
-	}
+            var newNextPoints = getPointsAtWorldPos(pos, normal);
+            var newNextPointsCopy = new List<PathPoint>(newNextPoints);
 
-	public static List<PathPoint> findNextPoints(PathPoint point, Vector3 normal){
+            var CamDirDot = Vector3.Dot(Camera.main.transform.forward, dir);
 
-		normal = PathPoint.CleanNormal(normal);
+            List<PathPoint> potentialWalls;
 
-		List<PathPoint> nextPoints = new List<PathPoint>();
+            if (CamDirDot > 0)
+            {
+                potentialWalls = getPointsAtWorldPos(
+                    pos - dir * 0.75f,
+                    PathPoint.CleanNormal(-dir)
+                );
+                potentialWalls.AddRange(
+                    getPointsAtWorldPos(
+                        pos - dir * 0.25f,
+                        PathPoint.CleanNormal(-dir)
+                    )
+                );
+            }
+            else
+            {
+                potentialWalls = getPointsAtWorldPos(
+                    pos - dir * 0.25f,
+                    PathPoint.CleanNormal(dir)
+                );
+                potentialWalls.AddRange(
+                    getPointsAtWorldPos(
+                        pos - dir * 0.25f,
+                        PathPoint.CleanNormal(dir)
+                    )
+                );
+            }
 
-		var overlappingPoints = getPointsAtWorldPos(point.position, normal);
+            // Remove if it is overlapped by another point bellow the same ray.
+            newNextPoints.RemoveAll(nextPoint =>
+            {
 
-		overlappingPoints.RemoveAll( overlappingPoint => {
-			return (
-				overlappingPoint.position.y < point.position.y ||
-				overlappingPoint == point
-			);
-		});
+                if (pathFindEnabled)
+                {
+                    // Remove if the point has been check already.
+                    if (nextPoint.state == PathPoint.State.Closed) return true;
 
-		Vector3[] directions = {
-			point.component.transform.transform.forward,
-			point.component.transform.transform.right,
-			- point.component.transform.transform.forward,
-			- point.component.transform.transform.right
-		};
+                    // Remove if the block is in the middle of a rotation.
+                    if (nextPoint.rotating) return true;
 
-		foreach( var dir in directions){
+                    // remove if it is the previous point
+                    if (nextPoint == point.prev) return true;
+                }
 
-			var pos = point.position + dir;
-			var axis = GetNormalAxis(normal);
+                // Remove if nextPoint is bellow another nextPoint that is at the same
+                // height or bellow the current point.
+                if (
+                    newNextPointsCopy.Exists(nextPoint2 =>
+                    {
+                        if (
+                            nextPoint2 != nextPoint &&
+                            nextPoint2.position[axis] <= point.position[axis]
+                        )
+                        {
+                            return nextPoint2.position[axis] > nextPoint.position[axis];
+                        }
+                        else return false;
+                    })
+                ) return true;
 
-			var newNextPoints = getPointsAtWorldPos( pos, normal );
-			var crossOverlaps = GetCrossOverlaps( pos, normal, axis );
-
-
-			// Remove if it is overlapped by another point bellow the same ray.
-			newNextPoints.RemoveAll( nextPoint => {
-
-				// Remove if the block is in the middle of a rotation.
-				if ( nextPoint.rotating ) return true;
-
-				// remove if this nextPoint is above the current point (from camera
-				// perspective) and his block overlaps the current point.
-				if(
-					! nextPoint.isPrismSide &&
-					nextPoint.camPosition[axis] > point.camPosition[axis] &&
-					nextPoint.position[axis] > point.position[axis]
-				) return true;
-
-				// remove if this block is bellow the current point (from camera
-				// perspective) and is being overlapped by the current point.
-				if(
-					! point.isPrismSide &&
-					nextPoint.camPosition[axis] < point.camPosition[axis] &&
-					nextPoint.position[axis] < point.position[axis]
-				) return true;
-
-				// Remove if nextPoint is bellow another nextPoint that is at the same
-				// height or bellow the current point.
-				if( nextPoint.camPosition.y > point.camPosition.y ){
-					if(
-						newNextPoints.Exists( nextPoint2 =>{
-							if( nextPoint2.position.y <= point.position.y ){
-								return nextPoint2.position.y > nextPoint.position.y;
-							} else return false;
-						})
-					) return true;
-				}
-
-				// Check if nextPoint is next to a point that is on top of point.
-				if (
-					overlappingPoints.Exists( (overlappingPoint) => {
-						return (
-							overlappingPoint.position.y <= nextPoint.position.y &&
-							overlappingPoint.screenPosition.y > nextPoint.screenPosition.y
-						);
-					})
-				) return true;
+                // Check if nextPoint is next to a point that is on top of point.
+                if (
+                    overlappingPoints.Exists((overlappingPoint) =>
+                    {
+                        return (
+                            overlappingPoint.position[axis] <= nextPoint.position[axis] &&
+                            overlappingPoint.position[axis] > point.position[axis]
+                        );
+                    })
+                ) return true;
 
 
-				// Cross overlaps
-				if(
-					crossOverlaps.Exists( (overlappingPoint) =>{
-						return (
-							overlappingPoint.realCamPosition.z < nextPoint.realCamPosition.z &&
-							overlappingPoint.realCamPosition.z > point.realCamPosition.z
-						);
-					})
-				) return true;
+                // Detect walls
+                if (
+                    potentialWalls.Exists((overlappingPoint) =>
+                    {
+                        if (
+                            (
+                                overlappingPoint.position[axis] > point.position[axis] &&
+                                overlappingPoint.position[axis] < nextPoint.position[axis]
+                            ) || (
+                                overlappingPoint.position[axis] < point.position[axis] &&
+                                overlappingPoint.position[axis] > nextPoint.position[axis]
+                            ) || (
+                                // It is a wall only if it is at the same level as one of the points
+                                overlappingPoint.position[axis] - nextPoint.position[axis] > 0 &&
+                                overlappingPoint.position[axis] - nextPoint.position[axis] < 1
+                            ) || (
+                                overlappingPoint.position[axis] - point.position[axis] > 0 &&
+                                overlappingPoint.position[axis] - point.position[axis] < 1
+                            )
+                        )
+                        {
+                            return true;
+                        }
+                        return false;
+                    })
+                ) return true;
 
-				// default return
-				return false;
-			});
+                // If this is an Ok point
+                return false;
+            });
 
-			foreach( var nextPoint in newNextPoints ){
-				nextPoints.Add(nextPoint);
-			}
 
-		}
+            foreach (var nextPoint in newNextPoints)
+            {
+                nextPoints.Add(nextPoint);
+            }
 
-		return nextPoints;
-	}
+        }
 
-	static List<PathPoint> getPointsAtScreenPos(Vector3 pos, Vector3 normal){
-		var ray = Camera.main.ScreenPointToRay(pos);
-		if ( IsBehind(normal) ) {
-			ray.origin = ray.origin + ray.direction*100;
-			ray.direction = - ray.direction;
+        return nextPoints;
+    }
 
-		}
-		return getPointsAtRay(ray, normal);
-	}
+	// Points utils
 
-	public static List<PathPoint> getPointsAtWorldPos(Vector3 pos, Vector3 normal) {
-		var screenPos = Camera.main.WorldToScreenPoint(pos);
-		return getPointsAtScreenPos(screenPos, normal);
-	}
-
-	static List<PathPoint> getPointsAtRay(Ray ray, Vector3 normal){
-
-		var layer = PathPoint.layer[ normal ];
-
-		List<PathPoint> points = new List<PathPoint>();
-
-		var layerMask = LayerMask.GetMask(layer);
-
-		var hits = Physics.RaycastAll(ray, 100.0f, layerMask);
-
-		foreach( var hit in hits ) {
-
-			var point = hit.collider.transform.parent.GetComponent<PathPointComponent>().point;
-
-			// TODO: Normal should be decided from the last node,
-			// as the player may be able to move on diff normals.
-
-			if( point.normal == normal ){
-				points.Add(point);
-			}
-
-		}
-
-		return points;
-	}
-
-	static bool IsBehind(Vector3 n){
+	public static bool IsBehind(Vector3 n){
 		var angle = Vector3.Angle( Camera.main.transform.forward, n );
 		return angle < 90 ;
 	}
@@ -225,30 +250,7 @@ public class Utility {
 		Debug.LogError("This is not a normal");
 		return -1;
 	}
-
-	static List<PathPoint> GetCrossOverlaps( Vector3 pos, Vector3 normal, int axis ) {
-
-		// This is to move the ray half way down, as otherwise
-		// it wont hit a cross overllap.
-
-		var axisDir = IsBehind(normal) ? -1 : 1;
-
-		var halfDir = Vector3.zero;
-		halfDir[ ( axis + axisDir ) % 3 ] = normal[axis] * 0.5f;
-
-		pos += halfDir;
-
-		var crossNormal = Vector3.zero;
-		var newAxis = ( axis + axisDir + axisDir ) % 3;
-		if( newAxis < 0) newAxis += 3;
-		crossNormal[ newAxis ] = normal[axis];
-		crossNormal = PathPoint.CleanNormal( crossNormal );
-
-		var crossOverlaps = getPointsAtWorldPos( pos, crossNormal );
-
-		return crossOverlaps;
-	}
-
+	
 	public static Vector3 getDirFromScreenView( Vector3 from, Vector3 to ){
 
 		var cam = Camera.main;
@@ -263,15 +265,47 @@ public class Utility {
 		return dir.normalized;
 	}
 
-	public static Vector3 GetTouchPosition(){
-		if (Input.touchCount == 1) {
-			var touch = Input.GetTouch (0);
-			return touch.position;
-		} else if ( Input.mousePresent ) {
-			return Input.mousePosition;
-		}
-		return Vector3.zero;
-	}
+	public static void SetPointColor(PathPointComponent point, Color color) {
+        var rend = point.GetComponentsInChildren<Renderer>()[0];
+        rend.material.color = color;
+    }
+
+    // Touch
+
+    public static Vector2 getTouchEnd()
+    {
+        Vector2 tapPos = Vector2.zero;
+
+        if (
+            (Input.touchCount > 0) &&
+            (Input.GetTouch(0).phase == TouchPhase.Ended)
+        )
+        {
+
+            var touch = Input.GetTouch(0);
+            tapPos = touch.position;
+
+        }
+        else if (Input.mousePresent && Input.GetMouseButtonUp(0))
+        {
+
+            tapPos = Input.mousePosition;
+
+        }
+
+        return tapPos;
+    }
+
+
+    // public static Vector3 GetTouchPosition(){
+    // 	if (Input.touchCount == 1) {
+    // 		var touch = Input.GetTouch (0);
+    // 		return touch.position;
+    // 	} else if ( Input.mousePresent ) {
+    // 		return Input.mousePosition;
+    // 	}
+    // 	return Vector3.zero;
+    // }
 
 
 }

@@ -74,7 +74,7 @@ public class PointInspector : Editor {
 		lineSegments.Clear();
 		if( paintNeighbours ){
 			foreach( var point in allPoints ){
-				PathFinder.setColor(point, new Color(.4f, .0f, .8f) );
+				Utility.SetPointColor(point, new Color(.4f, .0f, .8f) );
 			}
 		}
 	}
@@ -103,7 +103,7 @@ public class PointInspector : Editor {
 		foreach( var dir in directions){
 
 			var pos = point.position + dir;
-			var nextPoints = PathFinder.getPointsAtWorldPos( pos, point.normal );
+			var nextPoints = Utility.getPointsAtWorldPos( pos, point.normal );
 
 			var screenPoint = Camera.main.WorldToScreenPoint(pos);
 			screenPoint.z = 0;
@@ -113,7 +113,7 @@ public class PointInspector : Editor {
 
 			if( paintNeighbours ){
 				foreach( var nextPoint in nextPoints ) {
-					PathFinder.setColor(nextPoint.component, new Color(1.0f, .2f, 0) );
+					Utility.SetPointColor(nextPoint.component, new Color(1.0f, .2f, 0) );
 				}
 			}
 

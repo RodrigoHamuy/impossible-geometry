@@ -42,7 +42,7 @@ public class PathManagerComponent : MonoBehaviour {
 			player.Walk( pathFinder.path );
 			Debug.Log("Path found: " + pathFinder.path.Count + " steps.");
 			foreach( var point in pathFinder.path){
-				PathFinder.setColor(point.component, new Color(1, .8f, 0));
+				Utility.SetPointColor(point.component, new Color(1, .8f, 0));
 			}
 		} else {
 			Debug.Log("Path not found");
