@@ -146,6 +146,13 @@ public class Tests {
         Assert.IsTrue(HasPath(), "Should find a path.");
     }
 
+    [UnityTest]
+    public IEnumerator IssueStairs000_000_ShouldFind()
+    {
+        yield return LoadScene("issue-stairs-000.000");
+        Assert.IsTrue(HasPath(), "Should find a path.");
+    }
+
 	IEnumerator LoadScene(string sceneName) {
 		SceneManager.LoadScene(sceneName);
 		yield return null;
@@ -165,7 +172,7 @@ public class Tests {
 		var pathFound = pathFinder.MovePlayerTo(
 			player.transform.position,
 			touchPointPos,
-			PathPoint.CleanNormal( player.transform.up )
+			Utility.CleanNormal( player.transform.up )
 		);
 
 		return pathFound;

@@ -35,7 +35,7 @@ public class PathManagerComponent : MonoBehaviour {
 		var a = pathFinder.MovePlayerTo(
 			player.transform.position,
 			tapPos,
-			PathPoint.CleanNormal( player.transform.up )
+			Utility.CleanNormal( player.transform.up )
 		);
 
 		if( a &&  pathFinder.path != null && pathFinder.path.Count > 0 ) {

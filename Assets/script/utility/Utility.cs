@@ -122,8 +122,8 @@ public class Utility {
             // var CamDirDot = Vector3.Dot(Camera.main.transform.forward, dir);
 
             var wallsNormals = new List<Vector3>{
-                PathPoint.CleanNormal(dir), 
-                PathPoint.CleanNormal(-dir)
+                Utility.CleanNormal(dir), 
+                Utility.CleanNormal(-dir)
             };
 
             var camForward = Camera.main.transform.forward;
@@ -194,8 +194,8 @@ public class Utility {
 
 
                 // Detect walls
-                var realDir = nextPoint.position - point.position;
-                var realDirDotNormal = Vector3.Dot( realDir, normal );
+                // var realDir = nextPoint.position - point.position;
+                // var realDirDotNormal = Vector3.Dot( realDir, normal );
                 if (
                     potentialWalls.Exists((overlappingPoint) =>
                     {
@@ -272,7 +272,7 @@ public class Utility {
 		return angle < 90 ;
 	}
 
-	static int GetNormalAxis(Vector3 n){
+	public static int GetNormalAxis(Vector3 n){
 		for (var i = 0; i < 3; i++) {
 			if( n[i] != 0 ) return i;
 		}
@@ -297,6 +297,31 @@ public class Utility {
 	public static void SetPointColor(PathPointComponent point, Color color) {
         var rend = point.GetComponentsInChildren<Renderer>()[0];
         rend.material.color = color;
+    }
+
+    static public Vector3 CleanNormal(Vector3 n)
+    {
+        var vectors = new Vector3[]{
+            Vector3.up,
+            Vector3.down,
+            Vector3.left,
+            Vector3.right,
+            Vector3.forward,
+            Vector3.back
+        };
+
+        foreach (var vector in vectors)
+        {
+            if (Vector3.Dot(vector, n) > .9f)
+            {
+                return vector;
+            }
+        }
+
+        Debug.LogError("This is not a perpendicular normal.");
+
+        return n;
+
     }
 
     // Touch

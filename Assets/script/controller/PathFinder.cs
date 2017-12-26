@@ -69,7 +69,7 @@ public class PathFinder {
 		}
 	}
 
-	public static List<PathPoint> findNextPoints(PathPoint point, Vector3 normal){
+	static public List<PathPoint> findNextPoints(PathPoint point, Vector3 normal){
 
 		List<PathPoint> nextPoints = new List<PathPoint>();
 
@@ -78,21 +78,14 @@ public class PathFinder {
 		// A* Logic
 		foreach( var nextPoint in newNextPoints ){
 
-			if( nextPoint.state == PathPoint.State.Open ){
-				if( ! nextPoint.isCloser(point) ) {
-					continue;
-				}
-			} else {
-				nextPoint.state = PathPoint.State.Open;
-			}
-
-			nextPoint.setPrev(point);
-
-			nextPoint.state = PathPoint.State.Open;
-
-			nextPoints.Add(nextPoint);
+			AddToList(nextPoint, point, nextPoints);
 
 		}
+
+		// Add Stairs connections
+        if (point.stairConn != null) {
+            AddToList(point.stairConn, point, nextPoints);
+        }
 
 		nextPoints = nextPoints
 		.OrderBy( (PathPoint nextPoint) => {
@@ -104,6 +97,34 @@ public class PathFinder {
 		.ToList();
 
 		return nextPoints;
+	}
+
+	static void AddToList( PathPoint nextPoint, PathPoint point, List<PathPoint> points){
+
+        // Remove if the point has been check already.
+        if (nextPoint.state == PathPoint.State.Closed) return;
+
+        // Remove if the block is in the middle of a rotation.
+        if (nextPoint.rotating) return;
+
+        // remove if it is the previous point
+        if (nextPoint == point.prev) return;
+
+        if (nextPoint.state == PathPoint.State.Open) {
+            if (!nextPoint.isCloser(point)) {
+                return;
+            }
+        } else {
+            nextPoint.state = PathPoint.State.Open;
+        }
+
+        nextPoint.setPrev(point);
+
+        nextPoint.state = PathPoint.State.Open;
+
+        points.Add(nextPoint);
+
+
 	}
 
 	bool Search(PathPoint current, PathPoint target, List<PathPoint> currentList = null){

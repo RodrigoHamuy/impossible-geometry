@@ -51,6 +51,12 @@ public class PathPoint {
 	public bool rotating = false;
 	public bool canMove = false;
 
+	public PathPoint stairConn = null;
+
+	public enum StairPos{ none, top, bottom };
+
+	public StairPos stairPos = StairPos.none;
+
 	public PathPoint( Vector3 pos,  Vector3 normal, PathContainer container){
 
 		this.container = container;
@@ -138,26 +144,6 @@ public class PathPoint {
 		}
 	}
 
-	static public Vector3 CleanNormal(Vector3 n){
-		var vectors = new Vector3[]{
-			Vector3.up,
-			Vector3.down,
-			Vector3.left,
-			Vector3.right,
-			Vector3.forward,
-			Vector3.back
-		};
-
-		foreach( var vector in vectors ){
-			if ( Vector3.Dot( vector, n ) > .9f ){
-				return vector;
-			}
-		}
-
-		Debug.LogError("This is not a perpendicular normal.");
-
-		return n;
-
-	}
+	
 
 }

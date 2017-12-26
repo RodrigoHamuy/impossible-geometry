@@ -10,6 +10,8 @@ public class PlayerComponent : MonoBehaviour {
 
 	bool _isMoving = false;
 
+	bool _isOnStairs = false;
+
 	public bool isMoving{
 		get { return _isMoving; }
 	}
@@ -64,10 +66,8 @@ public class PlayerComponent : MonoBehaviour {
 	void Update(){
 
 		if( !isMoving ) return;
-
-		var currTargetPos = targetPos;
-
-		var dir = (currTargetPos - transform.position).normalized;
+		
+		var dir = (targetPos - transform.position).normalized;
 
 		_speed = Mathf.Min( _speed + acceleration, maxSpeed);
 
@@ -76,7 +76,7 @@ public class PlayerComponent : MonoBehaviour {
 		if(
 			(transform.position - targetPos).sqrMagnitude < 0.01f
 		) {
-			if( path.Count > 1) {
+			if( path.Count > 1 || _isOnStairs) {
 				MoveToNextPoint();
 			} else{
 				Debug.Log("Target reached");
@@ -98,9 +98,6 @@ public class PlayerComponent : MonoBehaviour {
 
 		this.path = path;
 
-		var prevPoint = path[0];
-		var targetPoint = path[1];
-
 		MoveToNextPoint();
 
 		_isMoving = true;
@@ -110,9 +107,32 @@ public class PlayerComponent : MonoBehaviour {
 	}
 
 	void MoveToNextPoint(){
+
+		if( _isOnStairs && targetPos != targetPoint.position) {
+			targetPos = targetPoint.position;
+			_isOnStairs = false;
+			return;
+		}
 		prevPoint = path[0];
 		path.RemoveAt(0);
 		targetPoint = path[0];
+
+		if( targetPoint.stairConn == prevPoint){
+			_isOnStairs = true;
+			Debug.Log("_isOnStairs");
+			var axis = Utility.GetNormalAxis( Utility.CleanNormal( transform.up ));
+
+
+			if( targetPoint.stairPos == PathPoint.StairPos.top ) {
+				targetPos = prevPoint.position;
+                targetPos[axis] = targetPoint.position[axis];
+			} else {
+				targetPos = targetPoint.position;
+                targetPos[axis] = prevPoint.position[axis];
+			}
+			return;
+		} 
+		_isOnStairs = false;
 		var camera = Camera.main;
 
 		// this dir is projected because the two points may be
@@ -156,7 +176,7 @@ public class PlayerComponent : MonoBehaviour {
 
 		var neighbours = Utility.getNextPoints(
 			 point, 
-			 PathPoint.CleanNormal(transform.up)
+			 Utility.CleanNormal(transform.up)
 		);
 
 		var up = point.position + transform.up;
@@ -164,13 +184,13 @@ public class PlayerComponent : MonoBehaviour {
 		neighbours.AddRange(
 			Utility.getPointsAtWorldPos(
 				up - Vector3.right * 0.1f,
-				PathPoint.CleanNormal(-Vector3.right)
+				Utility.CleanNormal(-Vector3.right)
 			)
 		);
 		neighbours.AddRange(
 			Utility.getPointsAtWorldPos(
 				up - Vector3.forward * 0.1f,
-				PathPoint.CleanNormal(-Vector3.forward )
+				Utility.CleanNormal(-Vector3.forward )
 			)
 		);
 

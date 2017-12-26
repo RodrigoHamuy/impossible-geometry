@@ -145,7 +145,7 @@ public class PathContainer{
 			(c-b).normalized
 		).normalized;
 
-		up = PathPoint.CleanNormal(up);
+		up = Utility.CleanNormal(up);
 
 		// if ( up != Vector3.up ) return;
 
