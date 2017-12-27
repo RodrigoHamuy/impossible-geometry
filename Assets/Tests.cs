@@ -153,6 +153,13 @@ public class Tests {
         Assert.IsTrue(HasPath(), "Should find a path.");
     }
 
+    [UnityTest]
+    public IEnumerator IssueDoor000_000_ShouldFind()
+    {
+        yield return LoadScene("issue-door-000.000");
+        Assert.IsTrue(HasPath(), "Should find a path.");
+    }
+
 	IEnumerator LoadScene(string sceneName) {
 		SceneManager.LoadScene(sceneName);
 		yield return null;

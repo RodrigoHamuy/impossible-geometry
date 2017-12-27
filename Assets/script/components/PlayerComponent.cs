@@ -133,6 +133,15 @@ public class PlayerComponent : MonoBehaviour {
 			return;
 		} 
 		_isOnStairs = false;
+
+		if( 
+			targetPoint.door != null &&
+			targetPoint.door.conn.point == prevPoint
+		){
+			targetPos = targetPoint.position;
+			transform.position = targetPos;
+			return;
+		}
 		var camera = Camera.main;
 
 		// this dir is projected because the two points may be

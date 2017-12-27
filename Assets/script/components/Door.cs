@@ -4,9 +4,19 @@ using UnityEngine;
 using System.Linq;
 
 public class Door : MonoBehaviour {
+
+    public Door conn;
+
+    PathPoint _point;
+
+    public PathPoint point{ 
+        get{
+            return _point;
+        }
+    }
 	
 	void Start () {
-		var point = Utility.getPointsAtWorldPos(
+		_point = Utility.getPointsAtWorldPos(
             transform.position,
             Utility.CleanNormal(transform.up)
         ).OrderBy(p =>
@@ -14,7 +24,7 @@ public class Door : MonoBehaviour {
             return (transform.position - p.position).sqrMagnitude;
         }).ElementAt(0);
 
-		point.door = this;
+		_point.door = this;
 		
 	}
 }

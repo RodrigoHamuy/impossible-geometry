@@ -87,6 +87,11 @@ public class PathFinder {
             AddToList(point.stairConn, point, nextPoints);
         }
 
+		// Add Doors
+		if ( point.door != null ) {
+			AddToList(point.door.conn.point, point, nextPoints);
+		}
+
 		nextPoints = nextPoints
 		.OrderBy( (PathPoint nextPoint) => {
 			return nextPoint.estimatedCost;

@@ -79,6 +79,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4087967375705902}
+  - component: {fileID: 114869420136040592}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -1298,3 +1299,15 @@ MonoBehaviour:
   m_selectedFaces: 
   m_SelectedEdges: []
   m_selectedTriangles: 
+--- !u!114 &114869420136040592
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1988754031248238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62e4d851c3dbd594a9d7f4897ef20715, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  conn: {fileID: 0}

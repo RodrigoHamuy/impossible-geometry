@@ -81,5 +81,8 @@ EditorBuildSettings:
     path: Assets/scenes/tests/issue-side-000.000.unity
     guid: 86c8c4cffb31753408213596e8596fee
   - enabled: 1
-    path: Assets/scenes/tests/issue-stairs.000.000.unity
+    path: Assets/scenes/tests/issue-stairs-000.000.unity
     guid: 8dcea373a48f66746b2c54317c4fd72c
+  - enabled: 1
+    path: Assets/scenes/tests/issue-door-000.000.unity
+    guid: d695f54758e921947851fc8a3ec1adee
