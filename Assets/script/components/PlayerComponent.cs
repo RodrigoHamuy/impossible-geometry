@@ -76,6 +76,9 @@ public class PlayerComponent : MonoBehaviour {
 		if(
 			(transform.position - targetPos).sqrMagnitude < 0.01f
 		) {
+			if( targetPoint.switchButton != null ){
+				targetPoint.switchButton.Press();
+			}
 			if( path.Count > 1 || _isOnStairs) {
 				MoveToNextPoint();
 			} else{

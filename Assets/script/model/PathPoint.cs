@@ -59,6 +59,8 @@ public class PathPoint {
 
     public Door door = null;
 
+	public Switch switchButton = null;
+
 	public PathPoint( Vector3 pos,  Vector3 normal, PathContainer container){
 
 		this.container = container;
