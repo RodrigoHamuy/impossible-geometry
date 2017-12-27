@@ -42,8 +42,4 @@ public class StairComponent : MonoBehaviour {
         pointBottom.stairPos = PathPoint.StairPos.bottom;
 		
 	}
-
-	void Update () {
-		
-	}
 }
