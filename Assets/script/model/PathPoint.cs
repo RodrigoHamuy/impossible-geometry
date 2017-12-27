@@ -57,6 +57,8 @@ public class PathPoint {
 
 	public StairPos stairPos = StairPos.none;
 
+    public Door door = null;
+
 	public PathPoint( Vector3 pos,  Vector3 normal, PathContainer container){
 
 		this.container = container;
@@ -143,7 +145,4 @@ public class PathPoint {
 			return Mathf.Round( estimatedDistanceToTarget + distanceFromStart );
 		}
 	}
-
-	
-
 }
