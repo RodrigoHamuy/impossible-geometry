@@ -337,7 +337,18 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 114384963669218356, guid: 61b52da1cba4030418491927e9abc914,
+        type: 2}
+      propertyPath: maxMove
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114384963669218356, guid: 61b52da1cba4030418491927e9abc914,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114384963669218356, guid: 61b52da1cba4030418491927e9abc914, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 61b52da1cba4030418491927e9abc914, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &648621267
@@ -925,7 +936,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh-5323968
+  m_Name: pb_Mesh11632
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -1205,12 +1216,34 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1434719157 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1344744797653020, guid: 61b52da1cba4030418491927e9abc914,
+    type: 2}
+  m_PrefabInternal: {fileID: 469500387}
+--- !u!114 &1434719158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1434719157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd8e95799629bfd4d8f8c3dec6dc38fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onMoveDone:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  dir: {x: 0, y: 1, z: 0}
 --- !u!43 &1596978397
 Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh-5303162
+  m_Name: pb_Mesh11582
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -1721,12 +1754,6 @@ Transform:
   m_Father: {fileID: 2087584738}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
---- !u!114 &1959940291 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114384963669218356, guid: 61b52da1cba4030418491927e9abc914,
-    type: 2}
-  m_PrefabInternal: {fileID: 469500387}
-  m_Script: {fileID: 11500000, guid: bec5e4aced563ae4faa22690a8a12b24, type: 3}
 --- !u!1 &2084705620
 GameObject:
   m_ObjectHideFlags: 0
@@ -1881,4 +1908,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 025e320ca1890504dbf0bcd9198063c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slideBlock: {fileID: 1959940291}
+  slideBlock: {fileID: 1434719158}

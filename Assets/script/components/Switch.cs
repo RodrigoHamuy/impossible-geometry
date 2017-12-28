@@ -8,7 +8,7 @@ public class Switch : MonoBehaviour {
 
     bool pressed = false;
 
-	public SlideComponent slideBlock;
+	public SwitchSlide slideBlock;
     
 	void Start () {
         var point = Utility.getPointsAtWorldPos(
@@ -25,6 +25,7 @@ public class Switch : MonoBehaviour {
     public void Press(){
         if( ! pressed ) {
             pressed = true;
+            slideBlock.MoveTo( 1 );
             print("pressed");
         }
     }
