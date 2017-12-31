@@ -947,7 +947,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh11640
+  m_Name: pb_Mesh13260
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -1232,7 +1232,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh11586
+  m_Name: pb_Mesh13198
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -1776,7 +1776,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  target: 90
 --- !u!4 &2022109494
 Transform:
   m_ObjectHideFlags: 0
@@ -1953,12 +1952,12 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2022109492}
         m_MethodName: StartMoving
-        m_Mode: 1
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
-          m_FloatArgument: 0
+          m_FloatArgument: 90
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2

@@ -11,7 +11,6 @@ public class SwitchSlide : MonoBehaviour {
 
 	float _currPos = 0;
 	float _target = 0;
-    float _speed = 15.0f;
     bool _isMoving = false;
 
 	Vector3 origin;

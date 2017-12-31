@@ -8,7 +8,7 @@ public class SwitchRotate : MonoBehaviour {
     public UnityEvent onMoveDone = new UnityEvent();
 
 	float _current = 0;
-	public float target = 90.0f;
+	float _target = 90.0f;
     bool _isMoving = false;
 
 	Quaternion _originalRotation;
@@ -20,7 +20,8 @@ public class SwitchRotate : MonoBehaviour {
 		InitPoints();
 	}
 
-	public void StartMoving(){
+	public void StartMoving( float target ){
+		_target = target;
 		_isMoving = true;
 		_originalRotation = transform.rotation;
 	}
@@ -56,10 +57,10 @@ public class SwitchRotate : MonoBehaviour {
     }
 
 	private void MoveStep() {
-        if (_current < target - 0.001f) {
-            _current += Mathf.Max(target - _current, .2f) * Time.deltaTime * 1.5f;
+        if (_current < _target - 0.001f) {
+            _current += Mathf.Max(_target - _current, .2f) * Time.deltaTime * 1.5f;
         } else {
-            _current = target;
+            _current = _target;
             _isMoving = false;
             Utility.canPlayerMove = true;
         }
