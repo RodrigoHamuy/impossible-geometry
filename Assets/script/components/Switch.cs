@@ -9,6 +9,10 @@ public class Switch : MonoBehaviour {
     bool pressed = false;
 
 	public SwitchSlide slideBlock;
+
+    // TODO: send the instructions on the event
+
+    public UnityEvent onPress = new UnityEvent();
     
 	void Start () {
         var point = Utility.getPointsAtWorldPos(
@@ -25,8 +29,7 @@ public class Switch : MonoBehaviour {
     public void Press(){
         if( ! pressed ) {
             pressed = true;
-            slideBlock.MoveTo( 1 );
-            print("pressed");
+            onPress.Invoke();
         }
     }
 }
