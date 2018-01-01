@@ -7,21 +7,27 @@ using System.Linq;
 public class Switch : MonoBehaviour {
 
     bool pressed = false;
-
-    // TODO: send the instructions on the event
-
     public UnityEvent onPress = new UnityEvent();
-    
-	void Start () {
+
+    private void Start () {
+        var container = InitPoint();
+        container.onGeneratePathPointsDone.AddListener( () => {
+            InitPoint();
+        });
+    }
+
+    private PathContainer InitPoint() {
         var point = Utility.getPointsAtWorldPos(
             transform.position,
             Utility.CleanNormal(transform.up)
-        ).OrderBy(p => {
+        ).OrderBy(p =>
+        {
             return (transform.position - p.position).sqrMagnitude;
         }).ElementAt(0);
 
         point.switchButton = this;
 
+        return point.container;
     }
 
     public void Press(){
