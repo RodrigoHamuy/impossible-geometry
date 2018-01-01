@@ -54,21 +54,25 @@ public class SlideComponent : MonoBehaviour {
 			GetComponentsInChildren<PointsContainerComponent>()
 		);
 
-		containerComponents.RemoveAll( c => {
-			return c.gameObject.tag != "slide";
-		});
+		// containerComponents.RemoveAll( c => {
+		// 	return c.gameObject.tag != "slide";
+		// });
 
 		foreach( var containerComponent in containerComponents ) {
 			var container = containerComponent.pathContainer;
 
 			SetContainerAsMovable(container);
 
-			containerComponent.onMouseDown.AddListener( StartMove );
-
 			onMoveDone.AddListener(() => {
 				container.ResetPoints();
 				SetContainerAsMovable(container);
 			});
+
+			if( containerComponent.gameObject.tag == "slide" ){
+				
+				containerComponent.onMouseDown.AddListener( StartMove );
+			}
+
 
 		}
 

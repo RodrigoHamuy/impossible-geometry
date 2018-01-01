@@ -86,3 +86,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/scenes/tests/issue-door-000.000.unity
     guid: d695f54758e921947851fc8a3ec1adee
+  - enabled: 1
+    path: Assets/scenes/tests/issue-switch-000.000.unity
+    guid: ee5616b0f612de946a08d8afabe77261
+  - enabled: 1
+    path: Assets/scenes/tests/issue-switch-rotate-000.000.unity
+    guid: cfe8645763b5dd74e8b85723a9ce1f73
+  - enabled: 1
+    path: Assets/scenes/tests/issue-stairs2-000.000.unity
+    guid: 52b84689f6a9fc34890d81892d271fb1

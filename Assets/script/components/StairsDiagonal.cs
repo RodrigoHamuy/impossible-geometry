@@ -6,10 +6,11 @@ using System.Linq;
 public class StairsDiagonal : MonoBehaviour {
 
 	private void Start() {
-		var bounds = GetComponent<Renderer>().bounds;
+        
+		var bounds = GetComponent<MeshFilter>().mesh.bounds;
 
 		var top = transform.position
-            + transform.up * bounds.extents.y 
+            + transform.up * bounds.extents.y
 			+ transform.forward * bounds.extents.z + transform.forward * 0.5f;
 
         var bottom = transform.position

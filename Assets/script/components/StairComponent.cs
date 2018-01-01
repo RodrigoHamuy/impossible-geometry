@@ -8,13 +8,17 @@ public class StairComponent : MonoBehaviour {
 	
 	void Start () {
 
-		var bounds = transform.Find("Cube").GetComponent<Renderer>().bounds;
+        var cube = transform.Find("Cube");
+
+		var bounds = cube.GetComponent<MeshFilter>().mesh.bounds;
+
+        var scale = cube.localScale;
 
 		var top = transform.position 
-			+ transform.up * bounds.extents.y;
+			+ transform.up * bounds.extents.y * scale.y;
 
 		var bottom = transform.position
-            - transform.up * bounds.extents.y
+            - transform.up * bounds.extents.y * scale.y
             + transform.forward;
 
         var pointTop = Utility.getPointsAtWorldPos(

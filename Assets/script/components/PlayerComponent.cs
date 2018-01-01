@@ -12,8 +12,6 @@ public class PlayerComponent : MonoBehaviour {
 
 	bool _isOnStairs = false;
 
-	bool _isOnStairsDiagonal = false;
-
 	public bool isMoving{
 		get { return _isMoving; }
 	}
@@ -140,11 +138,10 @@ public class PlayerComponent : MonoBehaviour {
 	}
 
 	bool StairsDiagonalLogic() {
+		
 		if (targetPoint.stairDiagonalConn != prevPoint) return false;
 
-		_isOnStairsDiagonal = true;
 		targetPos = targetPoint.position;
-
 		return true;
 	}
 
@@ -161,7 +158,6 @@ public class PlayerComponent : MonoBehaviour {
 		if( StairsLogic() ) return;
 
 		_isOnStairs = false;
-		_isOnStairsDiagonal = false;
 
 		if( 
 			targetPoint.door != null &&
