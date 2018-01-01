@@ -12,6 +12,8 @@ public class PlayerComponent : MonoBehaviour {
 
 	bool _isOnStairs = false;
 
+	bool _isOnStairsDiagonal = false;
+
 	public bool isMoving{
 		get { return _isMoving; }
 	}
@@ -109,33 +111,57 @@ public class PlayerComponent : MonoBehaviour {
 
 	}
 
+	bool StairsLogic() {
+		if (targetPoint.stairConn == prevPoint) {
+            _isOnStairs = true;
+            Debug.Log("_isOnStairs");
+            var axis = Utility.GetNormalAxis(Utility.CleanNormal(transform.up));
+
+
+            if (targetPoint.stairPos == PathPoint.StairPos.top) {
+                targetPos = prevPoint.position;
+                targetPos[axis] = targetPoint.position[axis];
+            } else {
+                targetPos = targetPoint.position;
+                targetPos[axis] = prevPoint.position[axis];
+            }
+            return true;
+        }
+		return false;
+    }
+
+	bool StairsLogicLastStep() {
+		if (_isOnStairs && targetPos != targetPoint.position) {
+            targetPos = targetPoint.position;
+            _isOnStairs = false;
+            return true;
+        }
+		return false;
+	}
+
+	bool StairsDiagonalLogic() {
+		if (targetPoint.stairDiagonalConn != prevPoint) return false;
+
+		_isOnStairsDiagonal = true;
+		targetPos = targetPoint.position;
+
+		return true;
+	}
+
 	void MoveToNextPoint(){
 
-		if( _isOnStairs && targetPos != targetPoint.position) {
-			targetPos = targetPoint.position;
-			_isOnStairs = false;
-			return;
-		}
+		if( StairsLogicLastStep() ) return;
+
 		prevPoint = path[0];
 		path.RemoveAt(0);
 		targetPoint = path[0];
 
-		if( targetPoint.stairConn == prevPoint){
-			_isOnStairs = true;
-			Debug.Log("_isOnStairs");
-			var axis = Utility.GetNormalAxis( Utility.CleanNormal( transform.up ));
+		if ( StairsDiagonalLogic() ) return;
 
+		if( StairsLogic() ) return;
 
-			if( targetPoint.stairPos == PathPoint.StairPos.top ) {
-				targetPos = prevPoint.position;
-                targetPos[axis] = targetPoint.position[axis];
-			} else {
-				targetPos = targetPoint.position;
-                targetPos[axis] = prevPoint.position[axis];
-			}
-			return;
-		} 
 		_isOnStairs = false;
+		_isOnStairsDiagonal = false;
 
 		if( 
 			targetPoint.door != null &&

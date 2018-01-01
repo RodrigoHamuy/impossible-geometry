@@ -8,8 +8,6 @@ public class Switch : MonoBehaviour {
 
     bool pressed = false;
 
-	public SwitchSlide slideBlock;
-
     // TODO: send the instructions on the event
 
     public UnityEvent onPress = new UnityEvent();

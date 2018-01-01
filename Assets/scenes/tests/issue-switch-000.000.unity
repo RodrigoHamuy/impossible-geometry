@@ -305,51 +305,44 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4488445802928398, guid: 61b52da1cba4030418491927e9abc914, type: 2}
+    - target: {fileID: 4643719731487484, guid: 6c33daad1789eeb47b3b76064a356502, type: 2}
       propertyPath: m_LocalPosition.x
       value: -2
       objectReference: {fileID: 0}
-    - target: {fileID: 4488445802928398, guid: 61b52da1cba4030418491927e9abc914, type: 2}
+    - target: {fileID: 4643719731487484, guid: 6c33daad1789eeb47b3b76064a356502, type: 2}
       propertyPath: m_LocalPosition.y
       value: -3
       objectReference: {fileID: 0}
-    - target: {fileID: 4488445802928398, guid: 61b52da1cba4030418491927e9abc914, type: 2}
+    - target: {fileID: 4643719731487484, guid: 6c33daad1789eeb47b3b76064a356502, type: 2}
       propertyPath: m_LocalPosition.z
       value: -3
       objectReference: {fileID: 0}
-    - target: {fileID: 4488445802928398, guid: 61b52da1cba4030418491927e9abc914, type: 2}
+    - target: {fileID: 4643719731487484, guid: 6c33daad1789eeb47b3b76064a356502, type: 2}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4488445802928398, guid: 61b52da1cba4030418491927e9abc914, type: 2}
+    - target: {fileID: 4643719731487484, guid: 6c33daad1789eeb47b3b76064a356502, type: 2}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4488445802928398, guid: 61b52da1cba4030418491927e9abc914, type: 2}
+    - target: {fileID: 4643719731487484, guid: 6c33daad1789eeb47b3b76064a356502, type: 2}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4488445802928398, guid: 61b52da1cba4030418491927e9abc914, type: 2}
+    - target: {fileID: 4643719731487484, guid: 6c33daad1789eeb47b3b76064a356502, type: 2}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 4488445802928398, guid: 61b52da1cba4030418491927e9abc914, type: 2}
+    - target: {fileID: 4643719731487484, guid: 6c33daad1789eeb47b3b76064a356502, type: 2}
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114384963669218356, guid: 61b52da1cba4030418491927e9abc914,
-        type: 2}
-      propertyPath: maxMove
-      value: 1
+    - target: {fileID: 1660089169440170, guid: 6c33daad1789eeb47b3b76064a356502, type: 2}
+      propertyPath: m_Name
+      value: SlideBlock
       objectReference: {fileID: 0}
-    - target: {fileID: 114384963669218356, guid: 61b52da1cba4030418491927e9abc914,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114384963669218356, guid: 61b52da1cba4030418491927e9abc914, type: 2}
-  m_ParentPrefab: {fileID: 100100000, guid: 61b52da1cba4030418491927e9abc914, type: 2}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 6c33daad1789eeb47b3b76064a356502, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &648621267
 GameObject:
@@ -1216,28 +1209,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1434719157 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1344744797653020, guid: 61b52da1cba4030418491927e9abc914,
+--- !u!114 &1434719158 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114760332736696742, guid: 6c33daad1789eeb47b3b76064a356502,
     type: 2}
   m_PrefabInternal: {fileID: 469500387}
---- !u!114 &1434719158
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1434719157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd8e95799629bfd4d8f8c3dec6dc38fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onMoveDone:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  dir: {x: 0, y: 1, z: 0}
 --- !u!43 &1596978397
 Mesh:
   m_ObjectHideFlags: 0
@@ -1908,7 +1885,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 025e320ca1890504dbf0bcd9198063c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slideBlock: {fileID: 1434719158}
   onPress:
     m_PersistentCalls:
       m_Calls:
