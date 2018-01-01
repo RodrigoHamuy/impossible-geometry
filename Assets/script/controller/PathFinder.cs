@@ -87,6 +87,11 @@ public class PathFinder {
             AddToList(point.stairConn, point, nextPoints);
         }
 
+		// Add Diagonal Stairs
+		if (point.stairDiagonalConn != null) {
+            AddToList(point.stairDiagonalConn, point, nextPoints);
+        }
+
 		// Add Doors
 		if ( point.door != null ) {
 			AddToList(point.door.conn.point, point, nextPoints);

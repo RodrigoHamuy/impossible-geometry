@@ -51,13 +51,23 @@ public class PathPoint {
 	public bool rotating = false;
 	public bool canMove = false;
 
-	public PathPoint stairConn = null;
+	// Vertical stair
 
 	public enum StairPos{ none, top, bottom };
 
+	public PathPoint stairConn = null;	
+
 	public StairPos stairPos = StairPos.none;
 
+	// Diagonal stair
+
+	public PathPoint stairDiagonalConn = null;
+
+	// Door
+
     public Door door = null;
+
+	public Switch switchButton = null;
 
 	public PathPoint( Vector3 pos,  Vector3 normal, PathContainer container){
 
