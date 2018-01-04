@@ -6,7 +6,7 @@ public class PathFinder {
 
 	PathPoint _target;
 
-	Vector3 normal;
+	// Vector3 normal;
 
 	public List<PathPoint> path;
 
@@ -17,14 +17,14 @@ public class PathFinder {
 	public bool MovePlayerTo(
 		Vector3 player,
 		Vector3 tapPos,
-		Vector3 n = default(Vector3)
+		Vector3 normal = default(Vector3)
 	){
 
-		if( n == Vector3.zero ) n = Vector3.up;
+		// if( normal == Vector3.zero ) normal = Vector3.up;
 
-		normal = n;
+		// normal = n;
 
-		var targets = Utility.GetPointsOnTapPos(tapPos, normal);
+		var targets = Utility.GetPointsOnTapPos(tapPos, Vector3.zero);
 
 		targets = targets.OrderBy(t => {
             return (tapPos - t.screenPosition).sqrMagnitude;
@@ -69,11 +69,11 @@ public class PathFinder {
 		}
 	}
 
-	static public List<PathPoint> findNextPoints(PathPoint point, Vector3 normal){
+	static public List<PathPoint> findNextPoints(PathPoint point){
 
 		List<PathPoint> nextPoints = new List<PathPoint>();
 
-		var newNextPoints =  Utility.getNextPoints( point, normal, true );
+		var newNextPoints =  Utility.getNextPoints( point, point.normal, true );
 
 		// A* Logic
 		foreach( var nextPoint in newNextPoints ){
@@ -153,7 +153,7 @@ public class PathFinder {
 		current.target = target;
 		current.state = PathPoint.State.Closed;
 
-		List<PathPoint> nexts = findNextPoints(current, normal);
+		List<PathPoint> nexts = findNextPoints(current);
 
 		possiblePaths.Remove(currentList);
 

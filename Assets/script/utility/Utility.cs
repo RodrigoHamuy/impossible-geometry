@@ -64,7 +64,7 @@ public class Utility {
 
             var point = hit.collider.transform.GetComponent<PathPointComponent>().point;
 
-            if (point.normal == normal) {
+            if ( normal == Vector3.zero || point.normal == normal) {
                 points.Add(point);
             }
 
