@@ -95,3 +95,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/scenes/tests/issue-stairs2-000.000.unity
     guid: 52b84689f6a9fc34890d81892d271fb1
+  - enabled: 1
+    path: Assets/scenes/tests/issue-door-000.001.unity
+    guid: c138c51660240fd4e8f1b0106b6a396a

@@ -161,6 +161,14 @@ public class Tests {
     }
 
     [UnityTest]
+    public IEnumerator IssueDoor000_001_ShouldFind()
+    {
+        yield return LoadScene("issue-door-000.001");
+        var path = GetPath();
+        Assert.AreEqual(new Vector3(-1.0f, -1.0f, -3.5f), path.Last().position, "Should be the right target.");
+    }
+
+    [UnityTest]
     public IEnumerator IssueStairsDiagonal000_000_ShouldFind()
     {
         yield return LoadScene("issue-stairs2-000.000");
@@ -206,7 +214,8 @@ public class Tests {
 
 		var pathFound = pathFinder.MovePlayerTo(
 			player.transform.position,
-			touchPointPos
+			touchPointPos,
+            Utility.CleanNormal(player.transform.up)
 		);
 
 		Assert.IsTrue( pathFound, "Should find a path." );

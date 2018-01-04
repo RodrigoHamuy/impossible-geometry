@@ -165,6 +165,7 @@ public class PlayerComponent : MonoBehaviour {
 		){
 			targetPos = targetPoint.position;
 			transform.position = targetPos;
+			transform.up = targetPoint.normal;
 			return;
 		}
 		var camera = Camera.main;

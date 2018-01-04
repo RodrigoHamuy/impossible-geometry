@@ -17,12 +17,8 @@ public class PathFinder {
 	public bool MovePlayerTo(
 		Vector3 player,
 		Vector3 tapPos,
-		Vector3 normal = default(Vector3)
+		Vector3 normal
 	){
-
-		// if( normal == Vector3.zero ) normal = Vector3.up;
-
-		// normal = n;
 
 		var targets = Utility.GetPointsOnTapPos(tapPos, Vector3.zero);
 
