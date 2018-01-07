@@ -5,8 +5,17 @@ using UnityEngine;
 
 public class PlayerComponent : MonoBehaviour {
 
+	[HideInInspector]
 	public UnityEvent onTargetReached = new UnityEvent();
+
+	[HideInInspector]
 	public UnityEvent onStartMoving = new UnityEvent();
+
+	[HideInInspector]
+	public UnityEvent onNodeReached = new UnityEvent();
+
+	[HideInInspector]
+	public UnityEvent onNodeHalfWay = new UnityEvent();
 
 	bool _isMoving = false;
 
@@ -24,11 +33,14 @@ public class PlayerComponent : MonoBehaviour {
 		get { return _speed; }
 	}
 
-	List<PathPoint> path;
+	[HideInInspector]
+	public List<PathPoint> path;
+
 	Vector3 targetPos;
 	PathPoint targetPoint;
 	PathPoint prevPoint;
 
+	[HideInInspector]
 	public Vector3 nextNodeDir;
 
 	void Start() {
@@ -71,11 +83,22 @@ public class PlayerComponent : MonoBehaviour {
 
 		_speed = Mathf.Min( _speed + acceleration, maxSpeed);
 
-		transform.position = transform.position + dir * _speed * Time.deltaTime;
+		var step = dir * _speed * Time.deltaTime;
+		var newPos = transform.position + step;
+		var newDistance = ( targetPos - newPos ).sqrMagnitude;
+		var prevDistance = ( targetPos - transform.position).sqrMagnitude;
+
+		if( prevDistance >= 0.5f && newDistance <= 0.5f ) {
+			onNodeHalfWay.Invoke();
+			print("onNodeHalfWay");
+		}
+
+		transform.position = transform.position + step;
 
 		if(
 			(transform.position - targetPos).sqrMagnitude < 0.01f
 		) {
+			onNodeReached.Invoke();
 			if( targetPoint.switchButton != null ){
 				targetPoint.switchButton.Press();
 			}
