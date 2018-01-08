@@ -293,6 +293,18 @@ public class Utility {
 		}
 		return dir.normalized;
 	}
+	
+	public static Vector3 getDirFromScreenView( Vector3 from, Vector3 to, Vector3 normal ){
+
+		var dir = Vector3.ProjectOnPlane(
+			to - from,
+			normal
+		).normalized;
+		for (var i = 0; i < 3; i++) {
+			dir[i] = Mathf.Round(dir[i]);
+		}
+		return dir.normalized;
+	}
 
 	public static void SetPointColor(PathPointComponent point, Color color) {
         var rend = point.GetComponentsInChildren<Renderer>()[0];

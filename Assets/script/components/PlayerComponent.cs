@@ -37,8 +37,18 @@ public class PlayerComponent : MonoBehaviour {
 	public List<PathPoint> path;
 
 	Vector3 targetPos;
-	PathPoint targetPoint;
-	PathPoint prevPoint;
+	
+	PathPoint _targetPoint;
+
+	public PathPoint targetPoint{
+		get{ return _targetPoint; }
+	}
+
+	PathPoint _prevPoint;
+
+	public PathPoint prevPoint{
+		get{ return _prevPoint; }
+	}
 
 	[HideInInspector]
 	public Vector3 nextNodeDir;
@@ -99,8 +109,8 @@ public class PlayerComponent : MonoBehaviour {
 			(transform.position - targetPos).sqrMagnitude < 0.01f
 		) {
 			onNodeReached.Invoke();
-			if( targetPoint.switchButton != null ){
-				targetPoint.switchButton.Press();
+			if( _targetPoint.switchButton != null ){
+				_targetPoint.switchButton.Press();
 			}
 			if( path.Count > 1 || _isOnStairs) {
 				MoveToNextPoint();
@@ -109,8 +119,8 @@ public class PlayerComponent : MonoBehaviour {
 				path.Clear();
 				_isMoving = false;
 				transform.position = targetPos;
-				if( targetPoint.canMove ) {
-					transform.parent = targetPoint.container.component.transform.parent;
+				if( _targetPoint.canMove ) {
+					transform.parent = _targetPoint.container.component.transform.parent;
 				} else {
 					transform.parent = null;
 				}
@@ -133,18 +143,18 @@ public class PlayerComponent : MonoBehaviour {
 	}
 
 	bool StairsLogic() {
-		if (targetPoint.stairConn == prevPoint) {
+		if (_targetPoint.stairConn == _prevPoint) {
             _isOnStairs = true;
             Debug.Log("_isOnStairs");
             var axis = Utility.GetNormalAxis(Utility.CleanNormal(transform.up));
 
 
-            if (targetPoint.stairPos == PathPoint.StairPos.top) {
-                targetPos = prevPoint.position;
-                targetPos[axis] = targetPoint.position[axis];
+            if (_targetPoint.stairPos == PathPoint.StairPos.top) {
+                targetPos = _prevPoint.position;
+                targetPos[axis] = _targetPoint.position[axis];
             } else {
-                targetPos = targetPoint.position;
-                targetPos[axis] = prevPoint.position[axis];
+                targetPos = _targetPoint.position;
+                targetPos[axis] = _prevPoint.position[axis];
             }
             return true;
         }
@@ -152,8 +162,8 @@ public class PlayerComponent : MonoBehaviour {
     }
 
 	bool StairsLogicLastStep() {
-		if (_isOnStairs && targetPos != targetPoint.position) {
-            targetPos = targetPoint.position;
+		if (_isOnStairs && targetPos != _targetPoint.position) {
+            targetPos = _targetPoint.position;
             _isOnStairs = false;
             return true;
         }
@@ -162,9 +172,9 @@ public class PlayerComponent : MonoBehaviour {
 
 	bool StairsDiagonalLogic() {
 		
-		if (targetPoint.stairDiagonalConn != prevPoint) return false;
+		if (_targetPoint.stairDiagonalConn != _prevPoint) return false;
 
-		targetPos = targetPoint.position;
+		targetPos = _targetPoint.position;
 		return true;
 	}
 
@@ -172,9 +182,9 @@ public class PlayerComponent : MonoBehaviour {
 
 		if( StairsLogicLastStep() ) return;
 
-		prevPoint = path[0];
+		_prevPoint = path[0];
 		path.RemoveAt(0);
-		targetPoint = path[0];
+		_targetPoint = path[0];
 
 		if ( StairsDiagonalLogic() ) return;
 
@@ -183,46 +193,46 @@ public class PlayerComponent : MonoBehaviour {
 		_isOnStairs = false;
 
 		if( 
-			targetPoint.door != null &&
-			targetPoint.door.conn.point == prevPoint
+			_targetPoint.door != null &&
+			_targetPoint.door.conn.point == _prevPoint
 		){
-			targetPos = targetPoint.position;
+			targetPos = _targetPoint.position;
 			transform.position = targetPos;
-			transform.up = targetPoint.normal;
+			transform.up = _targetPoint.normal;
 			return;
 		}
 		var camera = Camera.main;
 
 		// this dir is projected because the two points may be
 		// at different depth from the camera perspective.
-		nextNodeDir = Utility.getDirFromScreenView( prevPoint.position, targetPoint.position );
+		nextNodeDir = Utility.getDirFromScreenView( _prevPoint.position, _targetPoint.position );
 
 		// TODO: I think this is only working when Player normal is up.
 		// Need to make it dynamic to support player walking on walls/roofs.
 
 		Vector3 overlappingPos;
 
-		if( isOverlapped( targetPoint, out overlappingPos ) ){
+		if( isOverlapped( _targetPoint, out overlappingPos ) ){
 
-			var nextDir = Utility.getDirFromScreenView( targetPoint.position, overlappingPos );
+			var nextDir = Utility.getDirFromScreenView( _targetPoint.position, overlappingPos );
 			transform.position = overlappingPos - nextDir - nextNodeDir;
 			targetPos = overlappingPos - nextDir;
 
-		}else if ( isOverlapped( prevPoint, out overlappingPos ) ) {
+		}else if ( isOverlapped( _prevPoint, out overlappingPos ) ) {
 
-			var nextDir = Utility.getDirFromScreenView( overlappingPos, prevPoint.position );
+			var nextDir = Utility.getDirFromScreenView( overlappingPos, _prevPoint.position );
 			transform.position = overlappingPos + nextDir;
 			targetPos = overlappingPos + nextDir + nextNodeDir;
 
-		} else if ( prevPoint.position.y < targetPoint.position.y ) {
+		} else if ( _prevPoint.position.y < _targetPoint.position.y ) {
 
-			transform.position = targetPoint.position - nextNodeDir;
-			targetPos = targetPoint.position;
+			transform.position = _targetPoint.position - nextNodeDir;
+			targetPos = _targetPoint.position;
 
 		} else {
 
-			transform.position = prevPoint.position;
-			targetPos = prevPoint.position + nextNodeDir;
+			transform.position = _prevPoint.position;
+			targetPos = _prevPoint.position + nextNodeDir;
 
 		}
 

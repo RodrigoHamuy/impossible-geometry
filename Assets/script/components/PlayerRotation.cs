@@ -9,71 +9,72 @@ public class PlayerRotation : MonoBehaviour {
 	PlayerComponent player;
 
 	Vector3 prevForward;
-	Vector3 currForward;
-	Vector3 nextForward;
 
 	float currAngle;
 	float targetAngle;
-	float rotationAmount;
-
-	bool isRotating = false;
 	
 	void Start () {
 
 		body = transform.Find( "animation" );
 
 		player = GetComponent<PlayerComponent>();
-		player.onNodeHalfWay.AddListener( UpdateForward );
-
-		prevForward = transform.forward;
-		currForward = prevForward;
-		// player.onStartMoving.AddListener( UpdateForwardOnStartMoving );
+		player.onNodeHalfWay.AddListener( UpdateForwardHalfWay );
+		player.onNodeReached.AddListener( UpdateForwardOnNodeReached );
+		player.onStartMoving.AddListener( UpdateForwardOnStart );
 		
 	}
 
 	void Update () {
 
-		if ( ! isRotating ) return;
+		var newAngle = Mathf.LerpAngle( currAngle, targetAngle, Time.deltaTime * player.speed);
 
-		// var rotationStep = player.speed * Time.deltaTime;
-		// rotationAmount = Mathf.Min( rotationAmount + rotationStep, 1.0f) ;
-		rotationAmount = Mathf.Min( rotationAmount + Time.deltaTime, 1.0f) ;
+		body.transform.Rotate( Vector3.up, newAngle-currAngle);
 
-		var newAngle = Mathf.LerpAngle( currAngle, targetAngle, rotationAmount); 
-
-		// body.rotation = transform.rotation;
-
-		// body.forward = prevForward;
-
-		// var rotation = body.rotation;
-
-		body.Rotate( body.up, newAngle - currAngle );
 		currAngle = newAngle;
 
-		if( rotationAmount == 1.0f ) isRotating = false;
+		prevForward = transform.forward;
 
 	}
 
-	// void UpdateForwardOnStartMoving() {
-	// }
-
-	void UpdateForward() {
+	void UpdateForwardHalfWay() {
 
 		if( player.path.Count < 2) return;
 
-		var nextNode = player.path[0];
-		var nextNextNode = player.path[1];
+		var prevNode = player.path[0];
+		var nextNode = player.path[1];
 
-		if( nextNode.stairConn != null && nextNode.stairConn == nextNextNode.stairConn ) return;
-
-		nextForward = Utility.getDirFromScreenView( nextNode.position, nextNextNode.position );		
-
-		targetAngle = Vector3.Angle( prevForward, nextForward);
-
-		if( targetAngle != 0.0f ) {
-			rotationAmount = 0;
-			isRotating = true;
-		}
+		UpdateForward( prevNode, nextNode);
 
 	}
+
+	void UpdateForwardOnStart() {
+		var prevNode = player.prevPoint;
+		var nextNode = player.targetPoint;
+		UpdateForward( prevNode, nextNode);
+	}
+
+	void UpdateForwardOnNodeReached() {
+
+		if( player.path.Count > 1 ) return;
+		var prevNode = player.prevPoint;
+		var nextNode = player.targetPoint;
+		UpdateForward( prevNode, nextNode);
+
+	}
+
+	void UpdateForward( PathPoint prevNode, PathPoint nextNode ) {
+
+		Vector3 nextForward;
+
+		if( prevNode.stairConn != null && prevNode.stairConn == nextNode ) {
+			nextForward = Utility.getDirFromScreenView( prevNode.position, nextNode.position, prevNode.normal );				
+		}else {
+			nextForward = Utility.getDirFromScreenView( prevNode.position, nextNode.position );	
+		}
+
+		targetAngle = Vector3.SignedAngle( prevForward, nextForward, transform.up);
+
+	}
+
+
 }
