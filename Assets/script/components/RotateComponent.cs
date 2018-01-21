@@ -10,15 +10,8 @@ public class RotateComponent : MonoBehaviour {
 	public UnityEvent onCanRotateChange = new UnityEvent();
 
 	Vector3 startDir;
-	bool _isRotating = false;
 
-	bool isRotating {
-		get{ return _isRotating; }
-		set{
-			_isRotating = value;
-			Utility.canPlayerMove = ! _isRotating;
-		}
-	}
+	bool isRotating;
 
 	public bool canRotate = true;
 
@@ -79,41 +72,37 @@ public class RotateComponent : MonoBehaviour {
 	// 	onRotationDone.Invoke();
 	// }
 
-	bool touchStart = false;
-	bool mouseTouchStart = false;
+	bool isTouching = false;
 
 	void OnHandleMouseDown(){
-		touchStart = true;
+		isTouching = true;
 	}
 
 
 	void CheckInput(){
 
-		if( touchStart ) {
-			if (Input.touchCount == 1) {
+		var touchPhase = Utility.getTouchPhase();
 
-				var touch = Input.GetTouch (0);
+		if( 
+			isTouching && 
+			touchPhase != TouchPhase.Canceled &&
+			(
+				isRotating != (touchPhase == TouchPhase.Began)
+			)
+		) {
 
-				OnTouch (
-				touch.position,
-				touch.phase == TouchPhase.Began
-				);
+			var touchPos = Utility.getTouch();
 
-			} else if (Input.GetMouseButton (0)) {
+			OnTouch( touchPos, touchPhase == TouchPhase.Began );
 
-				OnTouch (
-				Input.mousePosition,
-				!mouseTouchStart
-				);
-				mouseTouchStart = true;
-			} else {
 
-				touchStart = false;
-				mouseTouchStart = false;
-			}
+			if ( touchPhase == TouchPhase.Ended ) isTouching = false;
+
 		} else {
 
-			if( isRotating ) SnapRotation();
+			if( isRotating ) {
+				SnapRotation();
+			}
 
 		}
 
@@ -143,8 +132,12 @@ public class RotateComponent : MonoBehaviour {
 			transform.rotation = snapRotation;
 			isRotating = false;
 			isRotationTargetSet = false;
-			onRotationDone.Invoke();
-			Debug.Log("done");
+
+			if( ! Utility.canPlayerMove ) {
+				Utility.canPlayerMove = true;
+				onRotationDone.Invoke();
+				print("onRotationDone");
+			}
 		}
 
 	}
@@ -166,11 +159,17 @@ public class RotateComponent : MonoBehaviour {
             startDir = endDir;
 			isRotating =  true;
 			isRotationTargetSet = false;
-			onRotationStart.Invoke();
 			return;
 		}
 
+
         var angle = Vector3.SignedAngle(startDir, endDir, Vector3.forward);
+
+		if( Utility.canPlayerMove && Mathf.Abs(angle) > 0.1f ) {
+			onRotationStart.Invoke();
+			Utility.canPlayerMove = false;
+			print("onRotationStart");
+		}
 
         var newAngle = Mathf.LerpAngle(currAngle, -angle, rotationSpeed * Time.deltaTime);
 

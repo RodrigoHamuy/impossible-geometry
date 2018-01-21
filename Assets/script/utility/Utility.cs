@@ -338,40 +338,69 @@ public class Utility {
 
     // Touch
 
-    public static Vector2 getTouchEnd()
-    {
+    public static Vector2 getTouch() {
+
         Vector2 tapPos = Vector2.zero;
 
-        if (
-            (Input.touchCount > 0) &&
-            (Input.GetTouch(0).phase == TouchPhase.Ended)
-        )
-        {
+        if ( Input.touchCount == 1 ) {
 
             var touch = Input.GetTouch(0);
             tapPos = touch.position;
 
-        }
-        else if (Input.mousePresent && Input.GetMouseButtonUp(0))
-        {
+        } else if (Input.mousePresent) {
 
             tapPos = Input.mousePosition;
 
         }
 
         return tapPos;
+
     }
 
+    public static Vector2 getTouchEnd() {
 
-    // public static Vector3 GetTouchPosition(){
-    // 	if (Input.touchCount == 1) {
-    // 		var touch = Input.GetTouch (0);
-    // 		return touch.position;
-    // 	} else if ( Input.mousePresent ) {
-    // 		return Input.mousePosition;
-    // 	}
-    // 	return Vector3.zero;
-    // }
+        if( getTouchPhase() == TouchPhase.Ended ) return getTouch();
+        return Vector2.zero;
+
+    }
+
+    public static Vector2 getTouchStart() {
+
+        if( getTouchPhase() == TouchPhase.Began ) return getTouch();
+
+        return Vector2.zero;
+    }
+    
+    public static TouchPhase getTouchPhase() {
+        if (
+            (
+                (Input.touchCount == 1) &&
+                (Input.GetTouch(0).phase == TouchPhase.Ended)
+            ) || (
+                Input.mousePresent && Input.GetMouseButtonUp(0)
+            )
+        ) return TouchPhase.Ended;
+
+        if (
+            (
+                (Input.touchCount == 1) &&
+                (Input.GetTouch(0).phase == TouchPhase.Began)
+            ) || (
+                Input.mousePresent && Input.GetMouseButtonDown(0)
+            ) 
+        ) return TouchPhase.Began;
+
+        if (
+            (
+                (Input.touchCount == 1) &&
+                (Input.GetTouch(0).phase == TouchPhase.Moved)
+            ) || (
+                Input.mousePresent && Input.GetMouseButton(0)
+            ) 
+        ) return TouchPhase.Moved;
+
+        return TouchPhase.Canceled;
+    }
 
 
 }
