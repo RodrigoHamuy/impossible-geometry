@@ -57,6 +57,10 @@ public class PointInspector : Editor {
             var labelText = point.position.ToString() + "\n" +
 			point.realCamPosition.ToString();
 
+			if( point.twistedBlockConn != null) {
+				labelText += "\n" + point.twistedBlockConn.position.ToString();
+			}
+
             Handles.Label(
                 targetObject.transform.position,
                 labelText,

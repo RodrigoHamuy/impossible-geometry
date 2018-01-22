@@ -175,6 +175,14 @@ public class Tests {
         Assert.IsTrue(HasPath(), "Should find a path.");
     }
 
+    [UnityTest]
+    public IEnumerator IssueTwistedBlock000_000_ShouldFind()
+    {
+        yield return LoadScene("issue-twisted-block-000.000");
+        var path = GetPath();
+        Assert.AreEqual(new Vector3(-7.0f, -1.0f, -3.5f), path.Last().position, "Should be the right target.");
+    }
+
 	IEnumerator LoadScene(string sceneName) {
 		SceneManager.LoadScene(sceneName);
 		yield return null;

@@ -21,6 +21,8 @@ public class PlayerComponent : MonoBehaviour {
 
 	bool _isOnStairs = false;
 
+	bool _isOnTwistedBlock = false;
+
 	public bool isMoving{
 		get { return _isMoving; }
 	}
@@ -85,6 +87,16 @@ public class PlayerComponent : MonoBehaviour {
 
 	}
 
+	void UpdateNormal() {
+		var totalDist = (targetPos - prevPoint.position).sqrMagnitude;
+
+		var currDist = (targetPos - transform.position).sqrMagnitude;
+
+		if( currDist < 0.01f ) currDist = 0.0f;
+
+		transform.up = Vector3.Slerp( prevPoint.normal, targetPoint.normal, (totalDist-currDist)/totalDist );
+	}
+
 	void Update(){
 
 		if( !isMoving ) return;
@@ -104,6 +116,10 @@ public class PlayerComponent : MonoBehaviour {
 		}
 
 		transform.position = transform.position + step;
+
+		if( _isOnTwistedBlock ) {
+			UpdateNormal();
+		}
 
 		if(
 			(transform.position - targetPos).sqrMagnitude < 0.01f
@@ -178,6 +194,18 @@ public class PlayerComponent : MonoBehaviour {
 		return true;
 	}
 
+	bool TwistedBlockLogic() {
+		if( 
+			_targetPoint.twistedBlockConn != null && 
+			_targetPoint.twistedBlockConn != prevPoint 
+		) return false;
+
+		targetPos = _targetPoint.position;
+		_isOnTwistedBlock = true;
+
+		return true;
+	}
+
 	void MoveToNextPoint(){
 
 		if( StairsLogicLastStep() ) return;
@@ -185,6 +213,8 @@ public class PlayerComponent : MonoBehaviour {
 		_prevPoint = path[0];
 		path.RemoveAt(0);
 		_targetPoint = path[0];
+
+		if ( TwistedBlockLogic() ) return;
 
 		if ( StairsDiagonalLogic() ) return;
 

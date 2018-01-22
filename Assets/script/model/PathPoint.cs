@@ -60,8 +60,10 @@ public class PathPoint {
 	public StairPos stairPos = StairPos.none;
 
 	// Diagonal stair
-
 	public PathPoint stairDiagonalConn = null;
+
+	// Twisted blocks
+	public PathPoint twistedBlockConn = null;
 
 	// Door
 
