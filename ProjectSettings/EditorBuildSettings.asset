@@ -98,3 +98,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/scenes/tests/issue-door-000.001.unity
     guid: c138c51660240fd4e8f1b0106b6a396a
+  - enabled: 1
+    path: Assets/scenes/tests/issue-twisted-block-000.000.unity
+    guid: 5b8b1c4a6aa5655448111e3db06b4343
