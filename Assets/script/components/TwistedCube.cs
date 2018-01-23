@@ -7,7 +7,6 @@ public class TwistedCube : MonoBehaviour {
 	void Start() {
 
 		var bounds = GetComponent<MeshFilter>().mesh.bounds;
-		var matrix = transform.localToWorldMatrix;
 
 		var right = (bounds.extents.x + .5f) * Vector3.right;
 
