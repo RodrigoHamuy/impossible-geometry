@@ -65,6 +65,9 @@ public class PathPoint {
 	// Twisted blocks
 	public PathPoint twistedBlockConn = null;
 
+    // Twisted blocks
+    public PathPoint archBlockConn = null;
+
 	// Door
 
     public Door door = null;

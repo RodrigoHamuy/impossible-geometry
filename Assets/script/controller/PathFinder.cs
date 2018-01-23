@@ -98,6 +98,11 @@ public class PathFinder {
 			AddToList(point.twistedBlockConn, point, nextPoints);
 		}
 
+		// Add Arch Block
+		if ( point.archBlockConn != null ) {
+			AddToList(point.archBlockConn, point, nextPoints);
+		}
+
 		nextPoints = nextPoints
 		.OrderBy( (PathPoint nextPoint) => {
 			return nextPoint.estimatedCost;
