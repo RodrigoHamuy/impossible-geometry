@@ -105,52 +105,67 @@ public class PlayerComponent : MonoBehaviour {
 
 		var circunference = 2.0f * Mathf.PI;
 
-        var dir = (targetPoint.position - transform.position).normalized;
-
         _speed = Mathf.Min(_speed + acceleration, maxSpeed);
 
-        var step = dir * _speed * Time.deltaTime;
 
 		var distToPrev = (transform.position - prevPoint.position).magnitude;
 		var distToNext = (transform.position - targetPoint.position).magnitude;
 
-		if( distToPrev > 0.5f && distToNext > 0.5f ) {
+		var prevEdge = prevPoint.position + targetPoint.normal * .5f;
+		var targetEdge = targetPoint.position + prevPoint.normal * .5f;
+
+		if( distToPrev < 0.5f ) {
+
+			var dir = Utility.CleanNormal((prevEdge - prevPoint.position).normalized);
+
+			print( "distToPrev - dir: " + dir.ToString());
+			print( "distToPrev - prevEdge: " + prevEdge.ToString());
+
+        	var step = dir * _speed * Time.deltaTime;
+			transform.position = transform.position + step;
+
+		} else if( distToNext < 0.5f ) {
+
+			var dir = Utility.CleanNormal((targetEdge - targetPoint.position).normalized);
+        	var step = dir * _speed * Time.deltaTime;
+			transform.position = transform.position + step;
+
+		} else {
 
 			var center = targetPoint.position - targetPoint.normal + prevPoint.normal * 0.5f;
 
-			var prevEdge = prevPoint.position + targetPoint.normal * .5f;
-			var targetEdge = targetPoint.position + prevPoint.normal * .5f;
 
 			var centerToPrev = prevEdge - center;
 			var centerToNext = targetEdge - center;
 
-			var angle = Vector3.Angle( centerToPrev, centerToNext );
+			var rotationAxis = Vector3.Cross( prevPoint.normal, targetPoint.normal);
+
+			var angle = Vector3.SignedAngle( centerToPrev, centerToNext, rotationAxis );
 
 			var centerToPlayer = transform.position - center;
 
-			var currAngle = Vector3.Angle(centerToPlayer, centerToNext );
+			var currAngle = Vector3.SignedAngle(centerToPlayer, centerToNext, rotationAxis );
 
 			var currArchDist = circunference * (currAngle / 360.0f);
 
-			var nextArchDist = currArchDist + step.magnitude;
+			var nextArchDist = currArchDist + _speed * Time.deltaTime;
 
 			var nextAngle = (nextArchDist / circunference) * 360.0f;
 
-			var rotation = Quaternion.AngleAxis( nextAngle, Vector3.Cross( prevPoint.normal, targetPoint.normal) );
+			var rotation = Quaternion.AngleAxis( nextAngle, rotationAxis );
 
 			var newPos = rotation * centerToPrev + center;
 
 			transform.position = newPos;
 
-			print("angle: " + angle.ToString());
+			print("angle: " + angle.ToString());			
+			
+			UpdateNormal();
 
-		} else {
-			transform.position = transform.position + step;
 		}
 
 
 
-		UpdateNormal();
 		
 
 	}
