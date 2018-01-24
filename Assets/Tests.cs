@@ -183,6 +183,14 @@ public class Tests {
         Assert.AreEqual(new Vector3(-7.0f, -1.0f, -3.5f), path.Last().position, "Should be the right target.");
     }
 
+    [UnityTest]
+    public IEnumerator IssueArchBlock000_000_ShouldFind()
+    {
+        yield return LoadScene("issue-arch-block-000.000");
+        var path = GetPath();
+        Assert.AreEqual(new Vector3(-3.5f, -3.0f, -3.0f), path.Last().position, "Should be the right target.");
+    }
+
 	IEnumerator LoadScene(string sceneName) {
 		SceneManager.LoadScene(sceneName);
 		yield return null;

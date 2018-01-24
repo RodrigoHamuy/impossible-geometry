@@ -21,7 +21,9 @@ public class PlayerComponent : MonoBehaviour {
 
 	bool _isOnStairs = false;
 
-	bool _isOnTwistedBlock = false;
+    bool _isOnTwistedBlock = false;
+
+    bool _isOnArchBlock = false;
 
 	public bool isMoving{
 		get { return _isMoving; }
@@ -97,25 +99,126 @@ public class PlayerComponent : MonoBehaviour {
 		transform.up = Vector3.Slerp( prevPoint.normal, targetPoint.normal, (totalDist-currDist)/totalDist );
 	}
 
-	void Update(){
+	void UpdateArchPosBeforePrevEdge( Vector3 prevEdge ) {
 
-		if( !isMoving ) return;
-		
-		var dir = (targetPos - transform.position).normalized;
+		var dir = Utility.CleanNormal(targetPoint.normal );
 
-		_speed = Mathf.Min( _speed + acceleration, maxSpeed);
+        var step = dir * _speed * Time.deltaTime;
+        transform.position = transform.position + step;
 
+    }
+
+	void UpdateArchPosAfterNextEdge( Vector3 targetEdge ) {
+
+		var dir = Utility.CleanNormal( - prevPoint.normal );
 		var step = dir * _speed * Time.deltaTime;
-		var newPos = transform.position + step;
-		var newDistance = ( targetPos - newPos ).sqrMagnitude;
-		var prevDistance = ( targetPos - transform.position).sqrMagnitude;
+		transform.position = transform.position + step;
 
-		if( prevDistance >= 0.5f && newDistance <= 0.5f ) {
-			onNodeHalfWay.Invoke();
-			print("onNodeHalfWay");
+    }
+
+	void UpdateArchPos() {
+
+		// TODO: Make player move on straight line until the prevEdge and from the targetEdge until the target.
+
+		var circunference = 2.0f * Mathf.PI;
+
+        _speed = Mathf.Min(_speed + acceleration, maxSpeed);
+
+
+		var distToPrev = (transform.position - prevPoint.position).magnitude;
+		var distToNext = (transform.position - targetPoint.position).magnitude;
+
+		var prevEdge = prevPoint.position + targetPoint.normal * .5f;
+		var targetEdge = targetPoint.position + prevPoint.normal * .5f;
+
+		if( distToPrev < 0.5f ) {
+
+			UpdateArchPosBeforePrevEdge( prevEdge );
+
+		} else if( distToNext <= 0.5f ) {
+
+			UpdateArchPosAfterNextEdge( targetEdge );
+
+		} else {
+
+			var center = targetPoint.position - targetPoint.normal + prevPoint.normal * 0.5f;
+
+
+			var centerToPrev = prevEdge - center;
+			var centerToNext = targetEdge - center;
+
+			var rotationAxis = Vector3.Cross( prevPoint.normal, targetPoint.normal);
+
+			var angle = Vector3.SignedAngle( centerToNext, centerToPrev, rotationAxis );
+
+
+			var centerToPlayer = transform.position - center;
+
+			var currAngle = Vector3.SignedAngle(centerToNext, centerToPlayer, rotationAxis );
+
+			var currArchDist = circunference * (currAngle / 360.0f);
+
+			var nextArchDist = currArchDist + _speed * Time.deltaTime * .5f;
+
+			var nextAngle = (nextArchDist / circunference) * 360.0f + 90.0f;
+
+			if( nextAngle >= 90 ) {
+				transform.position = targetEdge;
+				transform.up = targetPoint.normal;
+				return;
+			}
+
+			var rotation = Quaternion.AngleAxis( nextAngle, rotationAxis );
+
+			var newPos = rotation * centerToPrev + center;
+
+			transform.up = ( transform.position - center).normalized;
+
+			transform.position = newPos;
+
+			centerToPlayer = transform.position - center;
+
 		}
 
-		transform.position = transform.position + step;
+
+
+		
+
+	}
+
+	void UpdateStep() {
+
+
+        var dir = (targetPos - transform.position).normalized;
+
+        _speed = Mathf.Min(_speed + acceleration, maxSpeed);
+
+        var step = dir * _speed * Time.deltaTime;
+        transform.position = transform.position + step;
+
+	}
+
+	void Update(){
+
+		if( !isMoving ) return;		
+
+		var prevDistance = ( targetPos - transform.position).sqrMagnitude;
+
+		if( _isOnArchBlock ) {
+
+			UpdateArchPos();
+
+		} else {
+
+			UpdateStep();
+
+		}
+
+		var newDistance = (targetPos - transform.position).sqrMagnitude;
+		
+		if( prevDistance >= 0.5f && newDistance <= 0.5f ) {
+			onNodeHalfWay.Invoke();
+		}
 
 		if( _isOnTwistedBlock ) {
 			UpdateNormal();
@@ -197,13 +300,31 @@ public class PlayerComponent : MonoBehaviour {
 	bool TwistedBlockLogic() {
 		if( 
 			_targetPoint.twistedBlockConn != null && 
-			_targetPoint.twistedBlockConn != prevPoint 
-		) return false;
+			_targetPoint.twistedBlockConn == prevPoint 
+		) {
+			targetPos = _targetPoint.position;
+			_isOnTwistedBlock = true;
 
-		targetPos = _targetPoint.position;
-		_isOnTwistedBlock = true;
+			return true;
+		}
+		_isOnTwistedBlock = false;
+		return false;
 
-		return true;
+	}	
+
+	bool ArchBlockLogic() {
+		if( 
+			_targetPoint.archBlockConn != null && 
+			_targetPoint.archBlockConn == prevPoint 
+		) {
+			targetPos = _targetPoint.position;
+			_isOnArchBlock = true;
+
+			return true;
+		}
+		_isOnArchBlock = false;
+		return false;
+
 	}
 
 	void MoveToNextPoint(){
@@ -219,6 +340,8 @@ public class PlayerComponent : MonoBehaviour {
 		if ( StairsDiagonalLogic() ) return;
 
 		if( StairsLogic() ) return;
+
+		if( ArchBlockLogic() ) return;
 
 		_isOnStairs = false;
 
