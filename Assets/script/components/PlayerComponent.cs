@@ -99,6 +99,23 @@ public class PlayerComponent : MonoBehaviour {
 		transform.up = Vector3.Slerp( prevPoint.normal, targetPoint.normal, (totalDist-currDist)/totalDist );
 	}
 
+	void UpdateArchPosBeforePrevEdge( Vector3 prevEdge ) {
+
+		var dir = Utility.CleanNormal(targetPoint.normal );
+
+        var step = dir * _speed * Time.deltaTime;
+        transform.position = transform.position + step;
+
+    }
+
+	void UpdateArchPosAfterNextEdge( Vector3 targetEdge ) {
+
+		var dir = Utility.CleanNormal( - prevPoint.normal );
+		var step = dir * _speed * Time.deltaTime;
+		transform.position = transform.position + step;
+
+    }
+
 	void UpdateArchPos() {
 
 		// TODO: Make player move on straight line until the prevEdge and from the targetEdge until the target.
@@ -116,19 +133,11 @@ public class PlayerComponent : MonoBehaviour {
 
 		if( distToPrev < 0.5f ) {
 
-			var dir = Utility.CleanNormal((prevEdge - prevPoint.position).normalized);
+			UpdateArchPosBeforePrevEdge( prevEdge );
 
-			print( "distToPrev - dir: " + dir.ToString());
-			print( "distToPrev - prevEdge: " + prevEdge.ToString());
+		} else if( distToNext <= 0.5f ) {
 
-        	var step = dir * _speed * Time.deltaTime;
-			transform.position = transform.position + step;
-
-		} else if( distToNext < 0.5f ) {
-
-			var dir = Utility.CleanNormal((targetEdge - targetPoint.position).normalized);
-        	var step = dir * _speed * Time.deltaTime;
-			transform.position = transform.position + step;
+			UpdateArchPosAfterNextEdge( targetEdge );
 
 		} else {
 
@@ -140,27 +149,34 @@ public class PlayerComponent : MonoBehaviour {
 
 			var rotationAxis = Vector3.Cross( prevPoint.normal, targetPoint.normal);
 
-			var angle = Vector3.SignedAngle( centerToPrev, centerToNext, rotationAxis );
+			var angle = Vector3.SignedAngle( centerToNext, centerToPrev, rotationAxis );
+
 
 			var centerToPlayer = transform.position - center;
 
-			var currAngle = Vector3.SignedAngle(centerToPlayer, centerToNext, rotationAxis );
+			var currAngle = Vector3.SignedAngle(centerToNext, centerToPlayer, rotationAxis );
 
 			var currArchDist = circunference * (currAngle / 360.0f);
 
-			var nextArchDist = currArchDist + _speed * Time.deltaTime;
+			var nextArchDist = currArchDist + _speed * Time.deltaTime * .5f;
 
-			var nextAngle = (nextArchDist / circunference) * 360.0f;
+			var nextAngle = (nextArchDist / circunference) * 360.0f + 90.0f;
+
+			if( nextAngle >= 90 ) {
+				transform.position = targetEdge;
+				transform.up = targetPoint.normal;
+				return;
+			}
 
 			var rotation = Quaternion.AngleAxis( nextAngle, rotationAxis );
 
 			var newPos = rotation * centerToPrev + center;
 
+			transform.up = ( transform.position - center).normalized;
+
 			transform.position = newPos;
 
-			print("angle: " + angle.ToString());			
-			
-			UpdateNormal();
+			centerToPlayer = transform.position - center;
 
 		}
 
@@ -202,7 +218,6 @@ public class PlayerComponent : MonoBehaviour {
 		
 		if( prevDistance >= 0.5f && newDistance <= 0.5f ) {
 			onNodeHalfWay.Invoke();
-			print("onNodeHalfWay");
 		}
 
 		if( _isOnTwistedBlock ) {
