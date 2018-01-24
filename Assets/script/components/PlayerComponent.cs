@@ -101,20 +101,56 @@ public class PlayerComponent : MonoBehaviour {
 
 	void UpdateArchPos() {
 
+		// TODO: Make player move on straight line until the prevEdge and from the targetEdge until the target.
 
-        var dir = (targetPos - transform.position).normalized;
+		var circunference = 2.0f * Mathf.PI;
+
+        var dir = (targetPoint.position - transform.position).normalized;
 
         _speed = Mathf.Min(_speed + acceleration, maxSpeed);
 
         var step = dir * _speed * Time.deltaTime;
-        var newPos = transform.position + step;
 
-		// var angle = Vector3.Angle();\
+		var distToPrev = (transform.position - prevPoint.position).magnitude;
+		var distToNext = (transform.position - targetPoint.position).magnitude;
 
-		var middle = targetPos - targetPoint.normal + prevPoint.normal * 0.5f;
+		if( distToPrev > 0.5f && distToNext > 0.5f ) {
 
-        transform.position = transform.position + step;
+			var center = targetPoint.position - targetPoint.normal + prevPoint.normal * 0.5f;
 
+			var prevEdge = prevPoint.position + targetPoint.normal * .5f;
+			var targetEdge = targetPoint.position + prevPoint.normal * .5f;
+
+			var centerToPrev = prevEdge - center;
+			var centerToNext = targetEdge - center;
+
+			var angle = Vector3.Angle( centerToPrev, centerToNext );
+
+			var centerToPlayer = transform.position - center;
+
+			var currAngle = Vector3.Angle(centerToPlayer, centerToNext );
+
+			var currArchDist = circunference * (currAngle / 360.0f);
+
+			var nextArchDist = currArchDist + step.magnitude;
+
+			var nextAngle = (nextArchDist / circunference) * 360.0f;
+
+			var rotation = Quaternion.AngleAxis( nextAngle, Vector3.Cross( prevPoint.normal, targetPoint.normal) );
+
+			var newPos = rotation * centerToPrev + center;
+
+			transform.position = newPos;
+
+			print("angle: " + angle.ToString());
+
+		} else {
+			transform.position = transform.position + step;
+		}
+
+
+
+		UpdateNormal();
 		
 
 	}
