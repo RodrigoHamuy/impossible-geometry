@@ -6,10 +6,10 @@ namespace Maker {
 
   public class Spawner : MonoBehaviour {
 
-    public void AddBlock(Vector2 pos){
+    public void AddBlock (Vector2 pos) {
 
-      print("pos: "+ pos);
-      
+      print ("start: " + pos);
+
     }
 
   }

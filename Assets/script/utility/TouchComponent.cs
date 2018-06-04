@@ -12,6 +12,8 @@ namespace Generic {
     public Vector2Event onTouchEnd = new Vector2Event ();
     public Vector2Event onTouchMove = new Vector2Event ();
 
+    bool wasDown = false;
+
     // Camera gameCamera;
 
     void Start () {
@@ -47,8 +49,19 @@ namespace Generic {
 
     void MouseUpdate () {
 
+      var input = Input.mousePosition;
+
       if (Input.GetMouseButtonDown (0)) {
 
+        if (wasDown) {
+          onTouchMove.Invoke (input);
+        } else {
+          onTouchStart.Invoke (input);
+        }
+
+      } else if (wasDown) {
+        wasDown = false;
+        onTouchEnd.Invoke (input);
       }
 
     }
