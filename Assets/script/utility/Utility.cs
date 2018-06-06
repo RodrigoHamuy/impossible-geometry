@@ -6,6 +6,12 @@ public class Utility {
 
 	public static bool canPlayerMove = true;
 
+    public static float sin(float angle){
+
+        return Mathf.Rad2Deg * Mathf.Sin( Mathf.Deg2Rad * angle);
+
+    }
+
 	// Get Points
 
     static List<PathPoint> getPointsAtRay(Ray ray, Vector3 normal) {
