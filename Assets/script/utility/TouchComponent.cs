@@ -4,13 +4,13 @@ using UnityEngine.Events;
 namespace Generic {
 
   [System.Serializable]
-  public class Vector2Event : UnityEvent<Vector2> { }
+  public class Vector3Event : UnityEvent<Vector3> { }
 
   public class TouchComponent : MonoBehaviour {
 
-    public Vector2Event onTouchStart = new Vector2Event ();
-    public Vector2Event onTouchEnd = new Vector2Event ();
-    public Vector2Event onTouchMove = new Vector2Event ();
+    public Vector3Event onTouchStart = new Vector3Event ();
+    public Vector3Event onTouchEnd = new Vector3Event ();
+    public Vector3Event onTouchMove = new Vector3Event ();
 
     bool wasDown = false;
 
@@ -24,9 +24,70 @@ namespace Generic {
 
     void Update () {
 
-      if (Input.mousePresent) {
-        MouseUpdate ();
+      // if (Input.mousePresent) {
+      MouseUpdate ();
+      // }
+
+    }
+
+    void MouseUpdate () {
+
+      var input = Input.mousePosition;
+      RaycastHit hit;
+
+      if (Input.GetMouseButtonDown (0)) {
+
+        print ("input");
+        print (input);
+
+        hitPos (input, out hit);
+
+        if (wasDown) {
+
+          onTouchMove.Invoke (hit.point);
+
+        } else {
+
+          wasDown = true;
+          onTouchStart.Invoke (hit.point);
+          print ("onTouchStart");
+
+        }
+
+      } else if (wasDown) {
+
+        hitPos (input, out hit);
+
+        wasDown = false;
+        onTouchEnd.Invoke (hit.point);
+
       }
+
+    }
+
+    bool hitPos (Vector2 screenPos, out RaycastHit hit) {
+
+      var camera = Camera.main;
+
+      var ray = camera.ScreenPointToRay (screenPos);
+
+      var layer = LayerMask.LayerToName (gameObject.layer);
+
+      var layerMask = LayerMask.GetMask (layer);
+
+      var didHit = Physics.Raycast (
+        Camera.main.transform.position,
+        ray.direction,
+        out hit,
+        Mathf.Infinity,
+        layerMask
+      );
+
+      return didHit;
+
+    }
+
+    void TouchUpdate () {
 
       if (Input.touchCount == 0) return;
 
@@ -42,31 +103,7 @@ namespace Generic {
         case TouchPhase.Moved:
           onTouchMove.Invoke (touch.position);
           break;
-
       }
-
-    }
-
-    void MouseUpdate () {
-
-      var input = Input.mousePosition;
-
-      if (Input.GetMouseButtonDown (0)) {
-
-        if (wasDown) {
-          onTouchMove.Invoke (input);
-        } else {
-          onTouchStart.Invoke (input);
-        }
-
-      } else if (wasDown) {
-        wasDown = false;
-        onTouchEnd.Invoke (input);
-      }
-
-    }
-
-    void TouchUpdate () {
 
     }
 
