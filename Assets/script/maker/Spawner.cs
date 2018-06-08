@@ -16,15 +16,16 @@ namespace Maker {
 
     public void AddBlock (Vector2 pos) {
 
-
       var newPos = screenToWorld (pos);
 
       block.transform.position = newPos;
-      print ("start: " + newPos);
+      print ("start: " + pos);
 
     }
 
     Vector3 screenToWorld (Vector3 screenPos) {
+
+      screenPos.z = transform.position.z;
 
       // A: Camera
       // B: Floor
@@ -47,13 +48,13 @@ namespace Maker {
       var A = _camera.transform.position;
 
       var B = A;
-      B.y -= transform.position.y;
+      B.y = transform.position.y;
 
       var AtoB = B - A;
 
       var c = AtoB.magnitude;
 
-      var AtoCDir = _camera.ScreenPointToRay (screenPos).direction;
+      var AtoCDir = (-_camera.ScreenToWorldPoint (screenPos) - A).normalized;
 
       var angleA = Vector3.Angle (AtoB, AtoCDir);
 
