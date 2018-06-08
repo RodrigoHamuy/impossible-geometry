@@ -27,11 +27,12 @@ namespace Maker {
 
       screenPos.z = transform.position.z;
 
-      // A: Camera
-      // B: Floor
-      // C: Ray hitting floor
-
       /*
+      
+      A: Camera
+      B: Floor
+      C: Ray hitting floor
+      
           A
           .
            \
@@ -43,29 +44,21 @@ namespace Maker {
           -------# 
 
          B   a    C
+
       */
 
-      var A = _camera.transform.position;
-
+      var ray = _camera.ScreenPointToRay (screenPos);
+      var A = ray.origin;
       var B = A;
       B.y = transform.position.y;
-
       var AtoB = B - A;
-
       var c = AtoB.magnitude;
-
-      var AtoCDir = (-_camera.ScreenToWorldPoint (screenPos) - A).normalized;
-
+      var AtoCDir = ray.direction;
       var angleA = Vector3.Angle (AtoB, AtoCDir);
-
       var angleB = 90;
-
       var angleC = 180 - angleA - angleB;
-
       var b = Utility.sin (angleB) * (c / Utility.sin (angleC));
-
       var C = A + AtoCDir * b;
-
       return C;
 
     }
