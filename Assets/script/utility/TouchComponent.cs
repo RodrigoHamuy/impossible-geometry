@@ -9,10 +9,8 @@ namespace Generic {
   public class TouchComponent : MonoBehaviour {
 
     public Vector2Event onTouchStart = new Vector2Event ();
-    public Vector2Event onTouchEnd = new Vector2Event ();
     public Vector2Event onTouchMove = new Vector2Event ();
-
-    bool wasDown = false;
+    public Vector2Event onTouchEnd = new Vector2Event ();
 
     // Camera gameCamera;
 
@@ -26,6 +24,7 @@ namespace Generic {
 
       if (Input.mousePresent) {
         MouseUpdate ();
+        return;
       }
 
       if (Input.touchCount == 0) return;
@@ -53,15 +52,16 @@ namespace Generic {
 
       if (Input.GetMouseButtonDown (0)) {
 
-        if (wasDown) {
-          onTouchMove.Invoke (input);
-        } else {
           onTouchStart.Invoke (input);
-        }
 
-      } else if (wasDown) {
-        wasDown = false;
+      } else if (Input.GetMouseButton (0)) {
+        
+        onTouchMove.Invoke (input);
+
+      } else if (Input.GetMouseButtonUp(0)){
+
         onTouchEnd.Invoke (input);
+
       }
 
     }

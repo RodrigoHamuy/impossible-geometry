@@ -6,24 +6,47 @@ namespace Maker {
 
   public class Spawner : MonoBehaviour {
 
-    public GameObject block;
+    public Transform blockPrefab;
+    public Transform blockPreviewPrefab;
+
+    Renderer blockPreview;
 
     Camera _camera;
 
     void Start () {
+
       _camera = Camera.main;
-    }
 
-    public void AddBlock (Vector2 pos) {
+      blockPreview = Instantiate (blockPreviewPrefab, Vector3.zero, Quaternion.identity).GetComponent<Renderer> ();
 
-      var newPos = screenToWorld (pos);
-
-      block.transform.position = newPos;
-      print ("start: " + pos);
+      blockPreview.enabled = false;
 
     }
 
-    Vector3 screenToWorld (Vector3 screenPos) {
+    public void StartBlockPreview (Vector2 screenPos) {
+
+      blockPreview.transform.position = hitPosition (screenPos);
+      blockPreview.enabled = true;
+
+    }
+
+    public void MoveBlockPreview (Vector2 screenPos) {
+
+      blockPreview.transform.position = hitPosition (screenPos);
+
+    }
+
+    public void AddBlock (Vector2 screenPos) {
+      
+      blockPreview.enabled = false;
+
+      var pos = hitPosition (screenPos);
+
+      var block = Instantiate (blockPrefab, pos, Quaternion.identity);
+
+    }
+
+    Vector3 hitPosition (Vector3 screenPos) {
 
       screenPos.z = transform.position.z;
 
@@ -32,7 +55,7 @@ namespace Maker {
       A: Camera
       B: Floor
       C: Ray hitting floor
-      
+
           A
           .
            \
