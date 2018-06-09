@@ -59,54 +59,36 @@ namespace Maker {
 
       screenPos.z = transform.position.z;
 
-      /*
-      
-      A: Camera
-      B: Floor
-      C: Ray hitting floor
-
-          A
-          .
-           \
-            \
-             \
-      c       \   b
-               \
-                \
-          -------# 
-
-         B   a    C
-
-      */
-
       var ray = _camera.ScreenPointToRay (screenPos);
-      var A = ray.origin;
-      var B = A;
-      B.y = transform.position.y;
-      var AtoB = B - A;
-      var c = AtoB.magnitude;
-      var AtoCDir = ray.direction;
-      var angleA = Vector3.Angle (AtoB, AtoCDir);
-      var angleB = 90;
-      var angleC = 180 - angleA - angleB;
-      var b = Utility.sin (angleB) * (c / Utility.sin (angleC));
-      var C = A + AtoCDir * b;
+
+      string[] layerName = new string[] {
+        LayerMask.LayerToName (gameObject.layer),
+        "Block"
+      };
+
+      var layerMask = LayerMask.GetMask (layerName);
+
+      RaycastHit hit;
+
+      Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask);
+
+      var pos = hit.point;
 
       for (int i = 0; i < 3; i++) {
 
         float round = 0;
 
-        if (C[i] >= 0) round = .5f;
+        if (pos[i] >= 0) round = .5f;
 
         else round = -.5f;
 
-        if (i == 1) C[i] = Mathf.Round (C[i]) + round;
+        if (i == 1) pos[i] = Mathf.Round (pos[i]) + round;
 
-        else C[i] = Mathf.Floor (C[i]) + .5f;
+        else pos[i] = Mathf.Floor (pos[i]) + .5f;
 
       }
 
-      return C;
+      return pos;
 
     }
 
