@@ -82,6 +82,21 @@ namespace Maker {
       var angleC = 180 - angleA - angleB;
       var b = Utility.sin (angleB) * (c / Utility.sin (angleC));
       var C = A + AtoCDir * b;
+
+      for (int i = 0; i < 3; i++) {
+
+        float round = 0;
+
+        if (C[i] >= 0) round = .5f;
+
+        else round = -.5f;
+
+        if (i == 1) C[i] = Mathf.Round (C[i]) + round;
+
+        else C[i] = Mathf.Floor (C[i]) + .5f;
+
+      }
+
       return C;
 
     }
