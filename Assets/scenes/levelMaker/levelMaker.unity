@@ -741,7 +741,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh11790
+  m_Name: pb_Mesh11820
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -1135,7 +1135,9 @@ GameObject:
   - component: {fileID: 1894252735}
   - component: {fileID: 1894252734}
   - component: {fileID: 1894252741}
+  - component: {fileID: 1894252743}
   - component: {fileID: 1894252740}
+  - component: {fileID: 1894252742}
   m_Layer: 19
   m_Name: SpawnArea
   m_TagString: Untagged
@@ -1434,7 +1436,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1894252733}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e34571e01183e5408ca46c139504c43, type: 3}
   m_Name: 
@@ -1450,7 +1452,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1894252733}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72d62d4c25a7385409577fcfce1ad637, type: 3}
   m_Name: 
@@ -1492,6 +1494,78 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1894252740}
         m_MethodName: AddBlock
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: Generic.Vector2Event, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+--- !u!114 &1894252742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1894252733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55b196a96309145efa3a5d6000eadd6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockPrefab: {fileID: 4680396994661690, guid: 8074cee83f1700c488f833e81b011334,
+    type: 2}
+--- !u!114 &1894252743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1894252733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72d62d4c25a7385409577fcfce1ad637, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onTouchStart:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1894252742}
+        m_MethodName: StartStroke
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: Generic.Vector2Event, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onTouchMove:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1894252742}
+        m_MethodName: MoveStroke
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: Generic.Vector2Event, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onTouchEnd:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1894252742}
+        m_MethodName: EndStroke
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
