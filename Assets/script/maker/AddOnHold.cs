@@ -18,6 +18,10 @@ public class AddOnHold : MonoBehaviour {
 
 		currentY = hitPos.y;
 
+		var pos = transform.position;
+		pos.y = currentY - .5f;
+		transform.position = pos;
+
 		isPainting = true;
 
 		currentRow.Clear ();
