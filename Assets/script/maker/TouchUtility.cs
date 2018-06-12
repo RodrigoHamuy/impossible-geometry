@@ -25,15 +25,7 @@ public class TouchUtility {
 
     for (int i = 0; i < 3; i++) {
 
-      float round = 0;
-
-      if (pos[i] >= 0) round = .5f;
-
-      else round = -.5f;
-
-      if (i == 1) pos[i] = Mathf.Round (pos[i]) + round;
-
-      else pos[i] = Mathf.Floor (pos[i]) + .5f;
+      pos[i] = Mathf.Round (pos[i]) + .5f;
 
     }
 
