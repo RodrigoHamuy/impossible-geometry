@@ -5,12 +5,17 @@ using UnityEngine;
 public class AddOnHold : MonoBehaviour {
 
 	public Transform blockPrefab;
+	public Transform cubeBoyPrefab;
+	public Transform targetPrefab;
 
 	float currentY;
 
 	bool isPainting = false;
 
 	List<Transform> currentRow = new List<Transform> ();
+
+	Transform cubeBoy;
+	Transform target;
 
 	public void StartStroke (Vector2 screenPos) {
 
@@ -48,6 +53,14 @@ public class AddOnHold : MonoBehaviour {
 
 		currentRow.Add (block);
 
+		if (cubeBoy == null) {
+
+			cubeBoy = Instantiate (cubeBoyPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
+
+			cubeBoy.RotateAround(cubeBoy.position, Vector3.up, 180.0f);
+
+		}
+
 	}
 
 	public void EndStroke (Vector2 screenPos) {
@@ -61,6 +74,14 @@ public class AddOnHold : MonoBehaviour {
 			block.gameObject.layer = layer;
 
 		});
+
+		var hitPos = TouchUtility.HitPosition (screenPos, gameObject);
+
+		if (target == null) {
+
+			target = Instantiate (targetPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
+
+		}
 
 	}
 
