@@ -12,7 +12,7 @@ public class TouchUtility {
 
     string[] layerName = new string[] {
       LayerMask.LayerToName (plane.layer),
-      "Block"
+      // "Block"
     };
 
     var layerMask = LayerMask.GetMask (layerName);

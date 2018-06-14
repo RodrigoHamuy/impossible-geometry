@@ -18,9 +18,9 @@ public class AddOnHold : MonoBehaviour {
 
 		currentY = hitPos.y;
 
-		var pos = transform.position;
-		pos.y = currentY;
-		transform.position = pos;
+		// var pos = transform.position;
+		// pos.y = currentY;
+		// transform.position = pos;
 
 		isPainting = true;
 
