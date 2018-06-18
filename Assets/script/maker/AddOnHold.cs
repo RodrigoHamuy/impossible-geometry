@@ -44,6 +44,20 @@ public class AddOnHold : MonoBehaviour {
 			return oldBlock.position == hitPos;
 
 		});
+		
+		/*
+		
+		if (
+		  currentRow.Count() > 1 &&
+		  currentRow[currentRow.Count()-2).position == hitPOS
+		){
+		
+		  var block = currentRow.Pop();
+		  block.Destroy();
+		
+		}
+		
+		*/
 
 		if (spaceTaken) return;
 
