@@ -19,13 +19,13 @@ public class AddOnHold : MonoBehaviour {
 
 	public void StartStroke (Vector2 screenPos) {
 
-		var hitPos = TouchUtility.HitPosition (screenPos, gameObject);
+		var hitPos = TouchUtility.HitPosition (screenPos, gameObject, true);
 
 		currentY = hitPos.y;
 
-		// var pos = transform.position;
-		// pos.y = currentY;
-		// transform.position = pos;
+		var pos = transform.position;
+		pos.y = currentY;
+		transform.position = pos;
 
 		isPainting = true;
 
@@ -45,8 +45,6 @@ public class AddOnHold : MonoBehaviour {
 
 		});
 		
-		/*
-		
 		if (
 		  currentRow.Count() > 1 &&
 		  currentRow[currentRow.Count()-2).position == hitPOS
@@ -56,8 +54,6 @@ public class AddOnHold : MonoBehaviour {
 		  block.Destroy();
 		
 		}
-		
-		*/
 
 		if (spaceTaken) return;
 
