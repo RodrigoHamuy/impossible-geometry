@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TouchUtility {
 
-  public static Vector3 HitPosition (Vector3 screenPos, GameObject plane) {
+  public static Vector3 HitPosition (Vector3 screenPos, GameObject plane, bool includeBlocks = false) {
 
     var camera = Camera.main;
 
@@ -14,6 +14,8 @@ public class TouchUtility {
       LayerMask.LayerToName (plane.layer),
       // "Block"
     };
+    
+    if(includeBlocks) layerName.push("Block");
 
     var layerMask = LayerMask.GetMask (layerName);
 
