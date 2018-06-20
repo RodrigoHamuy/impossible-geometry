@@ -44,15 +44,18 @@ public class AddOnHold : MonoBehaviour {
 			return oldBlock.position == hitPos;
 
 		});
-		
+
 		if (
-		  currentRow.Count() > 1 &&
-		  currentRow[currentRow.Count()-2).position == hitPOS
-		){
-		
-		  var block = currentRow.Pop();
-		  block.Destroy();
-		
+			currentRow.Count > 1 &&
+			currentRow[currentRow.Count - 2].position == hitPos
+		) {
+
+			var lastBlock = currentRow[currentRow.Count - 1];
+			currentRow.RemoveAt (currentRow.Count - 1);
+			Destroy(lastBlock.gameObject);
+
+			return;
+
 		}
 
 		if (spaceTaken) return;
@@ -67,7 +70,7 @@ public class AddOnHold : MonoBehaviour {
 
 			cubeBoy = Instantiate (cubeBoyPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
 
-			cubeBoy.RotateAround(cubeBoy.position, Vector3.up, 180.0f);
+			cubeBoy.RotateAround (cubeBoy.position, Vector3.up, 180.0f);
 
 		}
 

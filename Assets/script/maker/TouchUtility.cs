@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TouchUtility {
@@ -10,14 +11,13 @@ public class TouchUtility {
 
     var ray = camera.ScreenPointToRay (screenPos);
 
-    string[] layerName = new string[] {
+    var layerName = new List<string>() {
       LayerMask.LayerToName (plane.layer),
-      // "Block"
     };
     
-    if(includeBlocks) layerName.push("Block");
+    if(includeBlocks) layerName.Add("Block");
 
-    var layerMask = LayerMask.GetMask (layerName);
+    var layerMask = LayerMask.GetMask (layerName.ToArray());
 
     RaycastHit hit;
 
