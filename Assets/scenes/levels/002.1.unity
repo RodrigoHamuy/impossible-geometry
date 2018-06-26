@@ -2131,6 +2131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2010669421}
   - component: {fileID: 1401673427}
+  - component: {fileID: 1401673428}
   m_Layer: 0
   m_Name: SlideBlock
   m_TagString: Untagged
@@ -2155,6 +2156,28 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   dir: {x: 0, y: 1, z: 0}
+--- !u!114 &1401673428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1401673426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f18df1bb85d9a4d0ca4cd26049658195, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onRotationStart:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onRotationDone:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  rotateComponent: {fileID: 0}
 --- !u!4 &1455641945 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4360515422675436, guid: b44536f212da3f040a44a5b39ded9c3c,
@@ -2682,7 +2705,8 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: b8e40a3827c9ace4d997e819df6c4ef4, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114935069735203034, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &1607155435
@@ -2865,6 +2889,11 @@ Mesh:
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 0
+--- !u!135 &1667929973 stripped
+SphereCollider:
+  m_PrefabParentObject: {fileID: 135578838218064858, guid: b44536f212da3f040a44a5b39ded9c3c,
+    type: 2}
+  m_PrefabInternal: {fileID: 1606295321}
 --- !u!1001 &1675900083
 Prefab:
   m_ObjectHideFlags: 0
@@ -3075,6 +3104,77 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8074cee83f1700c488f833e81b011334, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1772135078 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1541481104795796, guid: b44536f212da3f040a44a5b39ded9c3c,
+    type: 2}
+  m_PrefabInternal: {fileID: 1606295321}
+--- !u!114 &1772135080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1772135078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ae6a3e2aba394d668f4d877ac8a94ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onCanRotateChange:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEventBool, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRotationStart:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1401673428}
+        m_MethodName: OnTouchStart
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onRotationMove:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1401673428}
+        m_MethodName: OnTouchMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEventFloat, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRotationDone:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1401673428}
+        m_MethodName: OnTouchEnd
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  handleCollider: {fileID: 1667929973}
+  phase: 0
 --- !u!4 &1779221767 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4836276263631926, guid: b44536f212da3f040a44a5b39ded9c3c,
