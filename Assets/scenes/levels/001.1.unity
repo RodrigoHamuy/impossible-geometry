@@ -3050,6 +3050,99 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1416851022 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1541481104795796, guid: b44536f212da3f040a44a5b39ded9c3c,
+    type: 2}
+  m_PrefabInternal: {fileID: 1606295321}
+--- !u!114 &1416851023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1416851022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f18df1bb85d9a4d0ca4cd26049658195, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onRotationStart:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onRotationDone:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  rotateComponent: {fileID: 1416851024}
+--- !u!114 &1416851024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1416851022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ae6a3e2aba394d668f4d877ac8a94ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onCanRotateChange:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEventBool, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRotationStart:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1416851023}
+        m_MethodName: OnTouchStart
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onRotationMove:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1416851023}
+        m_MethodName: OnTouchMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEventFloat, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRotationDone:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1416851023}
+        m_MethodName: OnTouchEnd
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  handleCollider: {fileID: 1946822460}
+  phase: 0
 --- !u!1001 &1606295321
 Prefab:
   m_ObjectHideFlags: 0
@@ -3089,7 +3182,8 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114935069735203034, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &1681411810
@@ -3234,6 +3328,11 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2b437b63f4fe71a479307d9552c523f1, type: 2}
   m_IsPrefabParent: 0
+--- !u!135 &1946822460 stripped
+SphereCollider:
+  m_PrefabParentObject: {fileID: 135578838218064858, guid: b44536f212da3f040a44a5b39ded9c3c,
+    type: 2}
+  m_PrefabInternal: {fileID: 1606295321}
 --- !u!1001 &1947862144
 Prefab:
   m_ObjectHideFlags: 0
