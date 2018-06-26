@@ -6,9 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/scenes/levelMaker/levelMaker.unity
-    guid: 14108683c6052bc45887376442b5d875
-  - enabled: 1
     path: Assets/scenes/levels/001.1.unity
     guid: 80a94870393526548a911b648349825d
   - enabled: 1

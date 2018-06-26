@@ -1,186 +1,113 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+enum RotationPhase {
+  Idle,
+  Start,
+  Move,
+  Snap
+}
+
 public class RotateComponent : MonoBehaviour {
 
-	RotateHandleComponent handle;
+  Collider handleCollider;
 
-	public UnityEvent onRotationDone = new UnityEvent ();
-	public UnityEvent onRotationStart = new UnityEvent ();
-	public UnityEvent onCanRotateChange = new UnityEvent ();
+  public UnityEvent onRotationStart = new UnityEvent ();
+  public UnityEvent onCanRotateChange = new UnityEvent ();
+  public UnityEvent onRotationDone = new UnityEvent ();
 
-	Vector3 startDir;
+  public bool canRotate = true;
 
-	bool isRotating;
+  RotationPhase phase = RotationPhase.Idle;
 
-	public bool canRotate = true;
+  Vector2 startVector;
 
-	void Start () {
+  void Start () {
 
-		// Set points as rotatable
-		var containerComponents = GetComponentsInChildren<PointsContainerComponent> ();
-		foreach (var containerComponent in containerComponents) {
-			var container = containerComponent.pathContainer;
+    BindEvents ();
 
-			setPointsAsRotatable (container);
+  }
 
-			container.onGeneratePathPointsDone.AddListener (() => {
-				setPointsAsRotatable (container);
-			});
+  private void setPointsAsRotatable (PathContainer container) {
+    foreach (var point in container.points) {
+      point.canMove = true;
+    }
+  }
 
-			// Update points before/after rotation
-			onRotationDone.AddListener (container.ResetPoints);
-			onRotationStart.AddListener (container.onRotationStart);
-		}
+  void Update () {
 
-		handle = GetComponentsInChildren<RotateHandleComponent> () [0];
-		handle.onMouseDown.AddListener (OnHandleMouseDown);
+    switch (phase) {
+      case RotationPhase.Idle:
+        CheckTouchStart ();
+        break;
+      case RotationPhase.Start:
+        break;
+      case RotationPhase.Move:
+        break;
+      case RotationPhase.Snap:
+        break;
+    }
 
-		var player = Object.FindObjectOfType<PlayerComponent> ();
+  }
 
-		if (player == null) return;
+  void CheckTouchStart () {
 
-		// Enable/disable rotation during player movement.
-		player.onTargetReached.AddListener (() => {
-			canRotate = true;
-			onCanRotateChange.Invoke ();
-		});
-		player.onStartMoving.AddListener (() => {
-			canRotate = false;
-			onCanRotateChange.Invoke ();
-		});
-	}
+    Vector2 inputPos = Utility.getTouchStart ();
 
-	void setPointsAsRotatable (PathContainer container) {
-		foreach (var point in container.points) {
-			point.canMove = true;
-		}
-	}
+    if (inputPos == Vector2.zero) return;
 
-	void Update () {
+    var ray = Camera.main.ScreenPointToRay (inputPos);
 
-		if (canRotate) CheckInput ();
-	}
+    RaycastHit hit;
 
-	// public void Rotate(){
-	// 	isRotated = !isRotated;
-	// 	if( isRotated ){
-	// 		transform.eulerAngles = new Vector3( 0, 0, 90 );
-	// 	}else{
-	// 		transform.eulerAngles = Vector3.zero;
-	// 	}
-	// 	onRotationDone.Invoke();
-	// }
+    var doesHit = handleCollider.Raycast (ray, out hit, Mathf.Infinity);
 
-	bool isTouching = false;
+    if (!doesHit) return;
 
-	void OnHandleMouseDown () {
-		isTouching = true;
-	}
+    Vector2 handleScreenPos = Camera.main.WorldToScreenPoint (handleCollider.transform.position);
 
-	void CheckInput () {
+    startVector = inputPos - handleScreenPos;
 
-		var touchPhase = Utility.getTouchPhase ();
+    phase = RotationPhase.Start;
+    onRotationStart.Invoke ();
 
-		if (
-			isTouching &&
-			touchPhase != TouchPhase.Canceled &&
-			(
-				isRotating != (touchPhase == TouchPhase.Began)
-			)
-		) {
+  }
 
-			var touchPos = Utility.getTouch ();
+  void BindEvents () {
 
-			OnTouch (touchPos, touchPhase == TouchPhase.Began);
+    // Set points as rotatable
+    var containerComponents = GetComponentsInChildren<PointsContainerComponent> ();
+    foreach (var containerComponent in containerComponents) {
+      var container = containerComponent.pathContainer;
 
-			if (touchPhase == TouchPhase.Ended) isTouching = false;
+      setPointsAsRotatable (container);
 
-		} else {
+      container.onGeneratePathPointsDone.AddListener (() => {
+        setPointsAsRotatable (container);
+      });
 
-			if (isRotating) {
-				SnapRotation ();
-			}
+      // Update points before/after rotation
+      onRotationDone.AddListener (container.ResetPoints);
+      onRotationStart.AddListener (container.onRotationStart);
+    }
 
-		}
+    var handle = GetComponentsInChildren<RotateHandleComponent> () [0];
 
-	}
+    handleCollider = handle.GetComponent<Collider> ();
 
-	Quaternion snapRotation;
-	Vector3 targetForward;
-	bool isRotationTargetSet = false;
-	float rotationSpeed = 12;
-	void SnapRotation () {
+    var player = Object.FindObjectOfType<PlayerComponent> ();
 
-		if (!isRotationTargetSet) {
-			var euler = transform.eulerAngles;
+    if (player == null) return;
 
-			for (var i = 0; i < 3; i++) {
-				euler[i] = Mathf.Round (euler[i] / 90.0f) * 90.0f;
-			}
-			snapRotation = Quaternion.identity;
-			snapRotation.eulerAngles = euler;
-			targetForward = snapRotation * Vector3.forward;
-			isRotationTargetSet = true;
-		}
+    // Enable/disable rotation during player movement.
+    player.onTargetReached.AddListener (() => {
+      canRotate = true;
+      onCanRotateChange.Invoke ();
+    });
+    player.onStartMoving.AddListener (() => {
+      canRotate = false;
+      onCanRotateChange.Invoke ();
+    });
 
-		transform.rotation = Quaternion.Slerp (transform.rotation, snapRotation, 0.5f * rotationSpeed * Time.deltaTime);
-
-		if (Vector3.Dot (transform.forward, targetForward) > 0.999999f) {
-			transform.rotation = snapRotation;
-			isRotating = false;
-			isRotationTargetSet = false;
-
-			if (!Utility.canPlayerMove) {
-				Utility.canPlayerMove = true;
-				onRotationDone.Invoke ();
-				print ("onRotationDone");
-			}
-		}
-
-	}
-
-	float currAngle = 0;
-
-	void OnTouch (Vector3 screenTouchPosition, bool startPhase = false) {
-
-		var camera = Camera.main;
-
-		var handleScreenPos = camera.WorldToScreenPoint (handle.transform.position);
-		handleScreenPos.z = 0;
-
-		var endDir = screenTouchPosition - handleScreenPos;
-		endDir.z = 0;
-
-		if (startPhase) {
-			currAngle = 0;
-			startDir = endDir;
-			isRotating = true;
-			isRotationTargetSet = false;
-			return;
-		}
-
-		var angle = Vector3.SignedAngle (startDir, endDir, Vector3.forward);
-
-		if (Utility.canPlayerMove && Mathf.Abs (angle) > 0.1f) {
-			onRotationStart.Invoke ();
-			Utility.canPlayerMove = false;
-			print ("onRotationStart");
-		}
-
-		var newAngle = Mathf.LerpAngle (currAngle, -angle, rotationSpeed * Time.deltaTime);
-
-		transform.Rotate (handle.transform.up, newAngle - currAngle, Space.World);
-		currAngle = newAngle;
-	}
-
-	Vector3 GetTouchPosition () {
-		if (Input.touchCount == 1) {
-			var touch = Input.GetTouch (0);
-			return touch.position;
-		} else if (Input.GetMouseButton (0)) {
-			return Input.mousePosition;
-		}
-		return Vector3.zero;
-	}
+  }
 }
