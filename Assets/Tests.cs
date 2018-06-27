@@ -132,6 +132,18 @@ public class Tests {
   }
 
   [UnityTest]
+  public IEnumerator Issue010_007_ShouldNotFind () {
+    yield return LoadScene ("issue-010.007");
+    Assert.IsFalse (HasPath (), "Should not find a path.");
+  }
+
+  [UnityTest]
+  public IEnumerator Issue010_008_ShouldNotFind () {
+    yield return LoadScene ("issue-010.008");
+    Assert.IsFalse (HasPath (), "Should not find a path.");
+  }
+
+  [UnityTest]
   public IEnumerator IssueSide000_000_ShouldFind () {
     yield return LoadScene ("issue-side-000.000");
     Assert.IsTrue (HasPath (), "Should find a path.");
