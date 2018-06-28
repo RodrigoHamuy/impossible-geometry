@@ -31,7 +31,7 @@ public class RotateController : MonoBehaviour {
 
   public void OnTouchMove (float angle) {
 
-    print ("angle: " + angle);
+    // print ("angle: " + angle);
 
     currAngle = Mathf.LerpAngle (currAngle, angle, Time.deltaTime * 10.0f);
 

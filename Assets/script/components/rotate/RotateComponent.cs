@@ -10,7 +10,7 @@ public class RotateComponent : MonoBehaviour {
   public UnityEvent onRotationDone = new UnityEvent ();
 
   public Collider handleCollider;
-  
+
   public bool canRotate {
 
     get { return _canRotate; }
@@ -26,7 +26,7 @@ public class RotateComponent : MonoBehaviour {
 
   public RotationPhase phase = RotationPhase.Idle;
 
-  Vector2 startVector;
+  Vector3 startVector;
 
   void Update () {
 
@@ -80,21 +80,33 @@ public class RotateComponent : MonoBehaviour {
 
     }
 
-    Vector2 handleScreenPos = Camera.main.WorldToScreenPoint (handleCollider.transform.position);
-
     var currVector = TouchFromCenterVector (inputPos);
 
-    var angle = Vector2.SignedAngle (startVector, currVector);
+    print (currVector);
+
+    if (startVector != currVector) print (currVector);
+
+    var angle = Vector3.SignedAngle (startVector, currVector, transform.up);
 
     onRotationMove.Invoke (angle);
 
   }
 
-  Vector2 TouchFromCenterVector (Vector2 inputPos) {
+  Vector3 TouchFromCenterVector (Vector2 inputPos) {
 
-    Vector2 handleScreenPos = Camera.main.WorldToScreenPoint (handleCollider.transform.position);
+    var center = handleCollider.transform.position;
 
-    return inputPos - handleScreenPos;
+    var inputWorldPos = Camera.main.ScreenToWorldPoint (inputPos);
+
+    var dir = Vector3.Project (inputWorldPos - center, handleCollider.transform.up).normalized;
+
+    for (int i = 0; i < 3; i++) {
+
+      dir[i] = Mathf.Round (dir[i] / .01f) * .01f;
+
+    }
+
+    return dir;
 
   }
 
