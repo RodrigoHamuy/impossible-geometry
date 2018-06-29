@@ -410,7 +410,7 @@ Prefab:
     - target: {fileID: 114791977500822510, guid: 990ae69bf921bad4996471b2be9ebcf7,
         type: 2}
       propertyPath: nextScene
-      value: 002
+      value: 002.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 990ae69bf921bad4996471b2be9ebcf7, type: 2}
@@ -3089,7 +3089,8 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114935069735203034, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &1681411810

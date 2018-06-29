@@ -16,8 +16,8 @@ public class HandleComponent : MonoBehaviour {
 
 		var rotateComponent = GetComponent<RotateComponent>();
 
-		rotateComponent.onCanRotateChange.AddListener( () => {
-			canRotate = rotateComponent.canRotate;
+		rotateComponent.onCanRotateChange.AddListener( (bool value) => {
+			canRotate = value;
 		});
 
 	}

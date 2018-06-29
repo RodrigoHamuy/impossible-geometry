@@ -72,8 +72,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4836276263631926}
-  - component: {fileID: 114935069735203034}
   - component: {fileID: 114852155154831744}
+  - component: {fileID: 114766665582971034}
+  - component: {fileID: 114480264271375194}
   m_Layer: 0
   m_Name: Rotate
   m_TagString: Untagged
@@ -530,6 +531,74 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114480264271375194
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1541481104795796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ae6a3e2aba394d668f4d877ac8a94ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onCanRotateChange:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEventBool, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRotationStart:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114766665582971034}
+        m_MethodName: OnTouchStart
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onRotationMove:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114766665582971034}
+        m_MethodName: OnTouchMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEventFloat, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRotationDone:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114766665582971034}
+        m_MethodName: OnTouchEnd
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  handleCollider: {fileID: 135578838218064858}
+  startRef: {fileID: 0}
+  currRef: {fileID: 0}
+  phase: 0
 --- !u!114 &114627517552804908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -541,6 +610,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87869680438927c46b4d8cf2ae8ecf1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114766665582971034
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1541481104795796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f18df1bb85d9a4d0ca4cd26049658195, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onRotationStart:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onRotationDone:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  rotateComponent: {fileID: 114480264271375194}
 --- !u!114 &114821802491806336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -619,33 +710,6 @@ MonoBehaviour:
     type: 2}
   vertexPrefab: {fileID: 4824232419952624, guid: 66692361eb21fac4d962441e76568b0b,
     type: 2}
---- !u!114 &114935069735203034
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1541481104795796}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56802e9aaf9c87a429a4fc5439f0807e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onRotationDone:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  onRotationStart:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  onCanRotateChange:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  canRotate: 1
 --- !u!114 &114941956007786174
 MonoBehaviour:
   m_ObjectHideFlags: 1
