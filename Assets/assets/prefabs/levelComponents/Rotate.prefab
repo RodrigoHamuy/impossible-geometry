@@ -596,6 +596,8 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   handleCollider: {fileID: 135578838218064858}
+  startRef: {fileID: 0}
+  currRef: {fileID: 0}
   phase: 0
 --- !u!114 &114627517552804908
 MonoBehaviour:

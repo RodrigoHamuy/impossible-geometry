@@ -120,10 +120,10 @@ public class RotateController : MonoBehaviour {
 
     // Enable/disable rotation during player movement.
     player.onTargetReached.AddListener (() => {
-      rotateComponent.canRotate = true;
+      rotateComponent.CanRotate(true);
     });
     player.onStartMoving.AddListener (() => {
-      rotateComponent.canRotate = false;
+      rotateComponent.CanRotate(false);
     });
 
   }

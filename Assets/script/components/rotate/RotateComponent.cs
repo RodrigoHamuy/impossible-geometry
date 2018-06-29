@@ -12,21 +12,22 @@ public class RotateComponent : MonoBehaviour {
   public Collider handleCollider;
 
   public bool canRotate {
-
-    get { return _canRotate; }
-
-    set {
-      _canRotate = value;
-      onCanRotateChange.Invoke (_canRotate);
-    }
-
+    get;
+    private set;
   }
 
-  bool _canRotate = true;
-
-  public RotationPhase phase = RotationPhase.Idle;
+  Transform handler;
 
   Vector3 startVector;
+
+  RotationPhase phase = RotationPhase.Idle;
+
+  void Start () {
+
+    handler = handleCollider.transform;
+    canRotate = true;
+
+  }
 
   void Update () {
 
@@ -41,9 +42,14 @@ public class RotateComponent : MonoBehaviour {
 
   }
 
+  public void CanRotate (bool val) {
+    canRotate = val;
+    onCanRotateChange.Invoke (canRotate);
+  }
+
   void CheckTouchStart () {
 
-    if (!_canRotate) return;
+    if (!canRotate) return;
 
     Vector2 inputPos = Utility.getTouchStart ();
 
@@ -57,7 +63,7 @@ public class RotateComponent : MonoBehaviour {
 
     if (!doesHit) return;
 
-    startVector = TouchFromCenterVector (inputPos);
+    startVector = GetTouchDirFromPlaneCenter (inputPos);
 
     phase = RotationPhase.Move;
     onRotationStart.Invoke ();
@@ -80,33 +86,31 @@ public class RotateComponent : MonoBehaviour {
 
     }
 
-    var currVector = TouchFromCenterVector (inputPos);
-
-    print (currVector);
+    var currVector = GetTouchDirFromPlaneCenter (inputPos);
 
     if (startVector != currVector) print (currVector);
 
-    var angle = Vector3.SignedAngle (startVector, currVector, transform.up);
+    var angle = Vector3.SignedAngle (startVector, currVector, -handler.up);
 
     onRotationMove.Invoke (angle);
 
   }
 
-  Vector3 TouchFromCenterVector (Vector2 inputPos) {
+  Vector3 GetTouchDirFromPlaneCenter (Vector2 inputPos) {
 
-    var center = handleCollider.transform.position;
+    var normal = handler.up;
 
-    var inputWorldPos = Camera.main.ScreenToWorldPoint (inputPos);
+    var center = handler.position;
 
-    var dir = Vector3.Project (inputWorldPos - center, handleCollider.transform.up).normalized;
+    var plane = new Plane (normal, center);
 
-    for (int i = 0; i < 3; i++) {
+    var ray = Camera.main.ScreenPointToRay (inputPos);
 
-      dir[i] = Mathf.Round (dir[i] / .01f) * .01f;
+    float dist;
 
-    }
+    plane.Raycast (ray, out dist);
 
-    return dir;
+    return ray.origin + ray.direction * dist - center;
 
   }
 

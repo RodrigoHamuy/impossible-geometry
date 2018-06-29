@@ -2177,7 +2177,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  rotateComponent: {fileID: 0}
+  rotateComponent: {fileID: 1772135080}
 --- !u!4 &1455641945 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4360515422675436, guid: b44536f212da3f040a44a5b39ded9c3c,
@@ -2707,6 +2707,8 @@ Prefab:
       objectReference: {fileID: 2100000, guid: b8e40a3827c9ace4d997e819df6c4ef4, type: 2}
     m_RemovedComponents:
     - {fileID: 114935069735203034, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
+    - {fileID: 114480264271375194, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
+    - {fileID: 114766665582971034, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: b44536f212da3f040a44a5b39ded9c3c, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &1607155435
@@ -3174,7 +3176,6 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   handleCollider: {fileID: 1667929973}
-  phase: 0
 --- !u!4 &1779221767 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4836276263631926, guid: b44536f212da3f040a44a5b39ded9c3c,
