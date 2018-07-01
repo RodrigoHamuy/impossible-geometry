@@ -51,8 +51,13 @@
 
 				for(float i = 1. ; i < 10; i++) {
 
-				 	p.x += _D / i * sin( i * _D * 10. * p.y + _Time.y);
-					p.y += _D / i * sin( i * _D * 10. * p.x + _Time.y);
+					// This is animation over time
+				 	// p.x += _D / i * sin( i * _D * 10. * p.y + _Time.y);
+					// p.y += _D / i * sin( i * _D * 10. * p.x + _Time.y);
+
+					// This is animation without time
+				 	p.x += _D / i * sin( i * _D * 10. * p.y);
+					p.y += _D / i * sin( i * _D * 10. * p.x);
 
 				}
 

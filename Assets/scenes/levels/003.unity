@@ -959,6 +959,12 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 61b52da1cba4030418491927e9abc914, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &1510157501 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114619959387746946, guid: 6a4ee232a2ca2c64b9702db686dda0bf,
+    type: 2}
+  m_PrefabInternal: {fileID: 54291293}
+  m_Script: {fileID: 11500000, guid: a6432bb8f64cd154595cbc71616385e7, type: 3}
 --- !u!1001 &1592269584
 Prefab:
   m_ObjectHideFlags: 0
@@ -1153,9 +1159,45 @@ Prefab:
       propertyPath: m_LocalScale.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelStartTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1728564377}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelStartTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StartTimer
+      objectReference: {fileID: 0}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelCompleteTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1510157501}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelCompleteTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StartTimer
+      objectReference: {fileID: 0}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelStartTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelCompleteTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: 1.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3c4c1e350e449d74d9965b0a90877e5b, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &1728564377 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114349389077957404, guid: 6a4ee232a2ca2c64b9702db686dda0bf,
+    type: 2}
+  m_PrefabInternal: {fileID: 54291293}
+  m_Script: {fileID: 11500000, guid: a6432bb8f64cd154595cbc71616385e7, type: 3}
 --- !u!1001 &1800275691
 Prefab:
   m_ObjectHideFlags: 0

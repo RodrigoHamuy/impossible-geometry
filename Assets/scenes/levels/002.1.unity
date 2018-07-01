@@ -445,6 +445,12 @@ Mesh:
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 0
+--- !u!114 &218019573 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114619959387746946, guid: 6a4ee232a2ca2c64b9702db686dda0bf,
+    type: 2}
+  m_PrefabInternal: {fileID: 54291293}
+  m_Script: {fileID: 11500000, guid: a6432bb8f64cd154595cbc71616385e7, type: 3}
 --- !u!1 &267649504
 GameObject:
   m_ObjectHideFlags: 0
@@ -692,6 +698,46 @@ Prefab:
         type: 2}
       propertyPath: m_Pivot.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: transitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: transitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StartTimer
+      objectReference: {fileID: 0}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelStartTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 955449749}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelStartTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StartTimer
+      objectReference: {fileID: 0}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelCompleteTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 218019573}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelCompleteTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StartTimer
+      objectReference: {fileID: 0}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelStartTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114768489991011258, guid: 3c4c1e350e449d74d9965b0a90877e5b,
+        type: 2}
+      propertyPath: levelCompleteTransitionStart.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3c4c1e350e449d74d9965b0a90877e5b, type: 2}
@@ -1555,6 +1601,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &955449749 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114349389077957404, guid: 6a4ee232a2ca2c64b9702db686dda0bf,
+    type: 2}
+  m_PrefabInternal: {fileID: 54291293}
+  m_Script: {fileID: 11500000, guid: a6432bb8f64cd154595cbc71616385e7, type: 3}
 --- !u!1 &989624482
 GameObject:
   m_ObjectHideFlags: 0

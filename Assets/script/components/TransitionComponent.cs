@@ -1,23 +1,26 @@
-// ﻿using System.Collections;
+// using System.Collections;
 // using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TransitionComponent : MonoBehaviour {
 
-	TargetComponent target;
+	public UnityEvent levelStartTransitionStart = new UnityEvent ();
+	public UnityEvent levelCompleteTransitionStart = new UnityEvent ();
 
-	Animator fadeAnim;
+	TargetComponent target;
 
 	// Use this for initialization
 	void Start () {
 
-		target = GameObject.FindObjectOfType <TargetComponent> ();
-		fadeAnim = GetComponentInChildren<Animator> ();
-		target.onTargetReached.AddListener( onTargetReached );
+		target = GameObject.FindObjectOfType<TargetComponent> ();
+		target.onTargetReached.AddListener (onTargetReached);
+
+		levelStartTransitionStart.Invoke();
 
 	}
 
-	void onTargetReached() {
-		fadeAnim.SetTrigger("onLevelComplete");
+	void onTargetReached () {
+		levelCompleteTransitionStart.Invoke ();
 	}
 }
