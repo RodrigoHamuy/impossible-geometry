@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity WebGL Player | Geometry</title>
+  <link rel="shortcut icon" href="TemplateData/favicon.ico">
+  <link rel="stylesheet" href="TemplateData/style.css">
+  <script src="TemplateData/UnityProgress.js"></script>
+  <script src="Build/UnityLoader.js"></script>
+  <script>
+    var gameInstance = UnityLoader.instantiate("gameContainer", "Build/web.json", { onProgress: UnityProgress });
+  </script>
+</head>
+
+<body>
+  <div class="webgl-content">
+    <div id="gameContainer"></div>
+    <div class="footer">
+      <!-- <div class="webgl-logo"></div> -->
+      <div class="fullscreen" onclick="gameInstance.SetFullscreen(1)"></div>
+      <div class="title">Geometry</div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+
+      'use script';
+
+      var gameContainer = document.querySelector('#gameContainer');
+      var footer = document.querySelector('.footer');
+
+      gameContainer.style.height = (window.innerHeight - footer.clientHeight - 16) + 'px';
+
+      // gameContainer.style.height = (window.innerHeight - footer.clientHeight - 16) * 2 + 'px';
+      // gameContainer.style.width = window.innerWidth * 2 + 'px';
+      // gameContainer.style.transform = 'scale(0.5)';
+      // gameContainer.style['transform-origin'] = 'top left';
+
+      console.log(window.innerHeight - footer.clientHeight - 16);
+
+
+      setTimeout(() => {
+
+        var btn = gameContainer.querySelector('button');
+
+        if (btn === null) return;
+        // var canvas = document.querySelector('canvas');
+        btn.click();
+
+      }, 100);
+
+
+    })();
+  </script>
+
+</body>
+
+</html>
