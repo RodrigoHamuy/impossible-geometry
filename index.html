@@ -35,12 +35,16 @@
 
       gameContainer.style.height = (window.innerHeight - footer.clientHeight - 16) + 'px';
 
+      // START: retina hack 
+
       // gameContainer.style.height = (window.innerHeight - footer.clientHeight - 16) * 2 + 'px';
       // gameContainer.style.width = window.innerWidth * 2 + 'px';
       // gameContainer.style.transform = 'scale(0.5)';
       // gameContainer.style['transform-origin'] = 'top left';
 
-      console.log(window.innerHeight - footer.clientHeight - 16);
+      // console.log(window.innerHeight - footer.clientHeight - 16);
+
+      // END: Retina hack
 
 
       setTimeout(() => {
