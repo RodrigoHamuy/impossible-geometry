@@ -4,151 +4,161 @@ using UnityEngine;
 
 public class AddOnHold : MonoBehaviour {
 
-	public Transform blockPrefab;
-	public Transform cubeBoyPrefab;
-	public Transform targetPrefab;
+  public Transform blockPrefab;
+  public Transform cubeBoyPrefab;
+  public Transform targetPrefab;
 
-	float currentY;
+  float currentY;
 
-	bool isPainting = false;
+  bool isPainting = false;
 
-	List<Transform> currentRow = new List<Transform> ();
+  List<Transform> currentRow = new List<Transform> ();
 
-	Transform cubeBoy;
-	Transform target;
+  Transform cubeBoy;
+  Transform target;
 
-	public void StartStroke (Vector2 screenPos) {
+  public void StartStroke (Vector2 screenPos) {
 
-		var hitPos = GetHitPosition (screenPos);
+    var hitPos = GetHitPosition (screenPos);
 
-		currentY = hitPos.y;
+    currentY = hitPos.y;
 
-		// var pos = transform.position;
-		// pos.y = currentY;
-		// transform.position = pos;
+    // var pos = transform.position;
+    // pos.y = currentY;
+    // transform.position = pos;
 
-		isPainting = true;
+    isPainting = true;
 
-		currentRow.Clear ();
+    currentRow.Clear ();
 
-	}
+  }
 
-	public void MoveStroke (Vector2 screenPos) {
+  public void MoveStroke (Vector2 screenPos) {
 
-		var hitPos = GetHitPosition(screenPos);
+    var hitPos = GetHitPosition (screenPos);
 
-		if (currentY != hitPos.y) return;
+    if (currentY != hitPos.y) return;
 
-		var spaceTaken = currentRow.Exists ((Transform oldBlock) => {
+    var spaceTaken = currentRow.Exists ((Transform oldBlock) => {
 
-			return oldBlock.position == hitPos;
+      return oldBlock.position == hitPos;
 
-		});
+    });
 
-		if (
-			currentRow.Count > 1 &&
-			currentRow[currentRow.Count - 2].position == hitPos
-		) {
+    if (
+      currentRow.Count > 1 &&
+      currentRow[currentRow.Count - 2].position == hitPos
+    ) {
 
-			var lastBlock = currentRow[currentRow.Count - 1];
-			currentRow.RemoveAt (currentRow.Count - 1);
-			Destroy (lastBlock.gameObject);
+      var lastBlock = currentRow[currentRow.Count - 1];
+      currentRow.RemoveAt (currentRow.Count - 1);
+      Destroy (lastBlock.gameObject);
 
-			return;
+      return;
 
-		}
+    }
 
-		if (spaceTaken) return;
+    if (spaceTaken) return;
 
-		CheckCornerBlock (hitPos);
+    CheckCornerBlock (hitPos);
 
-		var block = Instantiate (blockPrefab, hitPos, Quaternion.identity);
+    var block = Instantiate (blockPrefab, hitPos, Quaternion.identity);
 
-		block.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
+    block.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
 
-		currentRow.Add (block);
+    currentRow.Add (block);
 
-		if (cubeBoy == null) {
+    if (cubeBoy == null) {
 
-			cubeBoy = Instantiate (cubeBoyPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
+      cubeBoy = Instantiate (cubeBoyPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
 
-			cubeBoy.RotateAround (cubeBoy.position, Vector3.up, 180.0f);
+      cubeBoy.RotateAround (cubeBoy.position, Vector3.up, 180.0f);
 
-		}
+    }
 
-	}
+  }
 
-	public void EndStroke (Vector2 screenPos) {
+  public void EndStroke (Vector2 screenPos) {
 
-		isPainting = false;
+    isPainting = false;
 
-		int layer = LayerMask.NameToLayer ("Block");
+    int layer = LayerMask.NameToLayer ("Block");
 
-		currentRow.ForEach ((block) => {
+    currentRow.ForEach ((block) => {
 
-			block.gameObject.layer = layer;
+      block.gameObject.layer = layer;
 
-		});
+    });
 
-		var hitPos = TouchUtility.HitPosition (screenPos, gameObject);
+    var hitPos = TouchUtility.HitPosition (screenPos, gameObject);
 
-		if (target == null) {
+    if (target == null) {
 
-			target = Instantiate (targetPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
+      target = Instantiate (targetPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
 
-		}
+    }
 
-	}
+  }
 
-	void CheckCornerBlock (Vector3 hitPos) {
+  void CheckCornerBlock (Vector3 hitPos) {
 
-		if (currentRow.Count == 0) return;
+    if (currentRow.Count == 0) return;
 
-		var last = currentRow[currentRow.Count - 1].position;
+    var last = currentRow[currentRow.Count - 1].position;
 
-		if (hitPos.x != last.x && hitPos.z != last.z) {
+    if (hitPos.x != last.x && hitPos.z != last.z) {
 
-			// Add a middle block for corners
+      // Add a middle block for corners
 
-			var middlePos = hitPos;
-			middlePos.z = last.z;
+      var middlePos = hitPos;
+      middlePos.z = last.z;
 
-			var midSpaceTaken = currentRow.Exists ((Transform oldBlock) => {
+      var midSpaceTaken = currentRow.Exists ((Transform oldBlock) => {
 
-				return oldBlock.position == middlePos;
+        return oldBlock.position == middlePos;
 
-			});
+      });
 
-			if (midSpaceTaken) {
+      if (midSpaceTaken) {
 
-				middlePos = hitPos;
-				middlePos.x = last.x;
+        middlePos = hitPos;
+        middlePos.x = last.x;
 
-			}
+      }
 
-			var midBlock = Instantiate (blockPrefab, middlePos, Quaternion.identity);
+      var midBlock = Instantiate (blockPrefab, middlePos, Quaternion.identity);
 
-			midBlock.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
+      midBlock.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
 
-			currentRow.Add (midBlock);
+      currentRow.Add (midBlock);
 
-		}
-	}
+    }
+  }
 
-	Vector3 GetHitPosition (Vector2 screenPos) {
+  Vector3 GetHitPosition (Vector2 screenPos) {
 
-		var cam = Camera.main;
+    var cam = Camera.main;
 
-		var ray = cam.ScreenPointToRay (screenPos);
+    var ray = cam.ScreenPointToRay (screenPos);
 
-		var plane = new Plane (Vector3.up, transform.position + Vector3.up * .5f);
+    var plane = new Plane (Vector3.up, transform.position + Vector3.up * .5f);
 
-		float enter;
+    float enter;
 
-		plane.Raycast (ray, out enter);
+    plane.Raycast (ray, out enter);
 
-		return ray.GetPoint (enter);
+    var worldPos = ray.GetPoint (enter);
 
-	}
+    for (var i = 0; i < 3; i++) {
+
+      worldPos[i] = Mathf.Round (worldPos[i]);
+
+    }
+
+    worldPos.y += .5f;
+
+    return worldPos;
+
+  }
 
 }
