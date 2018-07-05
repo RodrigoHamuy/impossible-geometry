@@ -12,20 +12,15 @@ namespace Generic {
     public Vector2Event onTouchMove = new Vector2Event ();
     public Vector2Event onTouchEnd = new Vector2Event ();
 
-    // Camera gameCamera;
+    void Update () {
 
-    void Start () {
+      if (Input.touchSupported) TouchUpdate();
 
-      // gameCamera = Camera.main;
+      else if (Input.mousePresent) MouseUpdate ();
 
     }
 
-    void Update () {
-
-      if (Input.mousePresent) {
-        MouseUpdate ();
-        return;
-      }
+    void TouchUpdate () {
 
       if (Input.touchCount == 0) return;
 
@@ -52,21 +47,17 @@ namespace Generic {
 
       if (Input.GetMouseButtonDown (0)) {
 
-          onTouchStart.Invoke (input);
+        onTouchStart.Invoke (input);
 
       } else if (Input.GetMouseButton (0)) {
-        
+
         onTouchMove.Invoke (input);
 
-      } else if (Input.GetMouseButtonUp(0)){
+      } else if (Input.GetMouseButtonUp (0)) {
 
         onTouchEnd.Invoke (input);
 
       }
-
-    }
-
-    void TouchUpdate () {
 
     }
 

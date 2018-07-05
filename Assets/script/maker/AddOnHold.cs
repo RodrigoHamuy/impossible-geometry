@@ -19,13 +19,13 @@ public class AddOnHold : MonoBehaviour {
 
 	public void StartStroke (Vector2 screenPos) {
 
-		var hitPos = TouchUtility.HitPosition (screenPos, gameObject, true);
+		var hitPos = GetHitPosition (screenPos);
 
 		currentY = hitPos.y;
 
-		var pos = transform.position;
-		pos.y = currentY;
-		transform.position = pos;
+		// var pos = transform.position;
+		// pos.y = currentY;
+		// transform.position = pos;
 
 		isPainting = true;
 
@@ -35,7 +35,7 @@ public class AddOnHold : MonoBehaviour {
 
 	public void MoveStroke (Vector2 screenPos) {
 
-		var hitPos = TouchUtility.HitPosition (screenPos, gameObject);
+		var hitPos = GetHitPosition(screenPos);
 
 		if (currentY != hitPos.y) return;
 
@@ -52,13 +52,15 @@ public class AddOnHold : MonoBehaviour {
 
 			var lastBlock = currentRow[currentRow.Count - 1];
 			currentRow.RemoveAt (currentRow.Count - 1);
-			Destroy(lastBlock.gameObject);
+			Destroy (lastBlock.gameObject);
 
 			return;
 
 		}
 
 		if (spaceTaken) return;
+
+		CheckCornerBlock (hitPos);
 
 		var block = Instantiate (blockPrefab, hitPos, Quaternion.identity);
 
@@ -95,6 +97,57 @@ public class AddOnHold : MonoBehaviour {
 			target = Instantiate (targetPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
 
 		}
+
+	}
+
+	void CheckCornerBlock (Vector3 hitPos) {
+
+		if (currentRow.Count == 0) return;
+
+		var last = currentRow[currentRow.Count - 1].position;
+
+		if (hitPos.x != last.x && hitPos.z != last.z) {
+
+			// Add a middle block for corners
+
+			var middlePos = hitPos;
+			middlePos.z = last.z;
+
+			var midSpaceTaken = currentRow.Exists ((Transform oldBlock) => {
+
+				return oldBlock.position == middlePos;
+
+			});
+
+			if (midSpaceTaken) {
+
+				middlePos = hitPos;
+				middlePos.x = last.x;
+
+			}
+
+			var midBlock = Instantiate (blockPrefab, middlePos, Quaternion.identity);
+
+			midBlock.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
+
+			currentRow.Add (midBlock);
+
+		}
+	}
+
+	Vector3 GetHitPosition (Vector2 screenPos) {
+
+		var cam = Camera.main;
+
+		var ray = cam.ScreenPointToRay (screenPos);
+
+		var plane = new Plane (Vector3.up, transform.position + Vector3.up * .5f);
+
+		float enter;
+
+		plane.Raycast (ray, out enter);
+
+		return ray.GetPoint (enter);
 
 	}
 

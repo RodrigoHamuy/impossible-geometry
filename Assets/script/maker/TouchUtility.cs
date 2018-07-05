@@ -27,7 +27,7 @@ public class TouchUtility {
 
     for (int i = 0; i < 3; i++) {
 
-      pos[i] = Mathf.Round (pos[i]) + .5f;
+      pos[i] = Mathf.Round (pos[i]);
 
     }
 
