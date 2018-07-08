@@ -1,8 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class AddOnHold : MonoBehaviour {
+
+  public UnityEvent2Vector3 OnBlockAdded;
+  public UnityEvent2Vector3 OnBlockRemoved;
+
+  public UnityEvent OnBrushStart;
+  public UnityEvent OnBrushEnd;
 
   public Transform blockPrefab;
   public Transform cubeBoyPrefab;
@@ -31,9 +38,13 @@ public class AddOnHold : MonoBehaviour {
 
     currentRow.Clear ();
 
+    OnBrushStart.Invoke ();
+
   }
 
   public void MoveStroke (Vector2 screenPos) {
+
+    var dir = Vector3.zero;
 
     var hitPos = GetHitPosition (screenPos);
 
@@ -52,6 +63,8 @@ public class AddOnHold : MonoBehaviour {
 
       var lastBlock = currentRow[currentRow.Count - 1];
       currentRow.RemoveAt (currentRow.Count - 1);
+
+      OnBlockRemoved.Invoke (lastBlock.position, GetLastBlockDirection ());
       Destroy (lastBlock.gameObject);
 
       return;
@@ -67,6 +80,8 @@ public class AddOnHold : MonoBehaviour {
     block.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
 
     currentRow.Add (block);
+
+    OnBlockAdded.Invoke (hitPos, GetLastBlockDirection ());    
 
     if (cubeBoy == null) {
 
@@ -97,6 +112,21 @@ public class AddOnHold : MonoBehaviour {
       target = Instantiate (targetPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
 
     }
+
+    OnBrushEnd.Invoke ();
+
+  }
+
+  Vector3 GetLastBlockDirection () {
+
+    var count = currentRow.Count;
+
+    if (count < 2) return Vector3.zero;
+
+    var preLast = currentRow[count - 2].position;
+    var last = currentRow[count - 1].position;
+
+    return (last - preLast).normalized;
 
   }
 
@@ -131,6 +161,7 @@ public class AddOnHold : MonoBehaviour {
       midBlock.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
 
       currentRow.Add (midBlock);
+      OnBlockAdded.Invoke (middlePos, GetLastBlockDirection ());
 
     }
   }
