@@ -81,7 +81,7 @@ public class AddOnHold : MonoBehaviour {
 
     currentRow.Add (block);
 
-    OnBlockAdded.Invoke (hitPos, GetLastBlockDirection ());    
+    OnBlockAdded.Invoke (hitPos, GetLastBlockDirection ());
 
     if (cubeBoy == null) {
 
@@ -179,6 +179,30 @@ public class AddOnHold : MonoBehaviour {
     plane.Raycast (ray, out enter);
 
     var worldPos = ray.GetPoint (enter);
+
+    for (var i = 0; i < 3; i++) {
+
+      worldPos[i] = Mathf.Round (worldPos[i]);
+
+    }
+
+    worldPos.y += .5f;
+
+    return worldPos;
+
+  }
+
+  Vector3 GetBlockHitPosition (Ray ray, out bool found) {
+
+    string[] layerNames = { "Block" };
+
+    var layerMask = LayerMask.GetMask (layerNames);
+
+    RaycastHit hit;
+
+    found = Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask);
+
+    var worldPos = hit.point;
 
     for (var i = 0; i < 3; i++) {
 
