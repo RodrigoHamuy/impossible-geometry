@@ -26,13 +26,13 @@ public class AddOnHold : MonoBehaviour {
 
   public void StartStroke (Vector2 screenPos) {
 
-    var hitPos = GetHitPosition (screenPos);
+    bool found;
+
+    var hitPos = GetBlockHitPosition (screenPos, out found);
+
+    if (!found) hitPos = GetHitPosition (screenPos);
 
     currentY = hitPos.y;
-
-    // var pos = transform.position;
-    // pos.y = currentY;
-    // transform.position = pos;
 
     isPainting = true;
 
@@ -186,13 +186,17 @@ public class AddOnHold : MonoBehaviour {
 
     }
 
-    worldPos.y += .5f;
+    // worldPos.y += .5f;
 
     return worldPos;
 
   }
 
-  Vector3 GetBlockHitPosition (Ray ray, out bool found) {
+  Vector3 GetBlockHitPosition (Vector2 screenPos, out bool found) {
+
+    var cam = Camera.main;
+
+    var ray = cam.ScreenPointToRay (screenPos);
 
     string[] layerNames = { "Block" };
 
@@ -202,17 +206,23 @@ public class AddOnHold : MonoBehaviour {
 
     found = Physics.Raycast (ray, out hit, Mathf.Infinity, layerMask);
 
-    var worldPos = hit.point;
+    if (!found) return Vector3.zero;
 
-    for (var i = 0; i < 3; i++) {
+    var block = hit.transform;
 
-      worldPos[i] = Mathf.Round (worldPos[i]);
+    var forward = hit.point - block.transform.position;
 
-    }
+    var forwardEuler = Quaternion.LookRotation (forward).eulerAngles;
 
-    worldPos.y += .5f;
+    forwardEuler.x = Mathf.Round (forwardEuler.x / 90.0f) * 90.0f;
+    forwardEuler.y = Mathf.Round (forwardEuler.y / 90.0f) * 90.0f;
+    forwardEuler.z = Mathf.Round (forwardEuler.z / 90.0f) * 90.0f;
 
-    return worldPos;
+    var rightAngleRotation = new Quaternion (forwardEuler.x, forwardEuler.y, forwardEuler.z, 1);
+
+    var finalPos = block.transform.position + rightAngleRotation * Vector3.forward;
+
+    return finalPos;
 
   }
 
