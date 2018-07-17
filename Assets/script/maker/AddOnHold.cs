@@ -15,7 +15,7 @@ public class AddOnHold : MonoBehaviour {
   public Transform cubeBoyPrefab;
   public Transform targetPrefab;
 
-  float currentY;
+  Vector3 currentPlanePoint;
 
   bool isPainting = false;
 
@@ -23,6 +23,12 @@ public class AddOnHold : MonoBehaviour {
 
   Transform cubeBoy;
   Transform target;
+
+  void Start () {
+
+    currentPlanePoint = transform.position + Vector3.up * .5f;
+
+  }
 
   public void StartStroke (Vector2 screenPos) {
 
@@ -32,7 +38,7 @@ public class AddOnHold : MonoBehaviour {
 
     if (!found) hitPos = GetHitPosition (screenPos);
 
-    currentY = hitPos.y;
+    currentPlanePoint = hitPos;
 
     isPainting = true;
 
@@ -48,7 +54,7 @@ public class AddOnHold : MonoBehaviour {
 
     var hitPos = GetHitPosition (screenPos);
 
-    if (currentY != hitPos.y) return;
+    if (currentPlanePoint.y != hitPos.y) return;
 
     var spaceTaken = currentRow.Exists ((Transform oldBlock) => {
 
@@ -172,7 +178,7 @@ public class AddOnHold : MonoBehaviour {
 
     var ray = cam.ScreenPointToRay (screenPos);
 
-    var plane = new Plane (Vector3.up, transform.position + Vector3.up * .5f);
+    var plane = new Plane (Vector3.up, currentPlanePoint);
 
     float enter;
 
@@ -212,15 +218,44 @@ public class AddOnHold : MonoBehaviour {
 
     var forward = hit.point - block.transform.position;
 
-    var forwardEuler = Quaternion.LookRotation (forward).eulerAngles;
+    var dotF = Vector3.Dot (forward, Vector3.forward);
+    var dotU = Vector3.Dot (forward, Vector3.up);
+    var dotR = Vector3.Dot (forward, Vector3.right);
 
-    forwardEuler.x = Mathf.Round (forwardEuler.x / 90.0f) * 90.0f;
-    forwardEuler.y = Mathf.Round (forwardEuler.y / 90.0f) * 90.0f;
-    forwardEuler.z = Mathf.Round (forwardEuler.z / 90.0f) * 90.0f;
+    Vector3 finalForward;
 
-    var rightAngleRotation = new Quaternion (forwardEuler.x, forwardEuler.y, forwardEuler.z, 1);
+    float closestDot;
 
-    var finalPos = block.transform.position + rightAngleRotation * Vector3.forward;
+    Vector3 closestAxis;
+
+    if (
+      Mathf.Abs (dotF) > Mathf.Abs (dotU) &&
+      Mathf.Abs (dotF) > Mathf.Abs (dotR)
+    ) {
+
+      closestDot = dotF;
+      closestAxis = Vector3.forward;
+
+    } else if (
+      Mathf.Abs (dotU) > Mathf.Abs (dotF) &&
+      Mathf.Abs (dotU) > Mathf.Abs (dotR)
+    ) {
+
+      closestDot = dotF;
+      closestAxis = Vector3.up;
+
+    } else {
+
+      closestDot = dotF;
+      closestAxis = Vector3.right;
+
+    }
+
+    var side = closestDot >.0f ? 1.0f : -1.0f;
+
+    finalForward = closestAxis * side;
+
+    var finalPos = block.transform.position +  finalForward;
 
     return finalPos;
 
