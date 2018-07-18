@@ -46,6 +46,8 @@ public class AddOnHold : MonoBehaviour {
 
     OnBrushStart.Invoke ();
 
+    MoveStroke(screenPos);
+
   }
 
   public void MoveStroke (Vector2 screenPos) {
@@ -241,12 +243,12 @@ public class AddOnHold : MonoBehaviour {
       Mathf.Abs (dotU) > Mathf.Abs (dotR)
     ) {
 
-      closestDot = dotF;
+      closestDot = dotU;
       closestAxis = Vector3.up;
 
     } else {
 
-      closestDot = dotF;
+      closestDot = dotR;
       closestAxis = Vector3.right;
 
     }
