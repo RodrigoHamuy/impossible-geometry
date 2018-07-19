@@ -38,6 +38,10 @@ public class AddOnHold : MonoBehaviour {
 
     if (!found) hitPos = GetHitPosition (screenPos);
 
+    print ("hitPos: " + hitPos);
+
+    print ("found: " + found);
+
     currentPlanePoint = hitPos;
 
     isPainting = true;
@@ -46,7 +50,9 @@ public class AddOnHold : MonoBehaviour {
 
     OnBrushStart.Invoke ();
 
-    MoveStroke(screenPos);
+    if(found) screenPos = Camera.main.WorldToScreenPoint(hitPos);
+ 
+    MoveStroke (screenPos);
 
   }
 
@@ -85,7 +91,7 @@ public class AddOnHold : MonoBehaviour {
 
     var block = Instantiate (blockPrefab, hitPos, Quaternion.identity);
 
-    block.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
+    // block.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
 
     currentRow.Add (block);
 
@@ -98,6 +104,8 @@ public class AddOnHold : MonoBehaviour {
       cubeBoy.RotateAround (cubeBoy.position, Vector3.up, 180.0f);
 
     }
+
+    currentPlanePoint = transform.position;
 
   }
 
@@ -257,7 +265,9 @@ public class AddOnHold : MonoBehaviour {
 
     finalForward = closestAxis * side;
 
-    var finalPos = block.transform.position +  finalForward;
+    var finalPos = block.transform.position + finalForward;
+
+    print ("Dir: " + finalForward);
 
     return finalPos;
 
