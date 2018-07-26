@@ -16,6 +16,9 @@ public class AddOnHold : MonoBehaviour {
   public Transform targetPrefab;
 
   Vector3 currentPlanePoint;
+  Vector2 firstTouchPos;
+
+  bool secondTouchPass = false;
 
   bool isPainting = false;
 
@@ -26,7 +29,7 @@ public class AddOnHold : MonoBehaviour {
 
   void Start () {
 
-    currentPlanePoint = transform.position + Vector3.up * .5f;
+    currentPlanePoint = transform.position;
 
   }
 
@@ -36,13 +39,16 @@ public class AddOnHold : MonoBehaviour {
 
     var hitPos = GetBlockHitPosition (screenPos, out found);
 
-    if (!found) hitPos = GetHitPosition (screenPos);
+    if (!found) {
 
-    print ("hitPos: " + hitPos);
+      currentPlanePoint = transform.position;
+      hitPos = GetHitPosition (screenPos);
 
-    print ("found: " + found);
+    } else {
 
-    currentPlanePoint = hitPos;
+      currentPlanePoint = hitPos;
+
+    }
 
     isPainting = true;
 
@@ -50,19 +56,35 @@ public class AddOnHold : MonoBehaviour {
 
     OnBrushStart.Invoke ();
 
+    firstTouchPos = screenPos;
+    secondTouchPass = false;
+
     if(found) screenPos = Camera.main.WorldToScreenPoint(hitPos);
  
-    MoveStroke (screenPos);
+    MoveStroke (screenPos, true);
 
   }
 
-  public void MoveStroke (Vector2 screenPos) {
+  public void MoveStroke (Vector2 screenPos){
+    MoveStroke(screenPos, false);
+  }
+
+  public void MoveStroke (Vector2 screenPos, bool isFirstTouch) {
+
+    if(!secondTouchPass){
+
+      if(
+        !isFirstTouch &&
+        (screenPos - firstTouchPos).magnitude < 10
+      ) return;
+
+      else if(!isFirstTouch) secondTouchPass = true;
+
+    }
 
     var dir = Vector3.zero;
 
     var hitPos = GetHitPosition (screenPos);
-
-    if (currentPlanePoint.y != hitPos.y) return;
 
     var spaceTaken = currentRow.Exists ((Transform oldBlock) => {
 
@@ -104,8 +126,6 @@ public class AddOnHold : MonoBehaviour {
       cubeBoy.RotateAround (cubeBoy.position, Vector3.up, 180.0f);
 
     }
-
-    currentPlanePoint = transform.position;
 
   }
 
@@ -266,8 +286,6 @@ public class AddOnHold : MonoBehaviour {
     finalForward = closestAxis * side;
 
     var finalPos = block.transform.position + finalForward;
-
-    print ("Dir: " + finalForward);
 
     return finalPos;
 
