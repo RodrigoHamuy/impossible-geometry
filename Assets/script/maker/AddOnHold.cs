@@ -27,13 +27,24 @@ public class AddOnHold : MonoBehaviour {
   Transform cubeBoy;
   Transform target;
 
+  Vector3 lastHitPosNoRound;
+  Vector3 lastHitPos;
+
+  Vector2 margin;
+
   void Start () {
 
     currentPlanePoint = transform.position;
 
+    var cam = Camera.main;
+
+    margin = cam.WorldToScreenPoint(Vector3.up) - cam.WorldToScreenPoint(Vector3.zero);
+
   }
 
   public void StartStroke (Vector2 screenPos) {
+
+    screenPos += margin;
 
     bool found;
 
@@ -60,6 +71,8 @@ public class AddOnHold : MonoBehaviour {
     secondTouchPass = false;
 
     if(found) screenPos = Camera.main.WorldToScreenPoint(hitPos);
+
+    screenPos -= margin;
  
     MoveStroke (screenPos, true);
 
@@ -70,6 +83,8 @@ public class AddOnHold : MonoBehaviour {
   }
 
   public void MoveStroke (Vector2 screenPos, bool isFirstTouch) {
+
+    screenPos += margin;
 
     if(!secondTouchPass){
 
@@ -82,9 +97,9 @@ public class AddOnHold : MonoBehaviour {
 
     }
 
-    var dir = Vector3.zero;
+    var hitPos = GetDirPosition (screenPos);
 
-    var hitPos = GetHitPosition (screenPos);
+    if(hitPos == Vector3.zero) return;
 
     var spaceTaken = currentRow.Exists ((Transform oldBlock) => {
 
@@ -109,6 +124,8 @@ public class AddOnHold : MonoBehaviour {
 
     if (spaceTaken) return;
 
+    print(screenPos);
+
     CheckCornerBlock (hitPos);
 
     var block = Instantiate (blockPrefab, hitPos, Quaternion.identity);
@@ -127,9 +144,67 @@ public class AddOnHold : MonoBehaviour {
 
     }
 
+    lastHitPosNoRound = GetHitPosition(screenPos, false);
+    lastHitPos = hitPos;
+
+  }
+
+  public Vector3 GetDirPosition(Vector2 screenPos){
+
+    if(lastHitPos == Vector3.zero) {
+
+      return GetHitPosition(screenPos);
+
+    }
+
+    var currHitNoRound = GetHitPosition(screenPos, false);
+
+    var dir = currHitNoRound - lastHitPosNoRound;
+
+    if(dir.magnitude < 1.0f) return Vector3.zero;
+
+    dir = dir.normalized;
+
+    var max = -Mathf.Infinity;
+    var maxIndex = 0;
+
+    for(var i = 0; i < 3; i++){
+
+      if(i==1) continue;
+
+      if(max < Mathf.Abs(dir[i])){
+        max = Mathf.Abs(dir[i]);
+        maxIndex = i;
+      }
+
+    }
+
+    for(var i = 0; i < 3; i++){
+
+      if(i==1) {
+
+        dir[i] = 0;
+        continue;
+
+      }
+
+      if(i == maxIndex){
+
+        dir[i] = dir[i] > 0 ? 1 : -1;
+
+      } else dir[i] = 0;
+
+    }
+
+    print(dir);
+
+    return lastHitPos + dir;
+
   }
 
   public void EndStroke (Vector2 screenPos) {
+
+    screenPos += margin;
 
     isPainting = false;
 
@@ -148,6 +223,9 @@ public class AddOnHold : MonoBehaviour {
       target = Instantiate (targetPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
 
     }
+
+    lastHitPosNoRound = Vector3.zero;
+    lastHitPos = Vector3.zero;
 
     OnBrushEnd.Invoke ();
 
@@ -202,7 +280,7 @@ public class AddOnHold : MonoBehaviour {
     }
   }
 
-  Vector3 GetHitPosition (Vector2 screenPos) {
+  Vector3 GetHitPosition (Vector2 screenPos, bool round = true) {
 
     var cam = Camera.main;
 
@@ -215,6 +293,8 @@ public class AddOnHold : MonoBehaviour {
     plane.Raycast (ray, out enter);
 
     var worldPos = ray.GetPoint (enter);
+
+    if(!round) return worldPos;
 
     for (var i = 0; i < 3; i++) {
 
