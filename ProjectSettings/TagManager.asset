@@ -27,7 +27,7 @@ TagManager:
   - menuItem
   - maker.spawn
   - maker.newBlock
-  - 
+  - UI.clickable
   - 
   - 
   - 

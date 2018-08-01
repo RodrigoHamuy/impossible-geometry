@@ -28,7 +28,7 @@ namespace Generic {
 
       switch (touch.phase) {
         case TouchPhase.Began:
-          onTouchStart.Invoke (touch.position);
+          OnTouchStart (touch.position);
           break;
         case TouchPhase.Ended:
           onTouchEnd.Invoke (touch.position);
@@ -47,7 +47,7 @@ namespace Generic {
 
       if (Input.GetMouseButtonDown (0)) {
 
-        onTouchStart.Invoke (input);
+        OnTouchStart(input);
 
       } else if (Input.GetMouseButton (0)) {
 
@@ -58,6 +58,12 @@ namespace Generic {
         onTouchEnd.Invoke (input);
 
       }
+
+    }
+
+    void OnTouchStart(Vector2 input){
+
+      onTouchStart.Invoke (input);
 
     }
 

@@ -15,6 +15,8 @@ public class AddOnHold : MonoBehaviour {
   public Transform cubeBoyPrefab;
   public Transform targetPrefab;
 
+  public Vector3 planeNormal = Vector3.up;
+
   Vector3 currentPlanePoint;
   Vector2 firstTouchPos;
 
@@ -170,7 +172,7 @@ public class AddOnHold : MonoBehaviour {
 
     for(var i = 0; i < 3; i++){
 
-      if(i==1) continue;
+      if(planeNormal[i]==1) continue;
 
       if(max < Mathf.Abs(dir[i])){
         max = Mathf.Abs(dir[i]);
@@ -181,7 +183,7 @@ public class AddOnHold : MonoBehaviour {
 
     for(var i = 0; i < 3; i++){
 
-      if(i==1) {
+      if(planeNormal[i] == 1) {
 
         dir[i] = 0;
         continue;
@@ -229,6 +231,18 @@ public class AddOnHold : MonoBehaviour {
 
     OnBrushEnd.Invoke ();
 
+  }
+
+  public void SetPlaneNormalUp(){
+    planeNormal = Vector3.up;
+  }
+
+  public void SetPlaneNormalRight(){
+    planeNormal = Vector3.right;
+  }
+
+  public void SetPlaneNormalForward(){
+    planeNormal = Vector3.forward;
   }
 
   Vector3 GetLastBlockDirection () {
@@ -286,7 +300,7 @@ public class AddOnHold : MonoBehaviour {
 
     var ray = cam.ScreenPointToRay (screenPos);
 
-    var plane = new Plane (Vector3.up, currentPlanePoint);
+    var plane = new Plane (planeNormal, currentPlanePoint);
 
     float enter;
 
