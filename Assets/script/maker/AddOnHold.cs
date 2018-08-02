@@ -109,6 +109,8 @@ public class AddOnHold : MonoBehaviour {
 
     });
 
+    if(spaceTaken) print("space taken: " + hitPos + (currentRow[currentRow.Count - 2].position == hitPos));
+
     if (
       currentRow.Count > 1 &&
       currentRow[currentRow.Count - 2].position == hitPos
@@ -119,6 +121,8 @@ public class AddOnHold : MonoBehaviour {
 
       OnBlockRemoved.Invoke (lastBlock.position, GetLastBlockDirection ());
       Destroy (lastBlock.gameObject);
+      lastHitPosNoRound = GetHitPosition(screenPos, false);
+      lastHitPos = hitPos;//currentRow[currentRow.Count - 2].position;
 
       return;
 
@@ -128,7 +132,7 @@ public class AddOnHold : MonoBehaviour {
 
     print(screenPos);
 
-    CheckCornerBlock (hitPos);
+    // CheckCornerBlock (hitPos);
 
     var block = Instantiate (blockPrefab, hitPos, Quaternion.identity);
 
@@ -197,8 +201,6 @@ public class AddOnHold : MonoBehaviour {
       } else dir[i] = 0;
 
     }
-
-    print(dir);
 
     return lastHitPos + dir;
 
