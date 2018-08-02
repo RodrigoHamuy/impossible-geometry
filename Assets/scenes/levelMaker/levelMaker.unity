@@ -590,7 +590,7 @@ GameObject:
   - component: {fileID: 424535401}
   - component: {fileID: 424535400}
   - component: {fileID: 424535403}
-  m_Layer: 21
+  m_Layer: 5
   m_Name: BrushMode - Forward
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -811,7 +811,7 @@ GameObject:
   - component: {fileID: 817552885}
   - component: {fileID: 817552884}
   - component: {fileID: 817552887}
-  m_Layer: 21
+  m_Layer: 5
   m_Name: BrushMode - UP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3438,7 +3438,7 @@ GameObject:
   - component: {fileID: 1793936834}
   - component: {fileID: 1793936833}
   - component: {fileID: 1793936836}
-  m_Layer: 21
+  m_Layer: 5
   m_Name: BrushMode - Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}

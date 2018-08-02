@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace Generic {
 
@@ -11,6 +12,9 @@ namespace Generic {
     public Vector2Event onTouchStart = new Vector2Event ();
     public Vector2Event onTouchMove = new Vector2Event ();
     public Vector2Event onTouchEnd = new Vector2Event ();
+
+    bool mouseDown = false;
+    bool touchDown = false;
 
     void Update () {
 
@@ -27,14 +31,24 @@ namespace Generic {
       var touch = Input.GetTouch (0);
 
       switch (touch.phase) {
+
         case TouchPhase.Began:
-          OnTouchStart (touch.position);
+
+          if ( ! EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)){
+            onTouchStart.Invoke (touch.position);
+            touchDown = true;
+          }
           break;
-        case TouchPhase.Ended:
-          onTouchEnd.Invoke (touch.position);
+
+        case TouchPhase.Ended:       
+
+          if(touchDown) onTouchEnd.Invoke (touch.position);
+          touchDown = false;
           break;
+
         case TouchPhase.Moved:
-          onTouchMove.Invoke (touch.position);
+
+          if(touchDown) onTouchMove.Invoke (touch.position);
           break;
 
       }
@@ -47,23 +61,22 @@ namespace Generic {
 
       if (Input.GetMouseButtonDown (0)) {
 
-        OnTouchStart(input);
+        if ( ! EventSystem.current.IsPointerOverGameObject()){
+          onTouchStart.Invoke (input);
+          mouseDown = true;
+        }
 
       } else if (Input.GetMouseButton (0)) {
 
-        onTouchMove.Invoke (input);
+        if(mouseDown) onTouchMove.Invoke (input);
 
       } else if (Input.GetMouseButtonUp (0)) {
 
-        onTouchEnd.Invoke (input);
+        if(mouseDown) onTouchEnd.Invoke (input);
+
+        mouseDown = false;
 
       }
-
-    }
-
-    void OnTouchStart(Vector2 input){
-
-      onTouchStart.Invoke (input);
 
     }
 
