@@ -135,6 +135,7 @@ public class AddOnHold : MonoBehaviour {
 
       var lastBlock = currentRow[currentRow.Count - 1];
       currentRow.RemoveAt (currentRow.Count - 1);
+      blockHistory.RemoveAt(blockHistory.Count - 1);
       Destroy (lastBlock.gameObject);
       OnBlockRemoved.Invoke (lastBlock.position, GetLastBlockDirection ());
       lastHitPosNoRound = GetHitPosition(screenPos, false);
