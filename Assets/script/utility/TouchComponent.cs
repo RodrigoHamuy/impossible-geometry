@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace Generic {
 
@@ -12,34 +13,42 @@ namespace Generic {
     public Vector2Event onTouchMove = new Vector2Event ();
     public Vector2Event onTouchEnd = new Vector2Event ();
 
-    // Camera gameCamera;
-
-    void Start () {
-
-      // gameCamera = Camera.main;
-
-    }
+    bool mouseDown = false;
+    bool touchDown = false;
 
     void Update () {
 
-      if (Input.mousePresent) {
-        MouseUpdate ();
-        return;
-      }
+      if (Input.touchSupported) TouchUpdate();
+
+      else if (Input.mousePresent) MouseUpdate ();
+
+    }
+
+    void TouchUpdate () {
 
       if (Input.touchCount == 0) return;
 
       var touch = Input.GetTouch (0);
 
       switch (touch.phase) {
+
         case TouchPhase.Began:
-          onTouchStart.Invoke (touch.position);
+
+          if ( ! EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)){
+            onTouchStart.Invoke (touch.position);
+            touchDown = true;
+          }
           break;
-        case TouchPhase.Ended:
-          onTouchEnd.Invoke (touch.position);
+
+        case TouchPhase.Ended:       
+
+          if(touchDown) onTouchEnd.Invoke (touch.position);
+          touchDown = false;
           break;
+
         case TouchPhase.Moved:
-          onTouchMove.Invoke (touch.position);
+
+          if(touchDown) onTouchMove.Invoke (touch.position);
           break;
 
       }
@@ -52,21 +61,22 @@ namespace Generic {
 
       if (Input.GetMouseButtonDown (0)) {
 
+        if ( ! EventSystem.current.IsPointerOverGameObject()){
           onTouchStart.Invoke (input);
+          mouseDown = true;
+        }
 
       } else if (Input.GetMouseButton (0)) {
-        
-        onTouchMove.Invoke (input);
 
-      } else if (Input.GetMouseButtonUp(0)){
+        if(mouseDown) onTouchMove.Invoke (input);
 
-        onTouchEnd.Invoke (input);
+      } else if (Input.GetMouseButtonUp (0)) {
+
+        if(mouseDown) onTouchEnd.Invoke (input);
+
+        mouseDown = false;
 
       }
-
-    }
-
-    void TouchUpdate () {
 
     }
 

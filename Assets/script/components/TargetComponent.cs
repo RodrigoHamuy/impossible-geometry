@@ -28,7 +28,7 @@ public class TargetComponent : MonoBehaviour {
 	}
 
 	IEnumerator LoadNextLevel() {
-		yield return new WaitForSeconds(1);
+		yield return new WaitForSeconds(1.5f);
 		SceneManager.LoadScene(nextScene);
 	}
 
