@@ -7,6 +7,8 @@ public class AddOnHold : MonoBehaviour {
 
   public UnityEvent2Vector3 OnBlockAdded;
   public UnityEvent2Vector3 OnBlockRemoved;
+  public UnityEventInt OnBlockAmountChange;
+  public UnityEvent OnHistoryClear;
 
   public UnityEvent OnBrushStart;
   public UnityEvent OnBrushEnd;
@@ -25,6 +27,7 @@ public class AddOnHold : MonoBehaviour {
   bool isPainting = false;
 
   List<Transform> currentRow = new List<Transform> ();
+  List<Transform> blockHistory = new List<Transform> ();
 
   Transform cubeBoy;
   Transform target;
@@ -41,6 +44,20 @@ public class AddOnHold : MonoBehaviour {
     var cam = Camera.main;
 
     margin = cam.WorldToScreenPoint(Vector3.up) - cam.WorldToScreenPoint(Vector3.zero);
+
+    OnBlockAdded.AddListener( (v1, v2) => {
+      OnBlockAmountChange.Invoke(blockHistory.Count);
+    });
+
+    OnBlockRemoved.AddListener( (v1, v2) => {
+      OnBlockAmountChange.Invoke(blockHistory.Count);
+    });
+
+    OnBlockAmountChange.AddListener( amount => {
+      if(amount == 0) OnHistoryClear.Invoke();
+    });
+
+    OnBlockAmountChange.Invoke(blockHistory.Count);
 
   }
 
@@ -118,9 +135,8 @@ public class AddOnHold : MonoBehaviour {
 
       var lastBlock = currentRow[currentRow.Count - 1];
       currentRow.RemoveAt (currentRow.Count - 1);
-
-      OnBlockRemoved.Invoke (lastBlock.position, GetLastBlockDirection ());
       Destroy (lastBlock.gameObject);
+      OnBlockRemoved.Invoke (lastBlock.position, GetLastBlockDirection ());
       lastHitPosNoRound = GetHitPosition(screenPos, false);
       lastHitPos = hitPos;//currentRow[currentRow.Count - 2].position;
 
@@ -139,6 +155,7 @@ public class AddOnHold : MonoBehaviour {
     // block.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
 
     currentRow.Add (block);
+    blockHistory.Add(block);
 
     OnBlockAdded.Invoke (hitPos, GetLastBlockDirection ());
 
@@ -291,6 +308,7 @@ public class AddOnHold : MonoBehaviour {
       midBlock.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
 
       currentRow.Add (midBlock);
+      blockHistory.Add(midBlock);
       OnBlockAdded.Invoke (middlePos, GetLastBlockDirection ());
 
     }
@@ -384,6 +402,17 @@ public class AddOnHold : MonoBehaviour {
     var finalPos = block.transform.position + finalForward;
 
     return finalPos;
+
+  }
+
+  public void RemoveLastBlock(){
+
+    if(blockHistory.Count == 0 ) return;
+
+    var block = blockHistory[blockHistory.Count - 1];
+    Destroy(block.gameObject);
+    blockHistory.RemoveAt( blockHistory.Count - 1);
+    OnBlockRemoved.Invoke(block.position, Vector3.zero);
 
   }
 
