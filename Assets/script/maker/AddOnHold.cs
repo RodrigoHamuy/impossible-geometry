@@ -406,15 +406,8 @@ public class AddOnHold : MonoBehaviour {
 
   }
 
-  public void RemoveLastBlock(){
-
-    if(blockHistory.Count == 0 ) return;
-
-    var block = blockHistory[blockHistory.Count - 1];
-    Destroy(block.gameObject);
-    blockHistory.RemoveAt( blockHistory.Count - 1);
-    OnBlockRemoved.Invoke(block.position, Vector3.zero);
-
+  public void SetPrefab(Transform element){
+    blockPrefab = element;
   }
 
 }
