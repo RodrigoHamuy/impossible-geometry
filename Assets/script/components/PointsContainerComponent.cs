@@ -116,4 +116,8 @@ public class PointsContainerComponent : MonoBehaviour {
 	void OnMouseUp(){
 		onMouseUp.Invoke();
 	}
+
+	public void ResetPoints(){
+		pathContainer.ResetPoints();
+	}
 }

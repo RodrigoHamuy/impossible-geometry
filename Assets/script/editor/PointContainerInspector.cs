@@ -15,9 +15,19 @@ public class PointContainerInspector : Editor {
 
 		component = (PointsContainerComponent) target;
 
+		if(GUILayout.Button("Reset path points")) {
+			ResetPoints();
+    }
+
 		if(GUILayout.Button("Convert to prism")) {
 			ConvertToPrism();
     }
+	}
+
+	void ResetPoints() {
+		Debug.Log("Reset points");
+		var pointsContainer = component.gameObject.GetComponent<PointsContainerComponent>();
+		pointsContainer.ResetPoints();
 	}
 
 	void ConvertToPrism() {

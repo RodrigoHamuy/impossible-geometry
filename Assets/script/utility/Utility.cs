@@ -316,7 +316,7 @@ public class Utility {
       }
     }
 
-    Debug.LogError ("This is not a perpendicular normal.");
+    Debug.LogError ("This is not a perpendicular normal: " + n.ToString());
 
     return n;
 
