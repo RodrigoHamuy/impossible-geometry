@@ -5,6 +5,10 @@ using UnityEngine.Events;
 
 public class AddOnHold : MonoBehaviour {
 
+  // TODO: Rotate PRISM
+  // TODO: Add PLAY button
+  // TODO: Reset all path points on Play Mode Start
+
   public UnityEvent2Vector3 OnBlockAdded;
   public UnityEvent2Vector3 OnBlockRemoved;
   public UnityEventInt OnBlockAmountChange;

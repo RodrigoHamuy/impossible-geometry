@@ -48,4 +48,5 @@ public class PathManagerComponent : MonoBehaviour {
 			Debug.Log("Path not found");
 		}
 	}
+
 }

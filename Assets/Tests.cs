@@ -53,6 +53,13 @@ public class Tests {
   }
 
   [UnityTest]
+  public IEnumerator Issue002_007_ShouldBeTheRightTarget () {
+    yield return LoadScene ("issue-002.007");
+    var path = GetPath ();
+    Assert.AreEqual (new Vector3 (6f, -7.5f, 5.5f), path.Last ().position, "Should be the right target.");
+  }
+
+  [UnityTest]
   public IEnumerator Issue005_000_ShouldNotFind () {
     yield return LoadScene ("issue-005.000");
     Assert.IsFalse (HasPath (), "Should not find a path.");
