@@ -137,6 +137,8 @@ public class AddOnHold : MonoBehaviour {
       currentRow[currentRow.Count - 2].position == hitPos
     ) {
 
+      // TODO: Remove path points from these guys
+
       var lastBlock = currentRow[currentRow.Count - 1];
       currentRow.RemoveAt (currentRow.Count - 1);
       blockHistory.RemoveAt(blockHistory.Count - 1);
