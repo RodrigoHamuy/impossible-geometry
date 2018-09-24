@@ -120,4 +120,8 @@ public class PointsContainerComponent : MonoBehaviour {
 	public void ResetPoints(){
 		pathContainer.ResetPoints();
 	}
+
+	void OnDestroy(){
+		pathContainer.DestroyPoints();
+	}
 }

@@ -14,12 +14,16 @@ public class PathContainer{
 	public PointsContainerComponent component;
 
 	public void ResetPoints(){
+		DestroyPoints();
+		setTriangles();
+		GeneratePathPoints();
+	}
+
+	public void DestroyPoints(){
 		foreach( var point in points ) {
 			GameObject.Destroy(point.component.gameObject);
 		}
 		points.Clear();
-		setTriangles();
-		GeneratePathPoints();
 	}
 
 	public void onRotationStart() {
