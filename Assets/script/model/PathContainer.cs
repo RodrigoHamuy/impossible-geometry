@@ -21,7 +21,9 @@ public class PathContainer{
 
 	public void DestroyPoints(){
 		foreach( var point in points ) {
-			GameObject.Destroy(point.component.gameObject);
+			if(point.component != null){
+				GameObject.Destroy(point.component.gameObject);
+			}
 		}
 		points.Clear();
 	}
