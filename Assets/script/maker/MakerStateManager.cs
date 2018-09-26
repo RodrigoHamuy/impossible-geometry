@@ -28,6 +28,7 @@ public class MakerStateManager : MonoBehaviour {
 
 	void Start () {
 		OnStateUpdate ();
+		OnEditorStateUpdate();
 	}
 
 	public void SetState (MakerState state) {
@@ -54,8 +55,8 @@ public class MakerStateManager : MonoBehaviour {
 
 		switch (state) {
 			case MakerState.Play:
-				SetAllActive (playModeObjects, true);
 				SetAllActive (editModeObjects, false);
+				SetAllActive (playModeObjects, true);
 				break;
 			case MakerState.Editor:
 				SetAllActive (playModeObjects, false);
@@ -69,14 +70,14 @@ public class MakerStateManager : MonoBehaviour {
 
 		switch (editorState) {
 			case EditorState.Brush:
-				SetAllActive (BrushModeObjects, true);
 				SetAllActive (PrismModeObjects, false);
 				SetAllActive (RotateModeObjects, false);
+				SetAllActive (BrushModeObjects, true);
 				break;
 			case EditorState.Prism:
 				SetAllActive (BrushModeObjects, false);
-				SetAllActive (PrismModeObjects, true);
 				SetAllActive (RotateModeObjects, false);
+				SetAllActive (PrismModeObjects, true);
 				break;
 			case EditorState.Rotate:
 				SetAllActive (BrushModeObjects, false);
