@@ -8,14 +8,24 @@ public class BlockRotator : MonoBehaviour {
   public GameObject rotateController;
   public GameObject rotateHolder;
 
+  public bool canChangeObject = true;
+
   void Start(){
     rotateController.SetActive(false);
+  }
+
+  public void CanChangeObject(bool value){
+    canChangeObject = value;
   }
 
 	public void OnTouchEnd(Vector2 touchPos) {
 
     // already in use
-    if(rotateHolder.transform.childCount != 0) return;
+    if(!canChangeObject) return;
+
+    if(rotateHolder.transform.childCount > 0) {
+      rotateHolder.GetComponentInChildren<Transform>().parent = null;
+    }
 
 		var block = GetBlocksOnTapPos(touchPos);
 
@@ -25,7 +35,9 @@ public class BlockRotator : MonoBehaviour {
       rotateController.transform.position = block.position;
       block.parent = rotateHolder.transform;
 
-		}
+		} else {
+      rotateController.SetActive(false);
+    }
 
 	}
 

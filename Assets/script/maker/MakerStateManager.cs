@@ -13,6 +13,7 @@ public class MakerStateManager : MonoBehaviour {
 	public UnityEventMakerState OnStateChange;
 
 	public MakerState state;
+	MakerState prevState;
 
 	//#endregion
 
@@ -22,28 +23,42 @@ public class MakerStateManager : MonoBehaviour {
 	public GameObject[] PrismModeObjects;
 	public GameObject[] RotateModeObjects;
 
+	public GameObject ComponentToRotateHolder;
+
 	public EditorState editorState;
+	EditorState prevEditorState;
 
 	//#endregion
 
 	void Start () {
+
+		prevState = state;
+		prevEditorState = editorState;
 		OnStateUpdate ();
-		OnEditorStateUpdate();
+		OnEditorStateUpdate ();
 	}
 
-	public void SetState (MakerState state) {
+	public void SetState (MakerState newState) {
 
-		if (this.state == state) return;
-		this.state = state;
+		if (state == newState) return;
+
+		prevState = state;
+		state = newState;
 
 		OnStateUpdate ();
 
+		if (prevState == MakerState.Editor || state == MakerState.Editor) {
+			OnEditorStateUpdate ();
+		}
+
 	}
 
-	public void SetState (EditorState state) {
+	public void SetState (EditorState newEditorState) {
 
-		if (editorState == state) return;
-		editorState = state;
+		if (editorState == newEditorState) return;
+
+		prevEditorState = editorState;
+		editorState = newEditorState;
 
 		OnEditorStateUpdate ();
 
@@ -67,6 +82,23 @@ public class MakerStateManager : MonoBehaviour {
 	}
 
 	void OnEditorStateUpdate () {
+
+		var currPrevState = state == MakerState.Play ? editorState : prevEditorState;
+
+		if(currPrevState == EditorState.Rotate) {
+
+			OnRotateStateEnd();
+
+		}
+
+		if (state == MakerState.Play) {
+
+			SetAllActive (BrushModeObjects, false);
+			SetAllActive (PrismModeObjects, false);
+			SetAllActive (RotateModeObjects, false);
+			return;
+
+		}
 
 		switch (editorState) {
 			case EditorState.Brush:
@@ -94,4 +126,8 @@ public class MakerStateManager : MonoBehaviour {
 		}
 	}
 
+	void OnRotateStateEnd(){
+		var cube = ComponentToRotateHolder.GetComponentInChildren<Transform>();
+		if(cube) cube.parent = null;
+	}
 }

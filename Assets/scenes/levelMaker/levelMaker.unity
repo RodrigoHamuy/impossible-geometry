@@ -756,7 +756,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh18298
+  m_Name: pb_Mesh14582
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -3468,7 +3468,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh11966
+  m_Name: pb_Mesh14508
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -3627,7 +3627,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateController: {fileID: 1780123535}
   rotateHolder: {fileID: 1960605083}
-  rotateSprite: {fileID: 997647227}
+  canChangeObject: 1
 --- !u!114 &1345655852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4627,6 +4627,8 @@ MonoBehaviour:
   - {fileID: 875258515}
   RotateModeObjects:
   - {fileID: 1345655850}
+  - {fileID: 1780123535}
+  ComponentToRotateHolder: {fileID: 1960605083}
   editorState: 0
 --- !u!1 &1780123535
 GameObject:
@@ -4644,7 +4646,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1780123536
 Transform:
   m_ObjectHideFlags: 0
@@ -4713,6 +4715,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1345655851}
+        m_MethodName: CanChangeObject
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   onRotationMove:
@@ -4744,6 +4757,17 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1345655851}
+        m_MethodName: CanChangeObject
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
