@@ -27,7 +27,7 @@ public class BlockRotator : MonoBehaviour {
       rotateHolder.GetComponentInChildren<Transform>().parent = null;
     }
 
-		var block = GetBlocksOnTapPos(touchPos);
+		var block = Utility.GetBlocksOnTapPos(touchPos);
 
 		if(block){
 
@@ -42,24 +42,5 @@ public class BlockRotator : MonoBehaviour {
 	}
 
 
-  public static Transform GetBlocksOnTapPos (Vector3 tapPos) {
-
-    var points = new List<PathPoint> ();
-    var ray = Camera.main.ScreenPointToRay (tapPos);
-    var layerMask = LayerMask.GetMask ("Block");
-    var hits = Physics.RaycastAll (ray, 100.0f, layerMask);
-    
-    var hitsOrdered = hits.OrderBy( h => h.distance);
-
-    foreach (var hit in hitsOrdered) {
-
-      var block = hit.collider.transform.GetComponent<Transform> ();
-
-			return block;
-
-    }
-
-		return null;
-
-  }
+  
 }

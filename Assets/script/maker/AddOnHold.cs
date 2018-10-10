@@ -5,14 +5,9 @@ using UnityEngine.Events;
 
 public class AddOnHold : MonoBehaviour {
 
-  // TODO: Rotate PRISM
-  // TODO: Add PLAY button
-  // TODO: Reset all path points on Play Mode Start
+  public Transform marker;
 
-  public UnityEvent2Vector3 OnBlockAdded;
-  public UnityEvent2Vector3 OnBlockRemoved;
-  public UnityEventInt OnBlockAmountChange;
-  public UnityEvent OnHistoryClear;
+  public MakerActionsManager actionsManager;
 
   public UnityEvent OnBrushStart;
   public UnityEvent OnBrushEnd;
@@ -31,7 +26,6 @@ public class AddOnHold : MonoBehaviour {
   bool isPainting = false;
 
   List<Transform> currentRow = new List<Transform> ();
-  List<Transform> blockHistory = new List<Transform> ();
 
   Transform cubeBoy;
   Transform target;
@@ -47,21 +41,7 @@ public class AddOnHold : MonoBehaviour {
 
     var cam = Camera.main;
 
-    margin = cam.WorldToScreenPoint(Vector3.up) - cam.WorldToScreenPoint(Vector3.zero);
-
-    OnBlockAdded.AddListener( (v1, v2) => {
-      OnBlockAmountChange.Invoke(blockHistory.Count);
-    });
-
-    OnBlockRemoved.AddListener( (v1, v2) => {
-      OnBlockAmountChange.Invoke(blockHistory.Count);
-    });
-
-    OnBlockAmountChange.AddListener( amount => {
-      if(amount == 0) OnHistoryClear.Invoke();
-    });
-
-    OnBlockAmountChange.Invoke(blockHistory.Count);
+    margin = cam.WorldToScreenPoint (Vector3.up) - cam.WorldToScreenPoint (Vector3.zero);
 
   }
 
@@ -93,36 +73,35 @@ public class AddOnHold : MonoBehaviour {
     firstTouchPos = screenPos;
     secondTouchPass = false;
 
-    if(found) screenPos = Camera.main.WorldToScreenPoint(hitPos);
+    if (found) screenPos = Camera.main.WorldToScreenPoint (hitPos);
 
     screenPos -= margin;
- 
+
     MoveStroke (screenPos, true);
 
   }
 
-  public void MoveStroke (Vector2 screenPos){
-    MoveStroke(screenPos, false);
+  public void MoveStroke (Vector2 screenPos) {
+    MoveStroke (screenPos, false);
   }
 
   public void MoveStroke (Vector2 screenPos, bool isFirstTouch) {
 
     screenPos += margin;
 
-    if(!secondTouchPass){
+    if (!secondTouchPass) {
 
-      if(
-        !isFirstTouch &&
+      if (!isFirstTouch &&
         (screenPos - firstTouchPos).magnitude < 10
       ) return;
 
-      else if(!isFirstTouch) secondTouchPass = true;
+      else if (!isFirstTouch) secondTouchPass = true;
 
     }
 
     var hitPos = GetDirPosition (screenPos);
 
-    if(hitPos == Vector3.zero) return;
+    if (hitPos == Vector3.zero) return;
 
     var spaceTaken = currentRow.Exists ((Transform oldBlock) => {
 
@@ -130,22 +109,17 @@ public class AddOnHold : MonoBehaviour {
 
     });
 
-    if(spaceTaken) print("space taken: " + hitPos + (currentRow[currentRow.Count - 2].position == hitPos));
+    if (spaceTaken) print ("space taken: " + hitPos + (currentRow[currentRow.Count - 2].position == hitPos));
 
     if (
       currentRow.Count > 1 &&
       currentRow[currentRow.Count - 2].position == hitPos
     ) {
 
-      // TODO: Remove path points from these guys
-
-      var lastBlock = currentRow[currentRow.Count - 1];
       currentRow.RemoveAt (currentRow.Count - 1);
-      blockHistory.RemoveAt(blockHistory.Count - 1);
-      Destroy (lastBlock.gameObject);
-      OnBlockRemoved.Invoke (lastBlock.position, GetLastBlockDirection ());
-      lastHitPosNoRound = GetHitPosition(screenPos, false);
-      lastHitPos = hitPos;//currentRow[currentRow.Count - 2].position;
+      actionsManager.RemoveLastBlock ();
+      lastHitPosNoRound = GetHitPosition (screenPos, false);
+      lastHitPos = hitPos; //currentRow[currentRow.Count - 2].position;
 
       return;
 
@@ -153,18 +127,13 @@ public class AddOnHold : MonoBehaviour {
 
     if (spaceTaken) return;
 
-    print(screenPos);
+    print (screenPos);
 
-    // CheckCornerBlock (hitPos);
+    var block = actionsManager.AddBlock (blockPrefab, hitPos);
 
-    var block = Instantiate (blockPrefab, hitPos, Quaternion.identity);
-
-    // block.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
+    marker.transform.position = hitPos;
 
     currentRow.Add (block);
-    blockHistory.Add(block);
-
-    OnBlockAdded.Invoke (hitPos, GetLastBlockDirection ());
 
     if (cubeBoy == null) {
 
@@ -174,51 +143,51 @@ public class AddOnHold : MonoBehaviour {
 
     }
 
-    lastHitPosNoRound = GetHitPosition(screenPos, false);
+    lastHitPosNoRound = GetHitPosition (screenPos, false);
     lastHitPos = hitPos;
 
   }
 
-  public Vector3 GetDirPosition(Vector2 screenPos){
+  public Vector3 GetDirPosition (Vector2 screenPos) {
 
-    if(lastHitPos == Vector3.zero) {
+    if (lastHitPos == Vector3.zero) {
 
-      return GetHitPosition(screenPos);
+      return GetHitPosition (screenPos);
 
     }
 
-    var currHitNoRound = GetHitPosition(screenPos, false);
+    var currHitNoRound = GetHitPosition (screenPos, false);
 
     var dir = currHitNoRound - lastHitPosNoRound;
 
-    if(dir.magnitude < 1.0f) return Vector3.zero;
+    if (dir.magnitude < 1.0f) return Vector3.zero;
 
     dir = dir.normalized;
 
     var max = -Mathf.Infinity;
     var maxIndex = 0;
 
-    for(var i = 0; i < 3; i++){
+    for (var i = 0; i < 3; i++) {
 
-      if(planeNormal[i]==1) continue;
+      if (planeNormal[i] == 1) continue;
 
-      if(max < Mathf.Abs(dir[i])){
-        max = Mathf.Abs(dir[i]);
+      if (max < Mathf.Abs (dir[i])) {
+        max = Mathf.Abs (dir[i]);
         maxIndex = i;
       }
 
     }
 
-    for(var i = 0; i < 3; i++){
+    for (var i = 0; i < 3; i++) {
 
-      if(planeNormal[i] == 1) {
+      if (planeNormal[i] == 1) {
 
         dir[i] = 0;
         continue;
 
       }
 
-      if(i == maxIndex){
+      if (i == maxIndex) {
 
         dir[i] = dir[i] > 0 ? 1 : -1;
 
@@ -259,15 +228,15 @@ public class AddOnHold : MonoBehaviour {
 
   }
 
-  public void SetPlaneNormalUp(){
+  public void SetPlaneNormalUp () {
     planeNormal = Vector3.up;
   }
 
-  public void SetPlaneNormalRight(){
+  public void SetPlaneNormalRight () {
     planeNormal = Vector3.right;
   }
 
-  public void SetPlaneNormalForward(){
+  public void SetPlaneNormalForward () {
     planeNormal = Vector3.forward;
   }
 
@@ -310,13 +279,11 @@ public class AddOnHold : MonoBehaviour {
 
       }
 
-      var midBlock = Instantiate (blockPrefab, middlePos, Quaternion.identity);
+      var midBlock = actionsManager.AddBlock (blockPrefab, middlePos);
 
       midBlock.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
 
       currentRow.Add (midBlock);
-      blockHistory.Add(midBlock);
-      OnBlockAdded.Invoke (middlePos, GetLastBlockDirection ());
 
     }
   }
@@ -335,7 +302,7 @@ public class AddOnHold : MonoBehaviour {
 
     var worldPos = ray.GetPoint (enter);
 
-    if(!round) return worldPos;
+    if (!round) return worldPos;
 
     for (var i = 0; i < 3; i++) {
 
@@ -412,20 +379,19 @@ public class AddOnHold : MonoBehaviour {
 
   }
 
-  public void SetPrefab(Transform element){
+  public void SetPrefab (Transform element) {
     blockPrefab = element;
   }
 
-  public void RemoveLastBlock(){
+  public void RemoveLastBlock () {
 
-    if(currentRow.Count > 0) {
+    if (currentRow.Count > 0) {
       currentRow.RemoveAt (currentRow.Count - 1);
     }
-    if(blockHistory.Count > 0) {
-      var lastBlock = blockHistory[blockHistory.Count-1];
-      blockHistory.RemoveAt(blockHistory.Count - 1);
-      Destroy (lastBlock.gameObject);
-      OnBlockRemoved.Invoke (lastBlock.position, GetLastBlockDirection ());
+    if (actionsManager.blockHistory.Count > 0) {
+      var lastBlock = actionsManager.RemoveLastBlock ();
+      var dir = GetLastBlockDirection ();
+      marker.position = lastBlock.position - dir;
     }
 
   }

@@ -316,7 +316,7 @@ public class Utility {
       }
     }
 
-    Debug.LogError ("This is not a perpendicular normal: " + n.ToString());
+    Debug.LogError ("This is not a perpendicular normal: " + n.ToString ());
 
     return n;
 
@@ -388,4 +388,25 @@ public class Utility {
     return TouchPhase.Canceled;
   }
 
+  public static Transform GetBlocksOnTapPos (Vector3 tapPos) {
+
+    var points = new List<PathPoint> ();
+    var ray = Camera.main.ScreenPointToRay (tapPos);
+    var layerMask = LayerMask.GetMask ("Block");
+    var hits = Physics.RaycastAll (ray, 100.0f, layerMask);
+
+    var hitsOrdered = hits.OrderBy (h => h.distance);
+
+    foreach (var hit in hitsOrdered) {
+
+      var block = hit.collider.transform.GetComponent<Transform> ();
+
+      return block;
+
+    }
+
+    return null;
+
+  }
+  
 }

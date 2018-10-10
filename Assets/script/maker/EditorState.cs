@@ -4,5 +4,6 @@ using System;
 public enum EditorState {
   Brush,
   Prism,
-  Rotate
+  Rotate,
+  Delete
 }

@@ -22,6 +22,7 @@ public class MakerStateManager : MonoBehaviour {
 	public GameObject[] BrushModeObjects;
 	public GameObject[] PrismModeObjects;
 	public GameObject[] RotateModeObjects;
+	public GameObject[] DeleteModeObjects;
 
 	public GameObject ComponentToRotateHolder;
 
@@ -85,9 +86,9 @@ public class MakerStateManager : MonoBehaviour {
 
 		var currPrevState = state == MakerState.Play ? editorState : prevEditorState;
 
-		if(currPrevState == EditorState.Rotate) {
+		if (currPrevState == EditorState.Rotate) {
 
-			OnRotateStateEnd();
+			OnRotateStateEnd ();
 
 		}
 
@@ -96,6 +97,7 @@ public class MakerStateManager : MonoBehaviour {
 			SetAllActive (BrushModeObjects, false);
 			SetAllActive (PrismModeObjects, false);
 			SetAllActive (RotateModeObjects, false);
+			SetAllActive (DeleteModeObjects, false);
 			return;
 
 		}
@@ -105,16 +107,25 @@ public class MakerStateManager : MonoBehaviour {
 				SetAllActive (PrismModeObjects, false);
 				SetAllActive (RotateModeObjects, false);
 				SetAllActive (BrushModeObjects, true);
+				SetAllActive (DeleteModeObjects, false);
 				break;
 			case EditorState.Prism:
 				SetAllActive (BrushModeObjects, false);
 				SetAllActive (RotateModeObjects, false);
 				SetAllActive (PrismModeObjects, true);
+				SetAllActive (DeleteModeObjects, false);
 				break;
 			case EditorState.Rotate:
 				SetAllActive (BrushModeObjects, false);
 				SetAllActive (PrismModeObjects, false);
 				SetAllActive (RotateModeObjects, true);
+				SetAllActive (DeleteModeObjects, false);
+				break;
+			case EditorState.Delete:
+				SetAllActive (BrushModeObjects, false);
+				SetAllActive (PrismModeObjects, false);
+				SetAllActive (RotateModeObjects, false);
+				SetAllActive (DeleteModeObjects, true);
 				break;
 		}
 
@@ -126,8 +137,8 @@ public class MakerStateManager : MonoBehaviour {
 		}
 	}
 
-	void OnRotateStateEnd(){
-		var cube = ComponentToRotateHolder.GetComponentInChildren<Transform>();
-		if(cube) cube.parent = null;
+	void OnRotateStateEnd () {
+		var cube = ComponentToRotateHolder.GetComponentInChildren<Transform> ();
+		if (cube) cube.parent = null;
 	}
 }
