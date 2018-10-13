@@ -1,0 +1,1 @@
+class MakerStateObserver : StateObserver<MakerState> { }

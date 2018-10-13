@@ -149,9 +149,6 @@ public class PlayerComponent : MonoBehaviour {
 
 			var rotationAxis = Vector3.Cross( prevPoint.normal, targetPoint.normal);
 
-			var angle = Vector3.SignedAngle( centerToNext, centerToPrev, rotationAxis );
-
-
 			var centerToPlayer = transform.position - center;
 
 			var currAngle = Vector3.SignedAngle(centerToNext, centerToPlayer, rotationAxis );

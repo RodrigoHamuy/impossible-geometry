@@ -3,50 +3,52 @@ using UnityEngine;
 
 public class PathManagerComponent : MonoBehaviour {
 
-	PlayerComponent player;
+  PlayerComponent player;
 
-	PathFinder pathFinder = new PathFinder();
+  PathFinder pathFinder = new PathFinder ();
 
-	void Start() {
+  void Start () {
 
-		player = Object.FindObjectsOfType< PlayerComponent >()[0];
+    player = Object.FindObjectOfType<PlayerComponent> ();
 
-		// var allBlocks = Object.FindObjectsOfType<PointsContainerComponent>();
-		// foreach( var block in allBlocks ) {
-		// 	block.onMouseUp.AddListener(OnBlockMouseUp);
-		// }
-	}
+    // var allBlocks = Object.FindObjectsOfType<PointsContainerComponent>();
+    // foreach( var block in allBlocks ) {
+    // 	block.onMouseUp.AddListener(OnBlockMouseUp);
+    // }
+  }
 
-	void Update(){
-		CheckInput();
-	}
-	void CheckInput(){
-		if (player.isMoving) return;
-        if (!Utility.canPlayerMove) return;
+  void Update () {
+    CheckInput ();
+  }
+  void CheckInput () {
 
-        Vector2 tapPos = Utility.getTouchEnd();
+    if (player == null) return;
+    if (player.isMoving) return;
+    if (!Utility.canPlayerMove) return;
 
-        if (tapPos == Vector2.zero) return;
+    Vector2 tapPos = Utility.getTouchEnd ();
 
-		OnBlockMouseUp( tapPos );
-	}
-	void OnBlockMouseUp ( Vector2 tapPos ) {		
+    if (tapPos == Vector2.zero) return;
 
-		var a = pathFinder.MovePlayerTo(
-			player.transform.position,
-			tapPos,
-			Utility.CleanNormal( player.transform.up )
-		);
+    OnBlockMouseUp (tapPos);
+  }
+  void OnBlockMouseUp (Vector2 tapPos) {
 
-		if( a &&  pathFinder.path != null && pathFinder.path.Count > 0 ) {
-			player.Walk( pathFinder.path );
-			Debug.Log("Path found: " + pathFinder.path.Count + " steps.");
-			foreach( var point in pathFinder.path){
-				Utility.SetPointColor(point.component, new Color(1, .8f, 0));
-			}
-		} else {
-			Debug.Log("Path not found");
-		}
-	}
+    var a = pathFinder.MovePlayerTo (
+      player.transform.position,
+      tapPos,
+      Utility.CleanNormal (player.transform.up)
+    );
+
+    if (a && pathFinder.path != null && pathFinder.path.Count > 0) {
+      player.Walk (pathFinder.path);
+      Debug.Log ("Path found: " + pathFinder.path.Count + " steps.");
+      foreach (var point in pathFinder.path) {
+        Utility.SetPointColor (point.component, new Color (1, .8f, 0));
+      }
+    } else {
+      Debug.Log ("Path not found");
+    }
+  }
 
 }
