@@ -31,27 +31,74 @@ public class MakerActionsManager : MonoBehaviour {
 
   }
 
-  public void RemoveBlock (Transform block) {
-    blockHistory.Remove (block);
-    Destroy (block.gameObject);
-    OnBlockRemoved.Invoke (block.position, block.transform.position);
+  public void Undo () {
+
+    var action = actions[actions.Count - 1];
+    actions.RemoveAt (actions.Count - 1);
+
+    switch (action.type) {
+      case MakerActionType.Add:
+        RemoveLastBlock ();
+        break;
+      case MakerActionType.Remove:
+        RestoreBlock (action);
+        break;
+    }
+
   }
 
-  public Transform RemoveLastBlock () {
+  public void RemoveBlock (Transform block) {
+
+    var i = blockHistory.IndexOf (block);
+    actions.Add (new MakerAction (
+      MakerActionType.Remove,
+      block,
+      block.position,
+      block.localScale,
+      block.rotation,
+      i
+    ));
+    blockHistory.RemoveAt (i);
+    block.gameObject.SetActive (false);
+    OnBlockRemoved.Invoke (block.position, block.transform.position);
+
+  }
+
+  Transform RemoveLastBlock () {
 
     var lastBlock = blockHistory[blockHistory.Count - 1];
     blockHistory.RemoveAt (blockHistory.Count - 1);
-    Destroy (lastBlock.gameObject);
+    lastBlock.gameObject.SetActive (false);
     OnBlockRemoved.Invoke (lastBlock.position, lastBlock.transform.position);
 
     return lastBlock;
 
   }
 
-  public Transform AddBlock (Transform prefab, Vector3 position) {
+  void RestoreBlock (MakerAction action) {
+
+    action.target.gameObject.SetActive (true);
+    blockHistory.Insert(action.historyIndex, action.target);
+
+  }
+
+  public Transform AddBlock (Transform prefab, Vector3 position, bool restore = false, int index = 0) {
 
     var block = Instantiate (prefab, position, Quaternion.identity);
-    blockHistory.Add (block);
+
+    if (restore) {
+      blockHistory.Insert (index, block);
+    } else {
+      blockHistory.Add (block);
+      actions.Add (new MakerAction (
+        MakerActionType.Add,
+        block,
+        block.position,
+        block.localScale,
+        block.rotation,
+        blockHistory.Count - 1
+      ));
+    }
     OnBlockAdded.Invoke (position, Vector3.zero);
     return block;
 

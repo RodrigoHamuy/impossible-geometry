@@ -1,13 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class AddOnHold : MonoBehaviour {
 
   public Transform marker;
-
-  public MakerActionsManager actionsManager;
 
   public UnityEvent OnBrushStart;
   public UnityEvent OnBrushEnd;
@@ -17,6 +16,8 @@ public class AddOnHold : MonoBehaviour {
   public Transform targetPrefab;
 
   public Vector3 planeNormal = Vector3.up;
+
+  MakerActionsManager actionsManager;
 
   Vector3 currentPlanePoint;
   Vector2 firstTouchPos;
@@ -33,7 +34,19 @@ public class AddOnHold : MonoBehaviour {
 
   Vector2 margin;
 
+  TouchComponent touchComponent;
+
   void Start () {
+
+    marker.gameObject.SetActive(false);
+
+    actionsManager = GameObject.FindObjectOfType<MakerActionsManager> ();
+
+    touchComponent = gameObject.GetComponent<TouchComponent> ();
+
+    touchComponent.onTouchStart.AddListener (StartStroke);
+    touchComponent.onTouchMove.AddListener (MoveStroke);
+    touchComponent.onTouchEnd.AddListener (EndStroke);
 
     currentPlanePoint = transform.position;
 
@@ -44,6 +57,8 @@ public class AddOnHold : MonoBehaviour {
   }
 
   public void StartStroke (Vector2 screenPos) {
+
+    marker.gameObject.SetActive (true);
 
     screenPos += margin;
 
@@ -113,7 +128,7 @@ public class AddOnHold : MonoBehaviour {
     ) {
 
       currentRow.RemoveAt (currentRow.Count - 1);
-      actionsManager.RemoveLastBlock ();
+      actionsManager.Undo ();
       lastHitPosNoRound = GetHitPosition (screenPos, false);
       lastHitPos = hitPos; //currentRow[currentRow.Count - 2].position;
 
@@ -219,6 +234,7 @@ public class AddOnHold : MonoBehaviour {
     lastHitPos = Vector3.zero;
 
     OnBrushEnd.Invoke ();
+    marker.gameObject.SetActive (false);
 
   }
 
@@ -375,19 +391,6 @@ public class AddOnHold : MonoBehaviour {
 
   public void SetPrefab (Transform element) {
     blockPrefab = element;
-  }
-
-  public void RemoveLastBlock () {
-
-    if (currentRow.Count > 0) {
-      currentRow.RemoveAt (currentRow.Count - 1);
-    }
-    if (actionsManager.blockHistory.Count > 0) {
-      var lastBlock = actionsManager.RemoveLastBlock ();
-      var dir = GetLastBlockDirection ();
-      marker.position = lastBlock.position - dir;
-    }
-
   }
 
 }

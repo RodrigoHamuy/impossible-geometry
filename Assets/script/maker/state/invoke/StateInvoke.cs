@@ -1,9 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StateInvoke <T>: MonoBehaviour {
+public abstract class StateInvoke<T> : MonoBehaviour {
 
   public T stateToInvoke;
+
+  protected abstract MakerStateType StateType {
+    get;
+  }
 
   MakerStateManager manager;
 
@@ -11,15 +15,15 @@ public class StateInvoke <T>: MonoBehaviour {
 
     manager = GameObject.FindObjectOfType<MakerStateManager> ();
 
-    var btn = GameObject.FindObjectOfType<Button>();
-    if(btn != null) {
-      btn.onClick.AddListener( () => Invoke() );
+    var btn = gameObject.GetComponent<Button> ();
+    if (btn != null) {
+      btn.onClick.AddListener (() => Invoke ());
     }
 
   }
 
   public void Invoke () {
-    manager.SetState(stateToInvoke);
+    manager.SetState (StateType, stateToInvoke);
   }
 
 }

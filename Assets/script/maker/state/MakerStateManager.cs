@@ -7,12 +7,12 @@ using UnityEngine.Events;
 
 public class MakerStateManager : MonoBehaviour {
 
-  List<State> states;
+  Dictionary<MakerStateType, List<State>> states = new Dictionary<MakerStateType, List<State>> ();
 
 #pragma warning disable 0414
 
   [SerializeField]
-  string currentState = "";
+  List<string> currentStates;
 
 #pragma warning restore 0414
 
@@ -21,28 +21,35 @@ public class MakerStateManager : MonoBehaviour {
     var makerStates = System.Enum.GetNames (typeof (MakerState)).ToList ();
     var typeId = System.Enum.GetName (typeof (MakerStateType), MakerStateType.General);
 
-    states = EnumsToStates<MakerState, MakerStateType> (MakerStateType.General);
+    states.Add (
+      MakerStateType.General,
+      EnumsToStates<MakerState, MakerStateType> (MakerStateType.General)
+    );
 
-    states.Concat (
+    states.Add (
+      MakerStateType.Menu,
       EnumsToStates<MenuState, MakerStateType> (MakerStateType.Menu)
     );
 
-    states.Concat (
+    states.Add (
+      MakerStateType.EditMode,
       EnumsToStates<EditorState, MakerStateType> (MakerStateType.EditMode)
     );
 
-    SetState (MakerState.MakerEdit);
-    // SetState (MenuState.MenuClose);
+    SetState (MakerStateType.General, MakerState.MakerEdit, true);
+    SetState (MakerStateType.Menu, MenuState.MenuClose, true);
+    SetState (MakerStateType.EditMode, EditorState.EditorAdd, true);
+    UpdateStateInspector();
 
   }
 
-  public void SetState<T> (T state) {
+  public void SetState<T> (MakerStateType type, T state, bool init = false) {
 
-    var currState = states.Find (s => s.Enable);
+    var currState = states[type].Find (s => s.Enable);
 
     var stateId = EnumToString (state);
 
-    var newState = states.Find (s => s.Id == stateId);
+    var newState = states[type].Find (s => s.Id == stateId);
 
     if (currState != newState) {
 
@@ -54,13 +61,19 @@ public class MakerStateManager : MonoBehaviour {
 
     newState.Enter ();
 
-    currentState = newState.Id;
+    if (!init) UpdateStateInspector ();
 
   }
 
-  public State GetState <T>(T state) {
+  void UpdateStateInspector () {
 
-    return states.Find (s => s.Id == EnumToString (state));
+    currentStates = states.Values.ToList ().ConvertAll (ss => ss.Find (s => s.Enable).Id);
+
+  }
+
+  public State GetState<T> (MakerStateType type, T state) {
+
+    return states[type].Find (s => s.Id == EnumToString (state));
 
   }
 

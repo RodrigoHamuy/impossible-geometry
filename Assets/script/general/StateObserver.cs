@@ -1,16 +1,20 @@
 using UnityEngine;
 
-public class StateObserver<T> : MonoBehaviour {
+public abstract class StateObserver<T> : MonoBehaviour {
 
   public T state;
 
   State observableState;
 
+  protected abstract MakerStateType StateType {
+    get;
+  }
+
   void Start () {
 
     var manager = GameObject.FindObjectOfType<MakerStateManager> ();
 
-    observableState = manager.GetState (state);
+    observableState = manager.GetState (StateType, state);
 
     observableState.OnChange.AddListener (OnChange);
     OnChange ();
