@@ -763,6 +763,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RemoveBlockBtn: {fileID: 474347961}
   RotateBlockBtn: {fileID: 816492154}
+  rotateComponent: {fileID: 1780123538}
+  rotateComponentHolder: {fileID: 1960605084}
 --- !u!114 &309173901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1285,7 +1287,6 @@ GameObject:
   - component: {fileID: 474347963}
   - component: {fileID: 474347962}
   - component: {fileID: 474347961}
-  - component: {fileID: 474347960}
   m_Layer: 5
   m_Name: DeleteBtn
   m_TagString: Untagged
@@ -1311,17 +1312,6 @@ RectTransform:
   m_AnchoredPosition: {x: -0.000034844696, y: 170.1}
   m_SizeDelta: {x: 45.1, y: 45.1}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &474347960
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 474347958}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb6dfd8490a9d4f438126e3bc245b305, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &474347961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1360,18 +1350,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 474347962}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 474347960}
-        m_MethodName: Invoke
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &474347962
@@ -2039,7 +2018,6 @@ GameObject:
   - component: {fileID: 934953393}
   - component: {fileID: 934953392}
   - component: {fileID: 934953391}
-  - component: {fileID: 934953396}
   m_Layer: 0
   m_Name: BlockMarker
   m_TagString: Untagged
@@ -2399,17 +2377,6 @@ Transform:
   m_Father: {fileID: 1956128588}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &934953396
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 934953389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c626f0e7dec46294c96f73f1c21bb96f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &959806413
 GameObject:
   m_ObjectHideFlags: 0
@@ -3656,7 +3623,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh12104
+  m_Name: pb_Mesh13186
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
