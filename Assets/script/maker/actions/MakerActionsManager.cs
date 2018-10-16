@@ -82,6 +82,18 @@ public class MakerActionsManager : MonoBehaviour {
 
   }
 
+  public Transform ReplaceBlock(Transform prefab, Transform target) {
+
+    print("saaaaa");
+
+    var block = AddBlock(prefab, target.position);
+
+    RemoveBlock(target);
+
+    return block;
+    
+  }
+
   public Transform AddBlock (Transform prefab, Vector3 position, bool restore = false, int index = 0) {
 
     var block = Instantiate (prefab, position, Quaternion.identity);

@@ -7,21 +7,15 @@ public class PathManagerComponent : MonoBehaviour {
 
   PathFinder pathFinder = new PathFinder ();
 
-  void Start () {
-
-    player = Object.FindObjectOfType<PlayerComponent> ();
-
-    // var allBlocks = Object.FindObjectsOfType<PointsContainerComponent>();
-    // foreach( var block in allBlocks ) {
-    // 	block.onMouseUp.AddListener(OnBlockMouseUp);
-    // }
-  }
-
   void Update () {
     CheckInput ();
   }
+  
   void CheckInput () {
 
+    if (player == null) {
+      player = Object.FindObjectOfType<PlayerComponent> ();
+    }
     if (player == null) return;
     if (player.isMoving) return;
     if (!Utility.canPlayerMove) return;
