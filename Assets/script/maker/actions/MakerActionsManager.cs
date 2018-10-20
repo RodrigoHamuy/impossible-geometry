@@ -62,7 +62,7 @@ public class MakerActionsManager : MonoBehaviour {
       i
     ));
     blockHistory.RemoveAt (i);
-    block.gameObject.SetActive (false);
+    GameObject.Destroy(block.gameObject);
     OnBlockRemoved.Invoke (block.position, block.transform.position);
 
   }
@@ -86,8 +86,6 @@ public class MakerActionsManager : MonoBehaviour {
   }
 
   public Transform ReplaceBlock (Transform prefab, Transform target) {
-
-    print ("saaaaa");
 
     var block = AddBlock (prefab, target.position);
 
