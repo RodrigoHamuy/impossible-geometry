@@ -20,6 +20,7 @@ public class SelectManager : MonoBehaviour {
   Plane dragPlane;
 
   Renderer target;
+  Renderer targetClone;
   MakerActionsManager manager;
   Color targetOriginalColor;
   TouchComponent touchComponent;
@@ -177,11 +178,17 @@ public class SelectManager : MonoBehaviour {
 
     var block = Utility.GetBlocksOnTapPos (touchPos);
 
+    if (!block) return;
+
     if (block.transform != target.transform) return;
 
     isDragging = true;
 
     dragPlane = new Plane (Vector3.up, block.position);
+
+    targetClone = GameObject.Instantiate (target, target.transform.position, target.transform.rotation);
+
+    target.enabled = false;
 
   }
 
@@ -197,7 +204,7 @@ public class SelectManager : MonoBehaviour {
 
     updateDragPosition (touchPos);
 
-    var pos = target.transform.position;
+    var pos = targetClone.transform.position;
 
     for (var i = 0; i < 3; i++) {
 
@@ -205,7 +212,13 @@ public class SelectManager : MonoBehaviour {
 
     }
 
-    target.transform.position = pos;
+    targetClone.transform.position = pos;
+
+    manager.EditBlock (target.transform, targetClone.transform);
+
+    target.enabled = true;
+
+    targetClone = null;
 
     isDragging = false;
 
@@ -219,7 +232,7 @@ public class SelectManager : MonoBehaviour {
 
     if (!dragPlane.Raycast (ray, out dist)) return;
 
-    target.transform.position = ray.origin + ray.direction * dist;
+    targetClone.transform.position = ray.origin + ray.direction * dist;
 
   }
 

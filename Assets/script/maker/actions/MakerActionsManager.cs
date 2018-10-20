@@ -43,6 +43,9 @@ public class MakerActionsManager : MonoBehaviour {
       case MakerActionType.Remove:
         RestoreBlock (action);
         break;
+      case MakerActionType.Edit:
+        RestoreBlockEdition (action);
+        break;
     }
 
   }
@@ -78,20 +81,20 @@ public class MakerActionsManager : MonoBehaviour {
   void RestoreBlock (MakerAction action) {
 
     action.target.gameObject.SetActive (true);
-    blockHistory.Insert(action.historyIndex, action.target);
+    blockHistory.Insert (action.historyIndex, action.target);
 
   }
 
-  public Transform ReplaceBlock(Transform prefab, Transform target) {
+  public Transform ReplaceBlock (Transform prefab, Transform target) {
 
-    print("saaaaa");
+    print ("saaaaa");
 
-    var block = AddBlock(prefab, target.position);
+    var block = AddBlock (prefab, target.position);
 
-    RemoveBlock(target);
+    RemoveBlock (target);
 
     return block;
-    
+
   }
 
   public Transform AddBlock (Transform prefab, Vector3 position, bool restore = false, int index = 0) {
@@ -113,6 +116,37 @@ public class MakerActionsManager : MonoBehaviour {
     }
     OnBlockAdded.Invoke (position, Vector3.zero);
     return block;
+
+  }
+
+  public void EditBlock (Transform target, Transform placeholder) {
+
+    target.transform.position = placeholder.transform.position;
+    target.transform.rotation = placeholder.transform.rotation;
+    target.transform.localScale = placeholder.transform.localScale;
+
+    var i = blockHistory.IndexOf (target);
+
+    actions.Add (new MakerAction (
+      MakerActionType.Edit,
+      target,
+      target.position,
+      target.localScale,
+      target.rotation,
+      i
+    ));
+
+    GameObject.Destroy (placeholder.gameObject);
+
+  }
+
+  void RestoreBlockEdition(MakerAction action){
+
+    var lastPosition = actions.FindLast( a => a.target == action.target);
+    
+    action.target.transform.position = lastPosition.position;
+    action.target.transform.rotation = lastPosition.rotation;
+    action.target.transform.localScale = lastPosition.scale;
 
   }
 
