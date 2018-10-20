@@ -10,7 +10,7 @@ public class PathManagerComponent : MonoBehaviour {
   void Update () {
     CheckInput ();
   }
-  
+
   void CheckInput () {
 
     if (player == null) {
@@ -43,6 +43,22 @@ public class PathManagerComponent : MonoBehaviour {
     } else {
       Debug.Log ("Path not found");
     }
+  }
+
+  void OnEnable () {
+
+    ResetAllPoints ();
+
+  }
+
+  void ResetAllPoints () {
+
+    var blocks = Object.FindObjectsOfType<PointsContainerComponent> ();
+
+    foreach (var block in blocks) {
+      block.ResetPoints ();
+    }
+
   }
 
 }

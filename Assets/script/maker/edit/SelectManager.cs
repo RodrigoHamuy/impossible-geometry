@@ -15,6 +15,9 @@ public class SelectManager : MonoBehaviour {
   public Transform rotateComponentHolder;
 
   bool isRotating = false;
+  bool isDragging = false;
+
+  Plane dragPlane;
 
   Renderer target;
   MakerActionsManager manager;
@@ -24,12 +27,12 @@ public class SelectManager : MonoBehaviour {
   List<Button> allButtons;
   List<bool> allButtonsState;
 
-  public void Replace(GameObject value) {
+  public void Replace (GameObject value) {
 
-    var block = manager.ReplaceBlock(value.transform, target.transform);
+    var block = manager.ReplaceBlock (value.transform, target.transform);
     ClearTarget ();
-    Select(block);
-    ShowSelectUi();
+    Select (block);
+    ShowSelectUi ();
 
   }
 
@@ -38,7 +41,11 @@ public class SelectManager : MonoBehaviour {
     allButtons = GameObject.FindObjectsOfType<Button> ().ToList ();
     manager = GameObject.FindObjectOfType<MakerActionsManager> ();
     touchComponent = GetComponent<TouchComponent> ();
-    touchComponent.onTouchEnd.AddListener (Select);
+
+    touchComponent.onTouchStart.AddListener (StartDrag);
+    touchComponent.onTouchMove.AddListener (MoveDrag);
+    touchComponent.onTouchEnd.AddListener (OnTouchEnd);
+
     RemoveBlockBtn.onClick.AddListener (RemoveBlock);
     RotateBlockBtn.onClick.AddListener (ShowRotationUi);
     ReplaceBtn.onClick.AddListener (ShowReplaceUi);
@@ -69,6 +76,14 @@ public class SelectManager : MonoBehaviour {
 
   }
 
+  void OnTouchEnd (Vector2 touchPos) {
+
+    if (isDragging) EndDrag (touchPos);
+
+    else Select (touchPos);
+
+  }
+
   void Select (Vector2 touchPos) {
 
     if (isRotating) return;
@@ -77,11 +92,11 @@ public class SelectManager : MonoBehaviour {
 
     var block = Utility.GetBlocksOnTapPos (touchPos);
 
-    if (block) Select(block);
+    if (block) Select (block);
 
   }
 
-  void Select(Transform block){
+  void Select (Transform block) {
 
     target = block.GetComponent<Renderer> ();
     targetOriginalColor = target.material.color;
@@ -94,8 +109,8 @@ public class SelectManager : MonoBehaviour {
 
   void OnEnable () {
 
-    ShowSelectUi();
-    
+    ShowSelectUi ();
+
   }
 
   void OnDisable () {
@@ -114,10 +129,16 @@ public class SelectManager : MonoBehaviour {
     }
 
     target = null;
-    RemoveBlockBtn.interactable = false;
-    RotateBlockBtn.interactable = false;
-    ReplaceBtn.interactable = false;
-    rotateComponent.gameObject.SetActive (false);
+
+    if (RemoveBlockBtn) {
+
+      RemoveBlockBtn.interactable = false;
+      RotateBlockBtn.interactable = false;
+      ReplaceBtn.interactable = false;
+
+    }
+
+    if (rotateComponent) rotateComponent.gameObject.SetActive (false);
 
   }
 
@@ -136,17 +157,69 @@ public class SelectManager : MonoBehaviour {
 
   }
 
-  void ShowReplaceUi() {
+  void ShowReplaceUi () {
 
-    SelectBtns.SetActive(false);
-    ReplaceBtns.SetActive(true);
+    SelectBtns.SetActive (false);
+    ReplaceBtns.SetActive (true);
 
   }
 
-  void ShowSelectUi() {
+  void ShowSelectUi () {
 
-    SelectBtns.SetActive(true);
-    ReplaceBtns.SetActive(false);
+    SelectBtns.SetActive (true);
+    ReplaceBtns.SetActive (false);
+
+  }
+
+  void StartDrag (Vector2 touchPos) {
+
+    if (!target) return;
+
+    var block = Utility.GetBlocksOnTapPos (touchPos);
+
+    if (block.transform != target.transform) return;
+
+    isDragging = true;
+
+    dragPlane = new Plane (Vector3.up, block.position);
+
+  }
+
+  void MoveDrag (Vector2 touchPos) {
+
+    if (!isDragging) return;
+
+    updateDragPosition (touchPos);
+
+  }
+
+  void EndDrag (Vector2 touchPos) {
+
+    updateDragPosition (touchPos);
+
+    var pos = target.transform.position;
+
+    for (var i = 0; i < 3; i++) {
+
+      pos[i] = Mathf.Round (pos[i]);
+
+    }
+
+    target.transform.position = pos;
+
+    isDragging = false;
+
+  }
+
+  void updateDragPosition (Vector2 touchPos) {
+
+    var ray = Camera.main.ScreenPointToRay (touchPos);
+
+    float dist;
+
+    if (!dragPlane.Raycast (ray, out dist)) return;
+
+    target.transform.position = ray.origin + ray.direction * dist;
 
   }
 
