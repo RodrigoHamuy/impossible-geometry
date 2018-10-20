@@ -11,7 +11,7 @@ public class SelectManager : MonoBehaviour {
   public Button ReplaceBtn;
   public GameObject SelectBtns;
   public GameObject ReplaceBtns;
-  public RotateComponent rotateComponent;
+  public RotateController rotateController;
   public Transform rotateComponentHolder;
 
   bool isRotating = false;
@@ -51,7 +51,7 @@ public class SelectManager : MonoBehaviour {
     RotateBlockBtn.onClick.AddListener (ShowRotationUi);
     ReplaceBtn.onClick.AddListener (ShowReplaceUi);
 
-    rotateComponent.onRotationStart.AddListener (() => {
+    rotateController.onRotationStart.AddListener (() => {
 
       allButtonsState = allButtons.ConvertAll (b => b.interactable);
       foreach (var btn in allButtons) {
@@ -61,7 +61,7 @@ public class SelectManager : MonoBehaviour {
 
     });
 
-    rotateComponent.onRotationDone.AddListener (() => {
+    rotateController.onRotationDone.AddListener (() => {
 
       for (int i = 0; i < allButtons.Count; i++) {
 
@@ -69,6 +69,9 @@ public class SelectManager : MonoBehaviour {
 
       }
 
+      manager.EditBlock (target.transform, targetClone.transform);
+      target.enabled = true;
+      targetClone = null;
       isRotating = false;
 
     });
@@ -139,7 +142,7 @@ public class SelectManager : MonoBehaviour {
 
     }
 
-    if (rotateComponent) rotateComponent.gameObject.SetActive (false);
+    if (rotateController) rotateController.gameObject.SetActive (false);
 
   }
 
@@ -152,9 +155,12 @@ public class SelectManager : MonoBehaviour {
 
   void ShowRotationUi () {
 
-    rotateComponent.transform.position = target.transform.position;
-    target.transform.parent = rotateComponentHolder;
-    rotateComponent.gameObject.SetActive (true);
+    targetClone = GameObject.Instantiate (target, target.transform.position, target.transform.rotation);
+    target.enabled = false;
+
+    rotateController.transform.position = targetClone.transform.position;
+    targetClone.transform.parent = rotateComponentHolder;
+    rotateController.gameObject.SetActive (true);
 
   }
 
@@ -173,6 +179,8 @@ public class SelectManager : MonoBehaviour {
   }
 
   void StartDrag (Vector2 touchPos) {
+
+    if (rotateController.gameObject.activeSelf) return;
 
     if (!target) return;
 

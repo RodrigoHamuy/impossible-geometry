@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114298016405672650}
   - component: {fileID: 64319117198552984}
   - component: {fileID: 114510937934966108}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: HalfCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}

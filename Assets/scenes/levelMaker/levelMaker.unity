@@ -767,7 +767,7 @@ MonoBehaviour:
   ReplaceBtn: {fileID: 436852762}
   SelectBtns: {fileID: 341527000}
   ReplaceBtns: {fileID: 905562193}
-  rotateComponent: {fileID: 1780123538}
+  rotateController: {fileID: 1780123537}
   rotateComponentHolder: {fileID: 1960605084}
 --- !u!114 &309173901
 MonoBehaviour:
