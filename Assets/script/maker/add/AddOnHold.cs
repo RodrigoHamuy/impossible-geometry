@@ -6,6 +6,8 @@ using UnityEngine.Events;
 
 public class AddOnHold : MonoBehaviour {
 
+  public Transform world;
+
   public Transform marker;
 
   public UnityEvent OnBrushStart;
@@ -38,7 +40,7 @@ public class AddOnHold : MonoBehaviour {
 
   void Start () {
 
-    marker.gameObject.SetActive(false);
+    marker.gameObject.SetActive (false);
 
     actionsManager = GameObject.FindObjectOfType<MakerActionsManager> ();
 
@@ -148,7 +150,7 @@ public class AddOnHold : MonoBehaviour {
 
     if (cubeBoy == null) {
 
-      cubeBoy = Instantiate (cubeBoyPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
+      cubeBoy = Instantiate (cubeBoyPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity, world).transform;
 
       cubeBoy.RotateAround (cubeBoy.position, Vector3.up, 180.0f);
 
@@ -226,7 +228,7 @@ public class AddOnHold : MonoBehaviour {
 
     if (target == null) {
 
-      target = Instantiate (targetPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity).transform;
+      target = Instantiate (targetPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity, world).transform;
 
     }
 

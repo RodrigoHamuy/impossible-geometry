@@ -4,7 +4,7 @@ using Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SelectManager : MonoBehaviour {
+public class EditManager : MonoBehaviour {
 
   public Button RemoveBlockBtn;
   public Button RotateBlockBtn;
@@ -21,6 +21,7 @@ public class SelectManager : MonoBehaviour {
   Plane dragPlane;
 
   Renderer target;
+  Transform targetParent;
   Renderer targetClone;
   MakerActionsManager manager;
   Color targetOriginalColor;
@@ -52,32 +53,32 @@ public class SelectManager : MonoBehaviour {
     RotateBlockBtn.onClick.AddListener (ShowRotationUi);
     ReplaceBtn.onClick.AddListener (ShowReplaceUi);
 
-    rotateController.onRotationStart.AddListener (() => {
-
-      allButtonsState = allButtons.ConvertAll (b => b.interactable);
-      foreach (var btn in allButtons) {
-        btn.interactable = false;
-      }
-      isRotating = true;
-
-    });
-
-    rotateController.onRotationDone.AddListener (() => {
-
-      for (int i = 0; i < allButtons.Count; i++) {
-
-        allButtons[i].interactable = allButtonsState[i];
-
-      }
-
-      manager.EditBlock (target.transform, targetClone.transform);
-      target.enabled = true;
-      targetClone = null;
-      isRotating = false;
-
-    });
-
     ClearTarget ();
+
+  }
+
+  void OnRotationStart () {
+
+    allButtonsState = allButtons.ConvertAll (b => b.interactable);
+    foreach (var btn in allButtons) {
+      btn.interactable = false;
+    }
+    isRotating = true;
+
+  }
+
+  void OnRotationEnd () {
+
+    for (int i = 0; i < allButtons.Count; i++) {
+
+      allButtons[i].interactable = allButtonsState[i];
+
+    }
+
+    manager.EditBlock (target.transform, targetClone.transform);
+    target.enabled = true;
+    targetClone = null;
+    isRotating = false;
 
   }
 
@@ -104,6 +105,7 @@ public class SelectManager : MonoBehaviour {
   void Select (Transform block) {
 
     target = block.GetComponent<Renderer> ();
+    targetParent = target.transform.parent;
     targetOriginalColor = target.material.color;
     target.material.color = Color.grey;
     RemoveBlockBtn.interactable = true;
@@ -118,12 +120,20 @@ public class SelectManager : MonoBehaviour {
 
     ShowSelectUi ();
 
+    rotateController.onRotationStart.AddListener (OnRotationStart);
+
+    rotateController.onRotationDone.AddListener (OnRotationEnd);
+
   }
 
   void OnDisable () {
 
     ClearTarget ();
-    SelectBtns.SetActive (false);
+    if (SelectBtns) SelectBtns.SetActive (false);
+
+    rotateController.onRotationStart.RemoveListener (OnRotationStart);
+
+    rotateController.onRotationDone.RemoveListener (OnRotationEnd);
 
   }
 
@@ -132,7 +142,7 @@ public class SelectManager : MonoBehaviour {
     if (target) {
 
       target.material.color = targetOriginalColor;
-      target.transform.parent = null;
+      target.transform.parent = targetParent;
       target.enabled = true;
       target = null;
 

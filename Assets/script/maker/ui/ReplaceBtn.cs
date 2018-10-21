@@ -7,13 +7,13 @@ public class ReplaceBtn : MonoBehaviour {
 
   public GameObject prefab;
 
-  SelectManager manager;
+  EditManager manager;
   
   Button btn;
 
   void Start() {
 
-    manager = GameObject.FindObjectOfType<SelectManager>();
+    manager = GameObject.FindObjectOfType<EditManager>();
 
     btn = gameObject.GetComponent<Button>();
 

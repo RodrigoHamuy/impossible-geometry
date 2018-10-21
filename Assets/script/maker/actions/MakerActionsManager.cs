@@ -4,6 +4,8 @@ using UnityEngine.Events;
 
 public class MakerActionsManager : MonoBehaviour {
 
+  public Transform world;
+
   public List<MakerAction> actions = new List<MakerAction> ();
 
   public UnityEvent2Vector3 OnBlockAdded;
@@ -62,7 +64,7 @@ public class MakerActionsManager : MonoBehaviour {
       i
     ));
     blockHistory.RemoveAt (i);
-    GameObject.Destroy(block.gameObject);
+    GameObject.Destroy (block.gameObject);
     OnBlockRemoved.Invoke (block.position, block.transform.position);
 
   }
@@ -71,7 +73,7 @@ public class MakerActionsManager : MonoBehaviour {
 
     var lastBlock = blockHistory[blockHistory.Count - 1];
     blockHistory.RemoveAt (blockHistory.Count - 1);
-    GameObject.Destroy(lastBlock.gameObject);
+    GameObject.Destroy (lastBlock.gameObject);
     OnBlockRemoved.Invoke (lastBlock.position, lastBlock.transform.position);
 
     return lastBlock;
@@ -87,7 +89,7 @@ public class MakerActionsManager : MonoBehaviour {
 
   public Transform ReplaceBlock (Transform prefab, Transform target) {
 
-    var block = AddBlock (prefab, target.position);
+    var block = AddBlock (prefab, target.position, target.parent);
 
     RemoveBlock (target);
 
@@ -95,9 +97,11 @@ public class MakerActionsManager : MonoBehaviour {
 
   }
 
-  public Transform AddBlock (Transform prefab, Vector3 position, bool restore = false, int index = 0) {
+  public Transform AddBlock (Transform prefab, Vector3 position, bool restore = false, int index = 0, Transform parent = null) {
 
-    var block = Instantiate (prefab, position, Quaternion.identity);
+    if (!parent) parent = world;
+
+    var block = Instantiate (prefab, position, Quaternion.identity, parent);
 
     if (restore) {
       blockHistory.Insert (index, block);
@@ -138,10 +142,10 @@ public class MakerActionsManager : MonoBehaviour {
 
   }
 
-  void RestoreBlockEdition(MakerAction action){
+  void RestoreBlockEdition (MakerAction action) {
 
-    var lastPosition = actions.FindLast( a => a.target == action.target);
-    
+    var lastPosition = actions.FindLast (a => a.target == action.target);
+
     action.target.transform.position = lastPosition.position;
     action.target.transform.rotation = lastPosition.rotation;
     action.target.transform.localScale = lastPosition.scale;
