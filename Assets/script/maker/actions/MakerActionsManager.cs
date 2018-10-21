@@ -71,7 +71,7 @@ public class MakerActionsManager : MonoBehaviour {
 
     var lastBlock = blockHistory[blockHistory.Count - 1];
     blockHistory.RemoveAt (blockHistory.Count - 1);
-    lastBlock.gameObject.SetActive (false);
+    GameObject.Destroy(lastBlock.gameObject);
     OnBlockRemoved.Invoke (lastBlock.position, lastBlock.transform.position);
 
     return lastBlock;

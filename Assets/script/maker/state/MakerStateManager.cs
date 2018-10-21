@@ -39,7 +39,7 @@ public class MakerStateManager : MonoBehaviour {
     SetState (MakerStateType.General, MakerState.MakerEdit, true);
     SetState (MakerStateType.Menu, MenuState.MenuClose, true);
     SetState (MakerStateType.EditMode, EditorState.EditorAdd, true);
-    UpdateStateInspector();
+    UpdateStateInspector ();
 
   }
 
@@ -67,7 +67,19 @@ public class MakerStateManager : MonoBehaviour {
 
   void UpdateStateInspector () {
 
-    currentStates = states.Values.ToList ().ConvertAll (ss => ss.Find (s => s.Enable).Id);
+    currentStates.Clear ();
+
+    for (int i = 0; i < states.Count (); i++) {
+
+      var state = states.ElementAt (i);
+
+      var stateString = System.Enum.GetName (typeof (MakerStateType), state.Key);
+
+      stateString += ": " + state.Value.Find (s => s.Enable).Id;
+
+      currentStates.Add (stateString);
+
+    }
 
   }
 

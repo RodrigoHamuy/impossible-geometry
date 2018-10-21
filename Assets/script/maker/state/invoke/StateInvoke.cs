@@ -16,8 +16,15 @@ public abstract class StateInvoke<T> : MonoBehaviour {
     manager = GameObject.FindObjectOfType<MakerStateManager> ();
 
     var btn = gameObject.GetComponent<Button> ();
-    if (btn != null) {
+    if (btn) {
       btn.onClick.AddListener (() => Invoke ());
+    }
+
+    var toggle = gameObject.GetComponent<Toggle> ();
+    if (toggle) {
+      toggle.onValueChanged.AddListener ((active) => {
+        if (active) Invoke ();
+      });
     }
 
   }

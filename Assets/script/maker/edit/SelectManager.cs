@@ -13,6 +13,7 @@ public class SelectManager : MonoBehaviour {
   public GameObject ReplaceBtns;
   public RotateController rotateController;
   public Transform rotateComponentHolder;
+  public GameObject AddAndSelectButtons;
 
   bool isRotating = false;
   bool isDragging = false;
@@ -108,6 +109,8 @@ public class SelectManager : MonoBehaviour {
     RemoveBlockBtn.interactable = true;
     RotateBlockBtn.interactable = true;
     ReplaceBtn.interactable = true;
+    AddAndSelectButtons.SetActive (false);
+    ReplaceBtns.SetActive (false);
 
   }
 
@@ -120,6 +123,7 @@ public class SelectManager : MonoBehaviour {
   void OnDisable () {
 
     ClearTarget ();
+    SelectBtns.SetActive (false);
 
   }
 
@@ -129,10 +133,17 @@ public class SelectManager : MonoBehaviour {
 
       target.material.color = targetOriginalColor;
       target.transform.parent = null;
+      target.enabled = true;
+      target = null;
 
     }
 
-    target = null;
+    if (targetClone) {
+
+      GameObject.Destroy (targetClone.gameObject);
+      targetClone = null;
+
+    }
 
     if (RemoveBlockBtn) {
 
@@ -143,6 +154,11 @@ public class SelectManager : MonoBehaviour {
     }
 
     if (rotateController) rotateController.gameObject.SetActive (false);
+
+    isRotating = false;
+    isDragging = false;
+
+    ShowSelectUi ();
 
   }
 
@@ -166,15 +182,17 @@ public class SelectManager : MonoBehaviour {
 
   void ShowReplaceUi () {
 
-    SelectBtns.SetActive (false);
     ReplaceBtns.SetActive (true);
+    SelectBtns.SetActive (false);
+    AddAndSelectButtons.SetActive (false);
 
   }
 
   void ShowSelectUi () {
 
-    SelectBtns.SetActive (true);
-    ReplaceBtns.SetActive (false);
+    if (SelectBtns) SelectBtns.SetActive (true);
+    if (ReplaceBtns) ReplaceBtns.SetActive (false);
+    if (AddAndSelectButtons) AddAndSelectButtons.SetActive (true);
 
   }
 
