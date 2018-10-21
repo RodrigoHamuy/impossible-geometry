@@ -4,9 +4,15 @@
 
 # TODO
 
+- When hit play, if player is not in the scene, ask to add player.
+- Avoid adding block on top of player.
+- Move Player.
+
+(OLD)
 - Diagonal stairs
 - Blend cube
 - Arch corner
 - Switch (one time use)
     - Rotate
     - Slide
+  

@@ -389,8 +389,7 @@ public class Utility {
   }
 
   public static Transform GetBlocksOnTapPos (Vector3 tapPos) {
-
-    var points = new List<PathPoint> ();
+    
     var ray = Camera.main.ScreenPointToRay (tapPos);
     var layerMask = LayerMask.GetMask ("Block");
     var hits = Physics.RaycastAll (ray, 100.0f, layerMask);

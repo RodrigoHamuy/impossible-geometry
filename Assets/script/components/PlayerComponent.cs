@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class PlayerComponent : MonoBehaviour {
 
+	Transform world;
+
 	[HideInInspector]
 	public UnityEvent onTargetReached = new UnityEvent();
 
@@ -58,6 +60,11 @@ public class PlayerComponent : MonoBehaviour {
 	public Vector3 nextNodeDir;
 
 	void Start() {
+
+		var world = GameObject.Find("World");
+		if(world){
+			this.world = world.transform;
+		}
 		CheckParent();
 	}
 
@@ -149,9 +156,6 @@ public class PlayerComponent : MonoBehaviour {
 
 			var rotationAxis = Vector3.Cross( prevPoint.normal, targetPoint.normal);
 
-			var angle = Vector3.SignedAngle( centerToNext, centerToPrev, rotationAxis );
-
-
 			var centerToPlayer = transform.position - center;
 
 			var currAngle = Vector3.SignedAngle(centerToNext, centerToPlayer, rotationAxis );
@@ -241,7 +245,7 @@ public class PlayerComponent : MonoBehaviour {
 				if( _targetPoint.canMove ) {
 					transform.parent = _targetPoint.container.component.transform.parent;
 				} else {
-					transform.parent = null;
+					transform.parent = world;
 				}
 				onTargetReached.Invoke();
 			}

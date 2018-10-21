@@ -9,7 +9,6 @@ public class RotateController : MonoBehaviour {
 
   public RotateComponent rotateComponent;
 
-  bool isRotating = false;
   bool isSnapping = false;
 
   Vector3 startForward;
@@ -19,8 +18,7 @@ public class RotateController : MonoBehaviour {
   float snapAngle;
 
   public void OnTouchStart () {
-
-    isRotating = true;
+    
     isSnapping = false;
     currAngle = .0f;
     startForward = transform.forward;
@@ -64,7 +62,6 @@ public class RotateController : MonoBehaviour {
 
       currAngle = snapAngle;
       RotateToAngle (currAngle);
-      isRotating = false;
       isSnapping = false;
       var q = transform.rotation.eulerAngles;
 
