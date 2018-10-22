@@ -140,8 +140,6 @@ public class AddOnHold : MonoBehaviour {
 
     if (spaceTaken) return;
 
-    print (screenPos);
-
     var block = actionsManager.AddBlock (blockPrefab, hitPos);
 
     marker.transform.position = hitPos;
