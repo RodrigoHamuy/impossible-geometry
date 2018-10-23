@@ -12,12 +12,19 @@ enum MultiSelectState {
 [RequireComponent (typeof (TouchComponent))]
 public class MultiSelect : MonoBehaviour {
 
+  public Transform world;
   public Transform rotateCenter;
   public Button AddRotationBtn;
+  public Button OkBtn;
+
+  public Transform rotateComponentPrefab;
+  public Transform handlePrefab;
 
   List<Transform> blocks = new List<Transform> ();
   List<Color> blocksColor = new List<Color> ();
   MultiSelectState state;
+  Transform handle;
+  Transform rotateComponent;
 
   void Start () {
 
@@ -29,6 +36,10 @@ public class MultiSelect : MonoBehaviour {
 
     AddRotationBtn.onClick.AddListener (() => {
       SetState (MultiSelectState.ChooseCenter);
+    });
+
+    OkBtn.onClick.AddListener (() => {
+      SetState (MultiSelectState.AddHandler);
     });
 
   }
@@ -47,6 +58,8 @@ public class MultiSelect : MonoBehaviour {
   }
 
   void InitChooseCenter () {
+
+    OkBtn.gameObject.SetActive (true);
 
     rotateCenter.gameObject.SetActive (true);
 
@@ -126,6 +139,7 @@ public class MultiSelect : MonoBehaviour {
 
       case MultiSelectState.SelectBlocks:
         ClearAll ();
+        OkBtn.gameObject.SetActive (false);
         rotateCenter.gameObject.SetActive (false);
         AddRotationBtn.interactable = false;
         state = MultiSelectState.SelectBlocks;
@@ -135,6 +149,26 @@ public class MultiSelect : MonoBehaviour {
         InitChooseCenter ();
         break;
 
+      case MultiSelectState.AddHandler:
+        InitAddHandler ();
+        break;
+
+    }
+
+  }
+
+  void InitAddHandler () {
+
+    OkBtn.gameObject.SetActive (false);
+    handle = GameObject.Instantiate (handlePrefab, rotateCenter.position + Vector3.up * .5f, rotateCenter.rotation, world);
+    rotateComponent = GameObject.Instantiate (rotateComponentPrefab, rotateCenter.position, rotateCenter.rotation, world);
+    handle.parent = rotateComponent;
+
+    var rotateController = rotateComponent.GetComponent<RotateComponent>();
+    rotateController.handleCollider = handle.GetComponentInChildren<Collider>();
+
+    foreach (var b in blocks) {
+      b.parent = rotateComponent;
     }
 
   }
