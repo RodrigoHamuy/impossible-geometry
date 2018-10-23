@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 enum MultiSelectState {
   SelectBlocks,
-  ChooseCenter,
+  AddCenter,
   AddHandler
 }
 
@@ -35,11 +35,16 @@ public class MultiSelect : MonoBehaviour {
     touchComponent.onTouchEnd.AddListener (OnTouchEnd);
 
     AddRotationBtn.onClick.AddListener (() => {
-      SetState (MultiSelectState.ChooseCenter);
+      SetState (MultiSelectState.AddCenter);
     });
 
     OkBtn.onClick.AddListener (() => {
-      SetState (MultiSelectState.AddHandler);
+
+      if (state == MultiSelectState.AddCenter) {
+        SetState (MultiSelectState.AddHandler);
+      } else if (state == MultiSelectState.AddHandler) {
+        SetState (MultiSelectState.AddCenter);
+      }
     });
 
   }
@@ -111,7 +116,9 @@ public class MultiSelect : MonoBehaviour {
 
     if (state == MultiSelectState.SelectBlocks) Select (touchPos);
 
-    if (state == MultiSelectState.ChooseCenter) MoveCenter (touchPos);
+    else if (state == MultiSelectState.AddCenter) MoveCenter (touchPos);
+
+    else if (state == MultiSelectState.AddHandler) MoveHandler (touchPos);
 
   }
 
@@ -145,7 +152,7 @@ public class MultiSelect : MonoBehaviour {
         state = MultiSelectState.SelectBlocks;
         break;
 
-      case MultiSelectState.ChooseCenter:
+      case MultiSelectState.AddCenter:
         InitChooseCenter ();
         break;
 
@@ -159,23 +166,32 @@ public class MultiSelect : MonoBehaviour {
 
   void InitAddHandler () {
 
-    OkBtn.gameObject.SetActive (false);
-    handle = GameObject.Instantiate (handlePrefab, rotateCenter.position + Vector3.up * .5f, rotateCenter.rotation, world);
-    rotateComponent = GameObject.Instantiate (rotateComponentPrefab, rotateCenter.position, rotateCenter.rotation, world);
-    handle.parent = rotateComponent;
+    rotateComponent = GameObject.Instantiate (
+      rotateComponentPrefab,
+      rotateCenter.position,
+      rotateCenter.rotation, world
+    );
+    var rotateComp = rotateComponent.GetComponent<RotateComponent> ();
 
-    var rotateController = rotateComponent.GetComponent<RotateComponent>();
-    rotateController.handleCollider = handle.GetComponentInChildren<Collider>();
+    handle = GameObject.Instantiate (handlePrefab, rotateCenter.position + Vector3.up * .5f, rotateCenter.rotation, world);
+    var handleRotation = handle.gameObject.AddComponent<RotateController> ();
+    rotateComp.onRotationStart.AddListener (handleRotation.OnTouchStart);
+    rotateComp.onRotationMove.AddListener (handleRotation.OnTouchMove);
+    rotateComp.onRotationDone.AddListener (handleRotation.OnTouchEnd);
+    handle.parent = blocks[0];
 
     foreach (var b in blocks) {
       b.parent = rotateComponent;
     }
 
+    var rotateController = rotateComponent.GetComponent<RotateComponent> ();
+    rotateController.handleCollider = handle.GetComponentInChildren<Collider> ();
+
   }
 
   void MoveCenter (Vector2 touchPos) {
 
-    if (state != MultiSelectState.ChooseCenter) return;
+    if (state != MultiSelectState.AddCenter) return;
 
     var block = Utility.GetBlocksOnTapPos (touchPos);
 
@@ -184,4 +200,20 @@ public class MultiSelect : MonoBehaviour {
     rotateCenter.transform.position = block.position;
 
   }
+
+  void MoveHandler (Vector2 touchPos) {
+
+    if (state != MultiSelectState.AddHandler) return;
+
+    var block = Utility.GetBlocksOnTapPos (touchPos);
+
+    handle.position = block.position;
+    handle.parent = block;
+
+    // if (!blocks.Exists (b => b == block)) return;
+
+    // rotateCenter.transform.position = block.position;
+
+  }
+
 }
