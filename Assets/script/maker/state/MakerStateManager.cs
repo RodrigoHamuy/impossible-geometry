@@ -7,6 +7,8 @@ using UnityEngine.Events;
 
 public class MakerStateManager : MonoBehaviour {
 
+  public Transform world;
+
   Dictionary<MakerStateType, List<State>> states = new Dictionary<MakerStateType, List<State>> ();
 
 #pragma warning disable 0414
@@ -54,14 +56,53 @@ public class MakerStateManager : MonoBehaviour {
     if (currState != newState) {
 
       if (currState != null) {
+
+        if (currState.Id == EnumToString (MakerState.MakerPlay)) {
+
+          ExitPlayMode ();
+
+        }
+
         currState.Exit ();
       }
 
     } else return;
 
+    if (newState.Id == EnumToString (MakerState.MakerPlay)) {
+
+      EnterPlayMode ();
+
+    }
+
     newState.Enter ();
 
     if (!init) UpdateStateInspector ();
+
+  }
+
+  void EnterPlayMode () {
+
+    var rotators = world.GetComponentsInChildren<RotateComponent> ();
+    var rotations = world.GetComponentsInChildren<RotateController> ();
+    foreach (var r in rotators) {
+      r.enabled = true;
+    }
+    foreach (var r in rotations) {
+      r.enabled = true;
+    }
+
+  }
+
+  void ExitPlayMode () {
+
+    var rotators = world.GetComponentsInChildren<RotateComponent> ();
+    var rotations = world.GetComponentsInChildren<RotateController> ();
+    foreach (var r in rotators) {
+      r.enabled = false;
+    }
+    foreach (var r in rotations) {
+      r.enabled = false;
+    }
 
   }
 
