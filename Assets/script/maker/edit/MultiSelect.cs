@@ -78,7 +78,7 @@ public class MultiSelect : MonoBehaviour {
     OkBtn.gameObject.SetActive (true);
 
     var okBtnText = OkBtn.GetComponentInChildren<Text> ();
-    okBtnText.text = "Set Rotation Center";
+    okBtnText.text = "Set Center";
 
     rotateCenter.gameObject.SetActive (true);
 
