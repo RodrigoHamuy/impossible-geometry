@@ -27,6 +27,18 @@ public class RotateComponent : MonoBehaviour {
     handler = handleCollider.transform;
     canRotate = true;
 
+    var player = Object.FindObjectOfType<PlayerComponent> ();
+
+    if (player == null) return;
+
+    // Enable/disable rotation during player movement.
+    player.onTargetReached.AddListener (() => {
+      CanRotate (true);
+    });
+    player.onStartMoving.AddListener (() => {
+      CanRotate (false);
+    });
+
   }
 
   void Update () {

@@ -7,8 +7,6 @@ public class RotateController : MonoBehaviour {
 
   public UnityEvent onRotationDone = new UnityEvent ();
 
-  public RotateComponent rotateComponent;
-
   bool isSnapping = false;
 
   Vector3 startForward;
@@ -110,18 +108,6 @@ public class RotateController : MonoBehaviour {
       onRotationDone.AddListener (container.ResetPoints);
       onRotationStart.AddListener (container.onRotationStart);
     }
-
-    var player = Object.FindObjectOfType<PlayerComponent> ();
-
-    if (player == null) return;
-
-    // Enable/disable rotation during player movement.
-    player.onTargetReached.AddListener (() => {
-      rotateComponent.CanRotate(true);
-    });
-    player.onStartMoving.AddListener (() => {
-      rotateComponent.CanRotate(false);
-    });
 
   }
 
