@@ -140,7 +140,18 @@ public class AddOnHold : MonoBehaviour {
 
     if (spaceTaken) return;
 
-    var block = actionsManager.AddBlock (blockPrefab, hitPos);
+    var block = actionsManager.AddBlock (
+      new MakerAction(
+        MakerActionType.Add,
+        null,
+        blockPrefab,
+        hitPos,
+        Vector3.one,
+        Quaternion.identity,
+        world
+      ),
+      false
+    );
 
     marker.transform.position = hitPos;
 
@@ -289,8 +300,19 @@ public class AddOnHold : MonoBehaviour {
 
       }
 
-      var midBlock = actionsManager.AddBlock (blockPrefab, middlePos);
-
+      var midBlock = actionsManager.AddBlock(
+        new MakerAction(
+          MakerActionType.Add,
+          null,
+          blockPrefab,
+          middlePos,
+          Vector3.one,
+          Quaternion.identity,
+          world
+        ),
+        false
+      );
+      
       midBlock.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
 
       currentRow.Add (midBlock);

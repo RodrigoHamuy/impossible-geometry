@@ -30,9 +30,9 @@ public class EditManager : MonoBehaviour {
   List<Button> allButtons;
   List<bool> allButtonsState;
 
-  public void Replace (GameObject value) {
+  public void Replace (GameObject prefab) {
 
-    var block = manager.ReplaceBlock (value.transform, target.transform);
+    var block = manager.ReplaceBlock (prefab.transform, target.transform);
     ClearTarget ();
     Select (block);
     ShowSelectUi ();
