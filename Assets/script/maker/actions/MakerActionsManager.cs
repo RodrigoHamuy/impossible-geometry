@@ -67,7 +67,12 @@ public class MakerActionsManager : MonoBehaviour {
 
   public Transform AddBlock (MakerAction action, bool restore) {
 
-    var block = Instantiate (action.prefab, action.position, action.rotation, action.parent);
+    var block = Instantiate (
+      action.prefab,
+      action.position,
+      action.rotation,
+      action.parent
+    );
 
     var editData = block.gameObject.AddComponent<EditableBlock> ();
     editData.blockPrefab = action.prefab;

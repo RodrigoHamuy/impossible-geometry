@@ -13,10 +13,18 @@ public class ViewManager : MonoBehaviour {
 
   Quaternion originalQuaternion;
 
+  Vector3 worldStartPos;
+  Vector3 dragStartPos;
+  Vector3 dragCurrPos;
+
+  Plane plane;
+
   void Start () {
 
     var touchComponent = GetComponent<TouchComponent> ();
 
+    touchComponent.onTouchStart.AddListener (OnTouchStart);
+    touchComponent.onTouchMove.AddListener (OnTouchMove);
     touchComponent.onTouchEnd.AddListener (OnTouchEnd);
 
   }
@@ -39,6 +47,29 @@ public class ViewManager : MonoBehaviour {
 
   }
 
+  void OnTouchStart (Vector2 touchPos) {
+
+    worldStartPos = world.position;
+
+    plane = new Plane (Vector3.up, transform.position);
+    var ray = Camera.main.ScreenPointToRay (touchPos);
+    float dist;
+    if (plane.Raycast (ray, out dist)) {
+      dragStartPos = ray.origin + ray.direction * dist;
+    }
+
+  }
+
+  void OnTouchMove (Vector2 touchPos) {
+    var ray = Camera.main.ScreenPointToRay (touchPos);
+    float dist;
+    if (plane.Raycast (ray, out dist)) {
+      dragCurrPos = ray.origin + ray.direction * dist;
+      world.position = worldStartPos + dragCurrPos - dragStartPos;
+    }
+
+  }
+
   void OnRotationStart () {
 
     isRotating = true;
@@ -54,6 +85,8 @@ public class ViewManager : MonoBehaviour {
   void OnTouchEnd (Vector2 touchPos) {
 
     Select (touchPos);
+
+    world.position = Utility.Round (world.position, 1.0f);
 
   }
 
@@ -91,7 +124,7 @@ public class ViewManager : MonoBehaviour {
     }
 
     isRotating = false;
-    
+
     if (rotateController) rotateController.gameObject.SetActive (false);
 
   }

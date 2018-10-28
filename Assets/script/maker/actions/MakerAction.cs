@@ -22,9 +22,9 @@ public struct MakerAction {
     this.type = type;
     this.target = target;
     this.prefab = prefab;
-    this.position = position;
+    this.position = Utility.Round (position, 1.0f);
     this.scale = scale;
-    this.rotation = rotation;
+    this.rotation = Utility.Round (rotation);
     this.parent = parent;
 
   }

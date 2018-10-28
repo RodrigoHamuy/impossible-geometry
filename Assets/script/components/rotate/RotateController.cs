@@ -16,7 +16,7 @@ public class RotateController : MonoBehaviour {
   float snapAngle;
 
   public void OnTouchStart () {
-    
+
     isSnapping = false;
     currAngle = .0f;
     startForward = transform.forward;
@@ -61,14 +61,8 @@ public class RotateController : MonoBehaviour {
       currAngle = snapAngle;
       RotateToAngle (currAngle);
       isSnapping = false;
-      var q = transform.rotation.eulerAngles;
-
-      transform.rotation = Quaternion.Euler (
-        Mathf.Round (q.x / 90.0f) * 90.0f,
-        Mathf.Round (q.y / 90.0f) * 90.0f,
-        Mathf.Round (q.z / 90.0f) * 90.0f
-      );
-
+      transform.rotation = Utility.Round (transform.rotation);
+      print (transform.rotation.eulerAngles);
       onRotationDone.Invoke ();
 
     }

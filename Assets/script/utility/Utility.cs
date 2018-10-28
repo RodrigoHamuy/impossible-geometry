@@ -389,7 +389,7 @@ public class Utility {
   }
 
   public static Transform GetBlocksOnTapPos (Vector3 tapPos) {
-    
+
     var ray = Camera.main.ScreenPointToRay (tapPos);
     var layerMask = LayerMask.GetMask ("Block");
     var hits = Physics.RaycastAll (ray, 100.0f, layerMask);
@@ -407,5 +407,16 @@ public class Utility {
     return null;
 
   }
-  
+
+  public static Vector3 Round (Vector3 value, float roundFactor) {
+    for (int i = 0; i < 3; i++) {
+      value[i] = Mathf.Round (value[i] / roundFactor) * roundFactor;
+    }
+    return value;
+  }
+
+  public static Quaternion Round (Quaternion value, float roundFactor = 90.0f) {
+    return Quaternion.Euler (Utility.Round (value.eulerAngles, 90f));
+  }
+
 }
