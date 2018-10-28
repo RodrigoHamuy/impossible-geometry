@@ -34,8 +34,6 @@ public class AddOnHold : MonoBehaviour {
   Vector3 lastHitPosNoRound;
   Vector3 lastHitPos;
 
-  Vector2 margin;
-
   TouchComponent touchComponent;
 
   void Start () {
@@ -54,15 +52,11 @@ public class AddOnHold : MonoBehaviour {
 
     var cam = Camera.main;
 
-    margin = cam.WorldToScreenPoint (Vector3.up) - cam.WorldToScreenPoint (Vector3.zero);
-
   }
 
   public void StartStroke (Vector2 screenPos) {
 
     marker.gameObject.SetActive (true);
-
-    screenPos += margin;
 
     bool found;
 
@@ -88,8 +82,6 @@ public class AddOnHold : MonoBehaviour {
 
     if (found) screenPos = Camera.main.WorldToScreenPoint (hitPos);
 
-    screenPos -= margin;
-
     MoveStroke (screenPos, true);
 
   }
@@ -99,8 +91,6 @@ public class AddOnHold : MonoBehaviour {
   }
 
   public void MoveStroke (Vector2 screenPos, bool isFirstTouch) {
-
-    screenPos += margin;
 
     if (!secondTouchPass) {
 
@@ -141,7 +131,7 @@ public class AddOnHold : MonoBehaviour {
     if (spaceTaken) return;
 
     var block = actionsManager.AddBlock (
-      new MakerAction(
+      new MakerAction (
         MakerActionType.Add,
         null,
         blockPrefab,
@@ -223,8 +213,6 @@ public class AddOnHold : MonoBehaviour {
 
   public void EndStroke (Vector2 screenPos) {
 
-    screenPos += margin;
-
     int layer = LayerMask.NameToLayer ("Block");
 
     currentRow.ForEach ((block) => {
@@ -300,8 +288,8 @@ public class AddOnHold : MonoBehaviour {
 
       }
 
-      var midBlock = actionsManager.AddBlock(
-        new MakerAction(
+      var midBlock = actionsManager.AddBlock (
+        new MakerAction (
           MakerActionType.Add,
           null,
           blockPrefab,
@@ -312,7 +300,7 @@ public class AddOnHold : MonoBehaviour {
         ),
         false
       );
-      
+
       midBlock.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
 
       currentRow.Add (midBlock);
