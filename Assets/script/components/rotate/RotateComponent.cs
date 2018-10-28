@@ -100,8 +100,6 @@ public class RotateComponent : MonoBehaviour {
 
     var currVector = GetTouchDirFromPlaneCenter (inputPos);
 
-    if (startVector != currVector) print (currVector);
-
     var angle = Vector3.SignedAngle (startVector, currVector, -handler.up);
 
     onRotationMove.Invoke (angle);

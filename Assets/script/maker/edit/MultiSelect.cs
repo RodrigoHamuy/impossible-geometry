@@ -20,6 +20,8 @@ public class MultiSelect : MonoBehaviour {
   public Button AddRotationBtn;
   public Button OkBtn;
 
+  public Toggle[] rotationToogleBtns;
+
   public Transform rotateComponentPrefab;
   public Transform handlePrefab;
 
@@ -54,6 +56,12 @@ public class MultiSelect : MonoBehaviour {
 
     });
 
+    for (int i = 0; i < rotationToogleBtns.Count (); i++) {
+
+      AddRotationAxisListener (rotationToogleBtns[i], i);
+
+    }
+
   }
 
   void OnEnable () {
@@ -69,7 +77,44 @@ public class MultiSelect : MonoBehaviour {
 
   }
 
+  void AddRotationAxisListener (Toggle btn, int axis) {
+
+    btn.onValueChanged.AddListener (value => {
+
+      if (!value) return;
+      var vector = Vector3.zero;
+      vector[axis] = 1;
+      SetRotationAxis (vector);
+
+    });
+
+  }
+
+  void SetRotationAxis (Vector3 vector) {
+
+    switch (state) {
+
+      case MultiSelectState.AddCenter:
+        var obj = rotateCenter.Find ("RotationAxis");
+        if (obj.up == vector) vector *= -1f;
+        obj.up = vector;
+        break;
+
+      case MultiSelectState.AddHandler:
+        if (handle.up == vector) vector *= -1f;
+        handle.up = vector;
+        handle.position = handle.parent.position + vector * .5f;
+        break;
+    }
+  }
+
   void InitChooseCenter () {
+
+    foreach (var btn in rotationToogleBtns) {
+      btn.gameObject.SetActive (true);
+    }
+
+    rotationToogleBtns[1].GetComponent<Toggle> ().isOn = true;
 
     foreach (var btn in focusModeButtons) {
       btn.gameObject.SetActive (false);
@@ -99,6 +144,10 @@ public class MultiSelect : MonoBehaviour {
   }
 
   void InitSelectBlocks () {
+
+    foreach (var btn in rotationToogleBtns) {
+      btn.gameObject.SetActive (false);
+    }
 
     foreach (var btn in focusModeButtons) {
       btn.gameObject.SetActive (true);
@@ -201,6 +250,7 @@ public class MultiSelect : MonoBehaviour {
     );
     var rotateComp = rotateComponent.GetComponent<RotateComponent> ();
     rotateComp.enabled = false;
+    rotateComp.transform.up = rotateCenter.Find ("RotationAxis").up;
 
     handle = GameObject.Instantiate (handlePrefab, rotateCenter.position + Vector3.up * .5f, rotateCenter.rotation, world);
     var handleRotation = handle.gameObject.AddComponent<RotateController> ();
@@ -241,7 +291,7 @@ public class MultiSelect : MonoBehaviour {
 
     if (!block) return;
 
-    handle.position = block.position + Vector3.up * .5f;
+    handle.position = block.position + handle.up * .5f;
     handle.parent = block;
 
   }
