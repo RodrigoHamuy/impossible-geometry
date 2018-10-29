@@ -54,6 +54,9 @@ public class EditManager : MonoBehaviour {
     RotateBlockBtn.onClick.AddListener (ShowRotationUi);
     ReplaceBtn.onClick.AddListener (ShowReplaceUi);
 
+    rotateController.onRotationStart.AddListener (OnRotationStart);
+    rotateController.onRotationDone.AddListener (OnRotationEnd);
+
     for (int i = 0; i < rotationToogleBtns.Count (); i++) {
 
       AddRotationAxisListener (rotationToogleBtns[i], i);
@@ -156,20 +159,12 @@ public class EditManager : MonoBehaviour {
 
     ShowSelectUi ();
 
-    rotateController.onRotationStart.AddListener (OnRotationStart);
-
-    rotateController.onRotationDone.AddListener (OnRotationEnd);
-
   }
 
   void OnDisable () {
 
     ClearTarget ();
     if (SelectBtns) SelectBtns.SetActive (false);
-
-    rotateController.onRotationStart.RemoveListener (OnRotationStart);
-
-    rotateController.onRotationDone.RemoveListener (OnRotationEnd);
 
   }
 
