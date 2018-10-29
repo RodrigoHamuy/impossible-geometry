@@ -1,11 +1,14 @@
 using Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Linq;
 
 public class ViewManager : MonoBehaviour {
 
   public RotateController rotateController;
   public Transform rotateComponentHolder;
   public Transform world;
+  public Toggle[] rotationToogleBtns;
 
   bool isRotating = false;
   Renderer target;
@@ -29,6 +32,12 @@ public class ViewManager : MonoBehaviour {
 
     rotateController.onRotationStart.AddListener (OnRotationStart);
     rotateController.onRotationDone.AddListener (OnRotationEnd);
+
+    for (int i = 0; i < rotationToogleBtns.Count (); i++) {
+
+      AddRotationAxisListener (rotationToogleBtns[i], i);
+
+    }
 
   }
 
@@ -127,6 +136,10 @@ public class ViewManager : MonoBehaviour {
 
     if (rotateController) rotateController.gameObject.SetActive (false);
 
+    foreach (var btn in rotationToogleBtns) {
+      btn.gameObject.SetActive (false);
+    }
+
   }
 
   void ShowRotationUi () {
@@ -136,6 +149,32 @@ public class ViewManager : MonoBehaviour {
     rotateController.transform.position = target.transform.position;
     world.parent = rotateComponentHolder;
     rotateController.gameObject.SetActive (true);
+
+    foreach (var btn in rotationToogleBtns) {
+      btn.gameObject.SetActive (true);
+    }
+
+    rotationToogleBtns[1].GetComponent<Toggle> ().isOn = true;
+
+  }
+
+  void AddRotationAxisListener (Toggle btn, int axis) {
+
+    btn.onValueChanged.AddListener (value => {
+
+      if (!value) return;
+      var vector = Vector3.zero;
+      vector[axis] = 1;
+      SetRotationAxis (vector);
+
+    });
+
+  }
+
+  void SetRotationAxis(Vector3 vector) {
+    world.parent = null;
+    rotateController.transform.up = vector;
+    world.parent = rotateComponentHolder;
 
   }
 
