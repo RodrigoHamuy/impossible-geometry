@@ -14,6 +14,7 @@ public class EditManager : MonoBehaviour {
   public RotateController rotateController;
   public Transform rotateComponentHolder;
   public GameObject AddAndSelectButtons;
+  public Toggle[] rotationToogleBtns;
 
   bool isRotating = false;
   bool isDragging = false;
@@ -53,8 +54,32 @@ public class EditManager : MonoBehaviour {
     RotateBlockBtn.onClick.AddListener (ShowRotationUi);
     ReplaceBtn.onClick.AddListener (ShowReplaceUi);
 
+    for (int i = 0; i < rotationToogleBtns.Count (); i++) {
+
+      AddRotationAxisListener (rotationToogleBtns[i], i);
+
+    }
+
     ClearTarget ();
 
+  }
+
+  void AddRotationAxisListener (Toggle btn, int axis) {
+
+    btn.onValueChanged.AddListener (value => {
+
+      if (!value) return;
+      var vector = Vector3.zero;
+      vector[axis] = 1;
+      SetRotationAxis (vector);
+
+    });
+
+  }
+
+  void SetRotationAxis (Vector3 vector) {
+
+    rotateController.transform.up = vector;
   }
 
   void OnRotationStart () {
@@ -79,6 +104,8 @@ public class EditManager : MonoBehaviour {
     target.enabled = true;
     targetClone = null;
     isRotating = false;
+
+    ShowRotationUi();
 
   }
 
@@ -113,6 +140,13 @@ public class EditManager : MonoBehaviour {
     ReplaceBtn.interactable = true;
     AddAndSelectButtons.SetActive (false);
     ReplaceBtns.SetActive (false);
+
+    foreach (var btn in rotationToogleBtns) {
+      btn.gameObject.SetActive (true);
+    }
+
+    rotationToogleBtns[1].GetComponent<Toggle> ().isOn = true;
+
 
   }
 
@@ -167,6 +201,10 @@ public class EditManager : MonoBehaviour {
 
     isRotating = false;
     isDragging = false;
+
+    foreach (var btn in rotationToogleBtns) {
+      btn.gameObject.SetActive (false);
+    }
 
     ShowSelectUi ();
 
