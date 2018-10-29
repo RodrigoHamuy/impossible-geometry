@@ -79,7 +79,9 @@ public class EditManager : MonoBehaviour {
 
   void SetRotationAxis (Vector3 vector) {
 
+    targetClone.transform.parent = null;
     rotateController.transform.up = vector;
+    targetClone.transform.parent = rotateComponentHolder;
   }
 
   void OnRotationStart () {
