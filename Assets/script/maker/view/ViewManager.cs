@@ -27,12 +27,7 @@ public class ViewManager : MonoBehaviour {
     touchComponent.onTouchMove.AddListener (OnTouchMove);
     touchComponent.onTouchEnd.AddListener (OnTouchEnd);
 
-  }
-
-  void OnEnable () {
-
     rotateController.onRotationStart.AddListener (OnRotationStart);
-
     rotateController.onRotationDone.AddListener (OnRotationEnd);
 
   }
@@ -61,6 +56,9 @@ public class ViewManager : MonoBehaviour {
   }
 
   void OnTouchMove (Vector2 touchPos) {
+
+    if(isRotating) return;
+
     var ray = Camera.main.ScreenPointToRay (touchPos);
     float dist;
     if (plane.Raycast (ray, out dist)) {
@@ -83,6 +81,8 @@ public class ViewManager : MonoBehaviour {
   }
 
   void OnTouchEnd (Vector2 touchPos) {
+
+    if(isRotating) return;
 
     Select (touchPos);
 
