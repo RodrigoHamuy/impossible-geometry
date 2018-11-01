@@ -1,13 +1,14 @@
+using System.Linq;
 using Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
 
 public class ViewManager : MonoBehaviour {
 
   public RotateController rotateController;
   public Transform rotateComponentHolder;
   public Transform world;
+  public GameObject canvas;
   public Toggle[] rotationToogleBtns;
 
   bool isRotating = false;
@@ -26,12 +27,12 @@ public class ViewManager : MonoBehaviour {
 
     var touchComponent = GetComponent<TouchComponent> ();
 
+    rotateController.onRotationStart.AddListener (OnRotationStart);
+    rotateController.onRotationDone.AddListener (OnRotationEnd);
+
     touchComponent.onTouchStart.AddListener (OnTouchStart);
     touchComponent.onTouchMove.AddListener (OnTouchMove);
     touchComponent.onTouchEnd.AddListener (OnTouchEnd);
-
-    rotateController.onRotationStart.AddListener (OnRotationStart);
-    rotateController.onRotationDone.AddListener (OnRotationEnd);
 
     for (int i = 0; i < rotationToogleBtns.Count (); i++) {
 
@@ -45,13 +46,11 @@ public class ViewManager : MonoBehaviour {
 
     ClearTarget ();
 
-    rotateController.onRotationStart.RemoveListener (OnRotationStart);
-
-    rotateController.onRotationDone.RemoveListener (OnRotationEnd);
-
   }
 
   void OnTouchStart (Vector2 touchPos) {
+
+    if (isRotating) return;
 
     worldStartPos = world.position;
 
@@ -66,7 +65,7 @@ public class ViewManager : MonoBehaviour {
 
   void OnTouchMove (Vector2 touchPos) {
 
-    if(isRotating) return;
+    if (isRotating) return;
 
     var ray = Camera.main.ScreenPointToRay (touchPos);
     float dist;
@@ -80,18 +79,20 @@ public class ViewManager : MonoBehaviour {
   void OnRotationStart () {
 
     isRotating = true;
+    canvas.SetActive (false);
 
   }
 
   void OnRotationEnd () {
 
     isRotating = false;
+    canvas.SetActive (true);
 
   }
 
   void OnTouchEnd (Vector2 touchPos) {
 
-    if(isRotating) return;
+    if (isRotating) return;
 
     Select (touchPos);
 
@@ -171,7 +172,7 @@ public class ViewManager : MonoBehaviour {
 
   }
 
-  void SetRotationAxis(Vector3 vector) {
+  void SetRotationAxis (Vector3 vector) {
     world.parent = null;
     rotateController.transform.up = vector;
     world.parent = rotateComponentHolder;

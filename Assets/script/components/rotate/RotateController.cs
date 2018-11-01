@@ -15,6 +15,26 @@ public class RotateController : MonoBehaviour {
   float currAngle;
   float snapAngle;
 
+  void Start () {
+
+    // Set points as rotatable
+    var containerComponents = GetComponentsInChildren<PointsContainerComponent> ();
+    foreach (var containerComponent in containerComponents) {
+      var container = containerComponent.pathContainer;
+
+      SetPointsAsRotatable (container);
+
+      container.onGeneratePathPointsDone.AddListener (() => {
+        SetPointsAsRotatable (container);
+      });
+
+      // Update points before/after rotation
+      onRotationDone.AddListener (container.ResetPoints);
+      onRotationStart.AddListener (container.onRotationStart);
+    }
+
+  }
+
   public void OnTouchStart () {
 
     isSnapping = false;
@@ -76,32 +96,6 @@ public class RotateController : MonoBehaviour {
     var forward = Quaternion.AngleAxis (angle, startUp) * startForward;
 
     transform.LookAt (transform.position + forward, startUp);
-
-  }
-
-  void Start () {
-
-    BindEvents ();
-
-  }
-
-  void BindEvents () {
-
-    // Set points as rotatable
-    var containerComponents = GetComponentsInChildren<PointsContainerComponent> ();
-    foreach (var containerComponent in containerComponents) {
-      var container = containerComponent.pathContainer;
-
-      SetPointsAsRotatable (container);
-
-      container.onGeneratePathPointsDone.AddListener (() => {
-        SetPointsAsRotatable (container);
-      });
-
-      // Update points before/after rotation
-      onRotationDone.AddListener (container.ResetPoints);
-      onRotationStart.AddListener (container.onRotationStart);
-    }
 
   }
 
