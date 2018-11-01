@@ -1852,7 +1852,8 @@ MonoBehaviour:
   rotateController: {fileID: 1780123537}
   rotateComponentHolder: {fileID: 1960605084}
   AddAndSelectButtons: {fileID: 272144034}
-  rotationToogleBtns:
+  canvas: {fileID: 225345226}
+  rotationToggleBtns:
   - {fileID: 533314346}
   - {fileID: 137880144}
   - {fileID: 950541337}

@@ -14,7 +14,10 @@ public class EditManager : MonoBehaviour {
   public RotateController rotateController;
   public Transform rotateComponentHolder;
   public GameObject AddAndSelectButtons;
-  public Toggle[] rotationToogleBtns;
+  public GameObject canvas;
+  public Toggle[] rotationToggleBtns;
+
+  GameObject rotationBtnsContainer;
 
   bool isRotating = false;
   bool isDragging = false;
@@ -57,9 +60,11 @@ public class EditManager : MonoBehaviour {
     rotateController.onRotationStart.AddListener (OnRotationStart);
     rotateController.onRotationDone.AddListener (OnRotationEnd);
 
-    for (int i = 0; i < rotationToogleBtns.Count (); i++) {
+    rotationBtnsContainer = rotationToggleBtns[0].transform.parent.gameObject;
 
-      AddRotationAxisListener (rotationToogleBtns[i], i);
+    for (int i = 0; i < rotationToggleBtns.Count (); i++) {
+
+      AddRotationAxisListener (rotationToggleBtns[i], i);
 
     }
 
@@ -82,9 +87,10 @@ public class EditManager : MonoBehaviour {
 
   void SetRotationAxis (Vector3 vector) {
 
-    targetClone.transform.parent = null;
+    if (targetClone) targetClone.transform.parent = null;
     rotateController.transform.up = vector;
-    targetClone.transform.parent = rotateComponentHolder;
+    if (targetClone) targetClone.transform.parent = rotateComponentHolder;
+
   }
 
   void OnRotationStart () {
@@ -93,11 +99,14 @@ public class EditManager : MonoBehaviour {
     foreach (var btn in allButtons) {
       btn.interactable = false;
     }
+    canvas.SetActive (false);
     isRotating = true;
 
   }
 
   void OnRotationEnd () {
+
+    canvas.SetActive (true);
 
     for (int i = 0; i < allButtons.Count; i++) {
 
@@ -110,7 +119,7 @@ public class EditManager : MonoBehaviour {
     targetClone = null;
     isRotating = false;
 
-    ShowRotationUi();
+    ShowRotationUi ();
 
   }
 
@@ -146,12 +155,11 @@ public class EditManager : MonoBehaviour {
     AddAndSelectButtons.SetActive (false);
     ReplaceBtns.SetActive (false);
 
-    foreach (var btn in rotationToogleBtns) {
+    foreach (var btn in rotationToggleBtns) {
       btn.gameObject.SetActive (true);
     }
 
-    rotationToogleBtns[1].GetComponent<Toggle> ().isOn = true;
-
+    rotationToggleBtns[1].GetComponent<Toggle> ().isOn = true;
 
   }
 
@@ -169,6 +177,8 @@ public class EditManager : MonoBehaviour {
   }
 
   void ClearTarget () {
+
+    rotationBtnsContainer.SetActive (false);
 
     if (target) {
 
@@ -199,11 +209,13 @@ public class EditManager : MonoBehaviour {
     isRotating = false;
     isDragging = false;
 
-    foreach (var btn in rotationToogleBtns) {
+    foreach (var btn in rotationToggleBtns) {
       btn.gameObject.SetActive (false);
     }
 
     ShowSelectUi ();
+
+    AddAndSelectButtons.SetActive (true);
 
   }
 
@@ -222,6 +234,7 @@ public class EditManager : MonoBehaviour {
     rotateController.transform.position = targetClone.transform.position;
     targetClone.transform.parent = rotateComponentHolder;
     rotateController.gameObject.SetActive (true);
+    rotationBtnsContainer.SetActive (true);
 
   }
 
@@ -229,7 +242,6 @@ public class EditManager : MonoBehaviour {
 
     ReplaceBtns.SetActive (true);
     SelectBtns.SetActive (false);
-    AddAndSelectButtons.SetActive (false);
 
   }
 
@@ -237,7 +249,6 @@ public class EditManager : MonoBehaviour {
 
     if (SelectBtns) SelectBtns.SetActive (true);
     if (ReplaceBtns) ReplaceBtns.SetActive (false);
-    if (AddAndSelectButtons) AddAndSelectButtons.SetActive (true);
 
   }
 
@@ -252,6 +263,8 @@ public class EditManager : MonoBehaviour {
     if (!block) return;
 
     if (block.transform != target.transform) return;
+
+    canvas.SetActive (false);
 
     isDragging = true;
 
@@ -290,6 +303,8 @@ public class EditManager : MonoBehaviour {
     target.enabled = true;
 
     targetClone = null;
+
+    canvas.SetActive (true);
 
     isDragging = false;
 
