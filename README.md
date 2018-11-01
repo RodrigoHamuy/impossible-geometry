@@ -1,5 +1,13 @@
 # ImpossibleGeometry
 
+## New TODO
+
+- Add Player (remove auto player)
+- Add Target (remove auto target)
+- On Hit Play Ask to Add Player/Target
+- Edit rotate block
+- Block Grid view (kinda mesh view)
+
 ## Remember to write
 
 - UI Development
