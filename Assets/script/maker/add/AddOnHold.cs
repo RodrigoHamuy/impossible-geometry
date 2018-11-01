@@ -17,6 +17,8 @@ public class AddOnHold : MonoBehaviour {
   public Transform cubeBoyPrefab;
   public Transform targetPrefab;
 
+  public GameObject canvas;
+
   public Vector3 planeNormal = Vector3.up;
 
   MakerActionsManager actionsManager;
@@ -74,6 +76,8 @@ public class AddOnHold : MonoBehaviour {
     }
 
     currentRow.Clear ();
+
+    canvas.SetActive (false);
 
     OnBrushStart.Invoke ();
 
@@ -231,6 +235,8 @@ public class AddOnHold : MonoBehaviour {
 
     lastHitPosNoRound = Vector3.zero;
     lastHitPos = Vector3.zero;
+
+    canvas.SetActive (true);
 
     OnBrushEnd.Invoke ();
     marker.gameObject.SetActive (false);

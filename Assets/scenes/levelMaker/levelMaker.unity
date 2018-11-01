@@ -3895,6 +3895,7 @@ MonoBehaviour:
     type: 2}
   targetPrefab: {fileID: 4379583769398898, guid: 990ae69bf921bad4996471b2be9ebcf7,
     type: 2}
+  canvas: {fileID: 225345226}
   planeNormal: {x: 0, y: 1, z: 0}
 --- !u!114 &875258517
 MonoBehaviour:
