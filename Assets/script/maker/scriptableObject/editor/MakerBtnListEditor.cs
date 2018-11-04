@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [CustomEditor (typeof (MakerBtnList))]
+[CanEditMultipleObjects]
 
 public class MakerBtnListEditor : Editor {
 
@@ -11,27 +12,34 @@ public class MakerBtnListEditor : Editor {
 
     DrawDefaultInspector ();
 
-    var btnList = (MakerBtnList) target;
-
     if (GUILayout.Button ("Build Object")) {
-      InitBtns (btnList);
+
+      foreach (var t in targets) {
+        var thisTarget = (MakerBtnList) t;
+        InitBtns (thisTarget);
+      }
+
     }
 
   }
 
-  void InitBtns (MakerBtnList btnList) {
+  void InitBtns (MakerBtnList thisTarget) {
 
-    var toggleGroup = btnList.GetComponent<ToggleGroup> ();
+    while (thisTarget.transform.childCount > 0) {
+      DestroyImmediate (thisTarget.transform.GetChild (0).gameObject);
+    }
+
+    var toggleGroup = thisTarget.GetComponent<ToggleGroup> ();
 
     var toggles = new List<Toggle> ();
 
-    foreach (var btnStyle in btnList.btnStyleList.btns) {
+    foreach (var btnStyle in thisTarget.btnStyleList.btns) {
 
       var btn = (
-        PrefabUtility.InstantiatePrefab (btnList.btnPrefab) as GameObject
+        PrefabUtility.InstantiatePrefab (thisTarget.btnPrefab) as GameObject
       ).GetComponent<MakerBtn> ();
 
-      btn.transform.SetParent (btnList.transform, false);
+      btn.transform.SetParent (thisTarget.transform, false);
 
       btn.style = btnStyle;
 
