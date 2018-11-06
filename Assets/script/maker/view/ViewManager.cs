@@ -1,6 +1,7 @@
 using System.Linq;
 using Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class ViewManager : MonoBehaviour {
@@ -9,7 +10,8 @@ public class ViewManager : MonoBehaviour {
   public Transform rotateComponentHolder;
   public Transform world;
   public GameObject canvas;
-  public Toggle[] rotationToogleBtns;
+
+  public UnityEventBool OnTargetChange;
 
   bool isRotating = false;
   Renderer target;
@@ -33,12 +35,6 @@ public class ViewManager : MonoBehaviour {
     touchComponent.onTouchStart.AddListener (OnTouchStart);
     touchComponent.onTouchMove.AddListener (OnTouchMove);
     touchComponent.onTouchEnd.AddListener (OnTouchEnd);
-
-    for (int i = 0; i < rotationToogleBtns.Count (); i++) {
-
-      AddRotationAxisListener (rotationToogleBtns[i], i);
-
-    }
 
   }
 
@@ -137,9 +133,7 @@ public class ViewManager : MonoBehaviour {
 
     if (rotateController) rotateController.gameObject.SetActive (false);
 
-    foreach (var btn in rotationToogleBtns) {
-      btn.gameObject.SetActive (false);
-    }
+    OnTargetChange.Invoke (false);
 
   }
 
@@ -151,28 +145,11 @@ public class ViewManager : MonoBehaviour {
     world.parent = rotateComponentHolder;
     rotateController.gameObject.SetActive (true);
 
-    foreach (var btn in rotationToogleBtns) {
-      btn.gameObject.SetActive (true);
-    }
-
-    rotationToogleBtns[1].GetComponent<Toggle> ().isOn = true;
+    OnTargetChange.Invoke (true);
 
   }
 
-  void AddRotationAxisListener (Toggle btn, int axis) {
-
-    btn.onValueChanged.AddListener (value => {
-
-      if (!value) return;
-      var vector = Vector3.zero;
-      vector[axis] = 1;
-      SetRotationAxis (vector);
-
-    });
-
-  }
-
-  void SetRotationAxis (Vector3 vector) {
+  public void SetRotationAxis (Vector3 vector) {
     world.parent = null;
     rotateController.transform.up = vector;
     world.parent = rotateComponentHolder;

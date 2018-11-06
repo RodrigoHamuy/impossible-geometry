@@ -2,22 +2,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class EditManager : MonoBehaviour {
 
-  public Button RemoveBlockBtn;
-  public Button RotateBlockBtn;
-  public Button ReplaceBtn;
-  public GameObject SelectBtns;
-  public GameObject ReplaceBtns;
   public RotateController rotateController;
   public Transform rotateComponentHolder;
-  public GameObject AddAndSelectButtons;
   public GameObject canvas;
-  public Toggle[] rotationToggleBtns;
 
-  GameObject rotationBtnsContainer;
+  public UnityEventBool OnTargetChange;
+
+  public UnityEvent OnRotateUIEnable;
 
   bool isRotating = false;
   bool isDragging = false;
@@ -39,7 +35,6 @@ public class EditManager : MonoBehaviour {
     var block = manager.ReplaceBlock (prefab.transform, target.transform);
     ClearTarget ();
     Select (block);
-    ShowSelectUi ();
 
   }
 
@@ -53,20 +48,8 @@ public class EditManager : MonoBehaviour {
     touchComponent.onTouchMove.AddListener (MoveDrag);
     touchComponent.onTouchEnd.AddListener (OnTouchEnd);
 
-    RemoveBlockBtn.onClick.AddListener (RemoveBlock);
-    RotateBlockBtn.onClick.AddListener (ShowRotationUi);
-    ReplaceBtn.onClick.AddListener (ShowReplaceUi);
-
     rotateController.onRotationStart.AddListener (OnRotationStart);
     rotateController.onRotationDone.AddListener (OnRotationEnd);
-
-    rotationBtnsContainer = rotationToggleBtns[0].transform.parent.gameObject;
-
-    for (int i = 0; i < rotationToggleBtns.Count (); i++) {
-
-      AddRotationAxisListener (rotationToggleBtns[i], i);
-
-    }
 
     ClearTarget ();
 
@@ -85,7 +68,7 @@ public class EditManager : MonoBehaviour {
 
   }
 
-  void SetRotationAxis (Vector3 vector) {
+  public void SetRotationAxis (Vector3 vector) {
 
     if (targetClone) targetClone.transform.parent = null;
     rotateController.transform.up = vector;
@@ -149,36 +132,18 @@ public class EditManager : MonoBehaviour {
     targetParent = target.transform.parent;
     targetOriginalColor = target.material.color;
     target.material.color = Color.grey;
-    RemoveBlockBtn.interactable = true;
-    RotateBlockBtn.interactable = true;
-    ReplaceBtn.interactable = true;
-    AddAndSelectButtons.SetActive (false);
-    ReplaceBtns.SetActive (false);
 
-    foreach (var btn in rotationToggleBtns) {
-      btn.gameObject.SetActive (true);
-    }
-
-    rotationToggleBtns[1].GetComponent<Toggle> ().isOn = true;
-
-  }
-
-  void OnEnable () {
-
-    ShowSelectUi ();
+    OnTargetChange.Invoke (true);
 
   }
 
   void OnDisable () {
 
     ClearTarget ();
-    if (SelectBtns) SelectBtns.SetActive (false);
 
   }
 
   void ClearTarget () {
-
-    rotationBtnsContainer.SetActive (false);
 
     if (target) {
 
@@ -196,26 +161,12 @@ public class EditManager : MonoBehaviour {
 
     }
 
-    if (RemoveBlockBtn) {
-
-      RemoveBlockBtn.interactable = false;
-      RotateBlockBtn.interactable = false;
-      ReplaceBtn.interactable = false;
-
-    }
-
     if (rotateController) rotateController.gameObject.SetActive (false);
 
     isRotating = false;
     isDragging = false;
 
-    foreach (var btn in rotationToggleBtns) {
-      btn.gameObject.SetActive (false);
-    }
-
-    ShowSelectUi ();
-
-    AddAndSelectButtons.SetActive (true);
+    OnTargetChange.Invoke (false);
 
   }
 
@@ -226,7 +177,7 @@ public class EditManager : MonoBehaviour {
 
   }
 
-  void ShowRotationUi () {
+  public void ShowRotationUi () {
 
     targetClone = GameObject.Instantiate (target, target.transform.position, target.transform.rotation);
     target.enabled = false;
@@ -234,21 +185,7 @@ public class EditManager : MonoBehaviour {
     rotateController.transform.position = targetClone.transform.position;
     targetClone.transform.parent = rotateComponentHolder;
     rotateController.gameObject.SetActive (true);
-    rotationBtnsContainer.SetActive (true);
-
-  }
-
-  void ShowReplaceUi () {
-
-    ReplaceBtns.SetActive (true);
-    SelectBtns.SetActive (false);
-
-  }
-
-  void ShowSelectUi () {
-
-    if (SelectBtns) SelectBtns.SetActive (true);
-    if (ReplaceBtns) ReplaceBtns.SetActive (false);
+    OnRotateUIEnable.Invoke ();
 
   }
 

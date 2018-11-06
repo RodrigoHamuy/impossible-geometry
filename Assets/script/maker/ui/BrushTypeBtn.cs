@@ -9,33 +9,41 @@ public class BrushTypeBtn : MonoBehaviour {
 
   AddOnHold manager;
 
-  List<BrushTypeBtn> btns;
-
-  Button button;
+  Toggle toggle;
 
   void Start () {
 
-    button = GetComponent<Button> ();
-
     manager = GameObject.FindObjectOfType<AddOnHold> ();
-    btns = GameObject.FindObjectsOfType<BrushTypeBtn> ().ToList ();
-
-    UpdateState ();
-
-    button.onClick.AddListener (OnSelected);
+    toggle = GetComponent<Toggle> ();
+    toggle.onValueChanged.AddListener (OnValueChanged);
 
   }
 
-  public void OnSelected () {
+  void OnEnable () {
+
+    UpdateState ();
+
+  }
+
+  public void OnValueChanged (bool value) {
+
+    if (!value) return;
+
     manager.planeNormal = normal;
-    foreach (var b in btns) {
-      b.UpdateState ();
-    }
+
   }
 
   void UpdateState () {
 
-    button.interactable = !(manager.planeNormal == normal);
+    if (!manager) {
+
+      manager = GameObject.FindObjectOfType<AddOnHold> ();
+      toggle = GetComponent<Toggle> ();
+
+    }
+
+    toggle.isOn = manager.planeNormal == normal;
 
   }
+
 }

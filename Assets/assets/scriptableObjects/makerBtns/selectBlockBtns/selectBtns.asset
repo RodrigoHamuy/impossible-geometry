@@ -9,11 +9,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 896f99dc483712f43b24d267804ad007, type: 3}
-  m_Name: MakerBtns
+  m_Name: selectBtns
   m_EditorClassIdentifier: 
   btns:
-  - {fileID: 0}
-  - {fileID: 11400000, guid: aa0ee817596103c4fbb744fb99f303dc, type: 2}
-  - {fileID: 11400000, guid: 85b405c1e4015684dbec082a991611e8, type: 2}
-  - {fileID: 11400000, guid: be044553025ba944387cad97d1b148e0, type: 2}
-  - {fileID: 11400000, guid: df2cc2baec310fc4f9a15f83782c8190, type: 2}
+  - {fileID: 11400000, guid: 12b309daf3003164e9cd02f8875e5af3, type: 2}
+  - {fileID: 11400000, guid: 969bf1813681cb5409acce4e3fc30637, type: 2}
+  - {fileID: 11400000, guid: 2088684b05a043c45b92549ae5bf8cdb, type: 2}

@@ -8,20 +8,23 @@ public class ReplaceBtn : MonoBehaviour {
   public GameObject prefab;
 
   EditManager manager;
-  
-  Button btn;
 
-  void Start() {
+  Toggle btn;
 
-    manager = GameObject.FindObjectOfType<EditManager>();
+  void Start () {
 
-    btn = gameObject.GetComponent<Button>();
+    manager = GameObject.FindObjectOfType<EditManager> ();
 
-    btn.onClick.AddListener( ()=> {
-      manager.Replace(prefab);
+    btn = gameObject.GetComponent<Toggle> ();
+
+    btn.onValueChanged.AddListener (value => {
+
+      if (!value) return;
+
+      manager.Replace (prefab);
+
     });
 
   }
-
 
 }
