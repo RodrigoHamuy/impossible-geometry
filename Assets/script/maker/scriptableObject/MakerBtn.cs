@@ -9,8 +9,6 @@ public class MakerBtn : MonoBehaviour {
 
 	public void InitBtn () {
 
-		var toggle = GetComponent<Toggle> ();
-
 		var imgs = new List<Image> ();
 
 		imgs.Add (

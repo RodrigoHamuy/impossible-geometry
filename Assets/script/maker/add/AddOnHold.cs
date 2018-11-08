@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class AddOnHold : MonoBehaviour {
 
@@ -13,11 +15,13 @@ public class AddOnHold : MonoBehaviour {
   public UnityEvent OnBrushStart;
   public UnityEvent OnBrushEnd;
 
-  public Transform blockPrefab;
-  public Transform cubeBoyPrefab;
-  public Transform targetPrefab;
-
   public GameObject canvas;
+
+  public AddBlockConfig[] config;
+
+  AddBlockConfig currentConfig;
+
+  float positionMargin;
 
   Vector3 planeNormal = Vector3.up;
 
@@ -30,9 +34,6 @@ public class AddOnHold : MonoBehaviour {
   bool secondTouchPass = false;
 
   List<Transform> currentRow = new List<Transform> ();
-
-  Transform cubeBoy;
-  Transform target;
 
   Vector3 lastHitPosNoRound;
   Vector3 lastHitPos;
@@ -52,14 +53,48 @@ public class AddOnHold : MonoBehaviour {
     touchComponent.onTouchEnd.AddListener (EndStroke);
 
     stateManager.OnAxisSelect.AddListener (SetPlaneAxis);
+    stateManager.OnPrefabMenuShow.AddListener (OnPrefabMenuShow);
+    stateManager.OnPrefabSelect.AddListener (OnPrefabSelect);
 
     currentPlanePoint = transform.position;
 
     var cam = Camera.main;
 
+    currentConfig = config[0];
+    if (currentConfig.addOnTop) positionMargin = -.5f;
+    else positionMargin = .0f;
+
   }
 
-  public void StartStroke (Vector2 screenPos) {
+  void OnPrefabSelect (Transform selected) {
+
+    currentConfig = Array.Find (config, configItem => configItem.prefab == selected);
+    if (currentConfig.addOnTop) positionMargin = -.5f;
+    else positionMargin = .0f;
+
+  }
+
+  void OnPrefabMenuShow (Transform menuContainer) {
+
+    if (!gameObject.activeInHierarchy) return;
+
+    var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> ();
+
+    foreach (var item in menuItems) {
+
+      item.gameObject.SetActive (
+        Array.Exists (config, configItem =>
+          configItem.prefab == item.element
+        )
+      );
+
+      item.GetComponent<Toggle> ().isOn = item.element == currentConfig.prefab;
+
+    }
+
+  }
+
+  void StartStroke (Vector2 screenPos) {
 
     marker.gameObject.SetActive (true);
 
@@ -93,11 +128,11 @@ public class AddOnHold : MonoBehaviour {
 
   }
 
-  public void MoveStroke (Vector2 screenPos) {
+  void MoveStroke (Vector2 screenPos) {
     MoveStroke (screenPos, false);
   }
 
-  public void MoveStroke (Vector2 screenPos, bool isFirstTouch) {
+  void MoveStroke (Vector2 screenPos, bool isFirstTouch) {
 
     if (!secondTouchPass) {
 
@@ -141,8 +176,8 @@ public class AddOnHold : MonoBehaviour {
       new MakerAction (
         MakerActionType.Add,
         null,
-        blockPrefab,
-        hitPos,
+        currentConfig.prefab,
+        hitPos + planeNormal * positionMargin,
         Vector3.one,
         Quaternion.identity,
         world
@@ -154,20 +189,12 @@ public class AddOnHold : MonoBehaviour {
 
     currentRow.Add (block);
 
-    if (cubeBoy == null) {
-
-      cubeBoy = Instantiate (cubeBoyPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity, world).transform;
-
-      cubeBoy.RotateAround (cubeBoy.position, Vector3.up, 180.0f);
-
-    }
-
     lastHitPosNoRound = GetHitPosition (screenPos, false);
     lastHitPos = hitPos;
 
   }
 
-  public Vector3 GetDirPosition (Vector2 screenPos) {
+  Vector3 GetDirPosition (Vector2 screenPos) {
 
     if (lastHitPos == Vector3.zero) {
 
@@ -218,7 +245,7 @@ public class AddOnHold : MonoBehaviour {
 
   }
 
-  public void EndStroke (Vector2 screenPos) {
+  void EndStroke (Vector2 screenPos) {
 
     int layer = LayerMask.NameToLayer ("Block");
 
@@ -227,14 +254,6 @@ public class AddOnHold : MonoBehaviour {
       block.gameObject.layer = layer;
 
     });
-
-    var hitPos = TouchUtility.HitPosition (screenPos, gameObject);
-
-    if (target == null) {
-
-      target = Instantiate (targetPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity, world).transform;
-
-    }
 
     lastHitPosNoRound = Vector3.zero;
     lastHitPos = Vector3.zero;
@@ -296,8 +315,8 @@ public class AddOnHold : MonoBehaviour {
         new MakerAction (
           MakerActionType.Add,
           null,
-          blockPrefab,
-          middlePos,
+          currentConfig.prefab,
+          middlePos + planeNormal * positionMargin,
           Vector3.one,
           Quaternion.identity,
           world
@@ -401,10 +420,6 @@ public class AddOnHold : MonoBehaviour {
 
     return finalPos;
 
-  }
-
-  public void SetPrefab (Transform element) {
-    blockPrefab = element;
   }
 
 }
