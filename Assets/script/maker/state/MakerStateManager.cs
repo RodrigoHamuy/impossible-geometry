@@ -7,6 +7,10 @@ using UnityEngine.Events;
 
 public class MakerStateManager : MonoBehaviour {
 
+  public UnityEventVector3 OnAxisSelect;
+  public UnityEventTransform OnPrefabSelect;
+  public UnityEventTransform OnPrefabMenuShow;
+
   public Transform world;
 
   Dictionary<MakerStateType, List<State>> states = new Dictionary<MakerStateType, List<State>> ();
@@ -43,6 +47,18 @@ public class MakerStateManager : MonoBehaviour {
     SetState (MakerStateType.EditMode, EditorState.EditorAdd, true);
     UpdateStateInspector ();
 
+  }
+
+  public void EmitAxis (Vector3 axis) {
+    OnAxisSelect.Invoke (axis);
+  }
+
+  public void EmitPrefab (Transform prefab) {
+    OnPrefabSelect.Invoke (prefab);
+  }
+
+  public void EmitPrefabMenuShow (Transform container) {
+    OnPrefabMenuShow.Invoke (container);
   }
 
   public void SetState<T> (MakerStateType type, T state, bool init = false) {

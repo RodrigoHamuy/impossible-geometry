@@ -19,9 +19,10 @@ public class AddOnHold : MonoBehaviour {
 
   public GameObject canvas;
 
-  public Vector3 planeNormal = Vector3.up;
+  Vector3 planeNormal = Vector3.up;
 
   MakerActionsManager actionsManager;
+  MakerStateManager stateManager;
 
   Vector3 currentPlanePoint;
   Vector2 firstTouchPos;
@@ -43,12 +44,14 @@ public class AddOnHold : MonoBehaviour {
     marker.gameObject.SetActive (false);
 
     actionsManager = GameObject.FindObjectOfType<MakerActionsManager> ();
-
+    stateManager = GameObject.FindObjectOfType<MakerStateManager> ();
     touchComponent = gameObject.GetComponent<TouchComponent> ();
 
     touchComponent.onTouchStart.AddListener (StartStroke);
     touchComponent.onTouchMove.AddListener (MoveStroke);
     touchComponent.onTouchEnd.AddListener (EndStroke);
+
+    stateManager.OnAxisSelect.AddListener (SetPlaneAxis);
 
     currentPlanePoint = transform.position;
 
@@ -243,16 +246,11 @@ public class AddOnHold : MonoBehaviour {
 
   }
 
-  public void SetPlaneNormalUp () {
-    planeNormal = Vector3.up;
-  }
+  void SetPlaneAxis (Vector3 axis) {
 
-  public void SetPlaneNormalRight () {
-    planeNormal = Vector3.right;
-  }
+    if (!gameObject.activeSelf) return;
+    planeNormal = axis;
 
-  public void SetPlaneNormalForward () {
-    planeNormal = Vector3.forward;
   }
 
   Vector3 GetLastBlockDirection () {

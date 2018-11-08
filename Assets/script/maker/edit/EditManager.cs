@@ -15,6 +15,8 @@ public class EditManager : MonoBehaviour {
 
   public UnityEvent OnRotateUIEnable;
 
+  public Transform[] replacePrefabs;
+
   bool isRotating = false;
   bool isDragging = false;
 
@@ -24,13 +26,14 @@ public class EditManager : MonoBehaviour {
   Transform targetParent;
   Renderer targetClone;
   MakerActionsManager manager;
+  MakerStateManager stateManager;
   Color targetOriginalColor;
   TouchComponent touchComponent;
 
   List<Button> allButtons;
   List<bool> allButtonsState;
 
-  public void Replace (GameObject prefab) {
+  void Replace (GameObject prefab) {
 
     var block = manager.ReplaceBlock (prefab.transform, target.transform);
     ClearTarget ();
@@ -43,6 +46,7 @@ public class EditManager : MonoBehaviour {
     allButtons = GameObject.FindObjectsOfType<Button> ().ToList ();
     manager = GameObject.FindObjectOfType<MakerActionsManager> ();
     touchComponent = GetComponent<TouchComponent> ();
+    stateManager = GameObject.FindObjectOfType<MakerStateManager> ();
 
     touchComponent.onTouchStart.AddListener (StartDrag);
     touchComponent.onTouchMove.AddListener (MoveDrag);
@@ -51,7 +55,26 @@ public class EditManager : MonoBehaviour {
     rotateController.onRotationStart.AddListener (OnRotationStart);
     rotateController.onRotationDone.AddListener (OnRotationEnd);
 
+    stateManager.OnPrefabMenuShow.AddListener (OnPrefabMenuShow);
+
+    // stateManager.OnPrefabSelect.AddListener ();
+    // stateManager.OnAxisSelect.AddListener();
+
     ClearTarget ();
+
+  }
+
+  void OnPrefabMenuShow (Transform menuContainer) {
+
+    if (!gameObject.activeInHierarchy) return;
+
+    var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> ();
+
+    foreach (var item in menuItems) {
+
+      item.gameObject.SetActive (replacePrefabs.Contains (item.element));
+
+    }
 
   }
 
