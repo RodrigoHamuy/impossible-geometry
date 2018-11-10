@@ -3058,7 +3058,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh12428
+  m_Name: pb_Mesh12666
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -10488,7 +10488,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -39.57}
+  m_AnchoredPosition: {x: 0, y: -38.97}
   m_SizeDelta: {x: 255, y: 77.94}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1682797367

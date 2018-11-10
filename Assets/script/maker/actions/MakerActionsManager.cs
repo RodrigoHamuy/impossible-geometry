@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -11,6 +12,8 @@ public class MakerActionsManager : MonoBehaviour {
   public UnityEvent OnHistoryClear;
 
   public List<Transform> blocksInScene = new List<Transform> ();
+
+  int idCounter = 0;
 
   void Start () {
 
@@ -43,8 +46,11 @@ public class MakerActionsManager : MonoBehaviour {
 
   public void RemoveBlock (Transform block) {
 
+    var blockData = block.GetComponent<EditableBlock> ();
+
     var prefab = block.GetComponent<EditableBlock> ().blockPrefab;
-    actions.Add (new MakerAction (
+
+    var action = new MakerAction (
       MakerActionType.Remove,
       block,
       prefab,
@@ -52,7 +58,11 @@ public class MakerActionsManager : MonoBehaviour {
       block.localScale,
       block.rotation,
       block.parent
-    ));
+    );
+    action.id = blockData.id;
+
+    actions.Add (action);
+
     blocksInScene.Remove (block);
     GameObject.Destroy (block.gameObject);
 
@@ -61,7 +71,11 @@ public class MakerActionsManager : MonoBehaviour {
   void RemoveBlock (MakerAction action) {
 
     blocksInScene.Remove (action.target);
-    GameObject.Destroy (action.target.gameObject);
+
+    var blocks = GameObject.FindObjectsOfType<EditableBlock> ();
+    var block = Array.Find (blocks, b => b.id == action.id);
+
+    GameObject.Destroy (block.gameObject);
 
   }
 
@@ -82,8 +96,11 @@ public class MakerActionsManager : MonoBehaviour {
     blocksInScene.Add (block);
 
     if (!restore) {
+      action.id = ++idCounter;
       actions.Add (action);
     }
+
+    editData.id = action.id;
 
     return block;
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public struct MakerAction {
@@ -8,6 +9,7 @@ public struct MakerAction {
   public Vector3 scale;
   public Quaternion rotation;
   public Transform parent;
+  public int id;
 
   public MakerAction (
     MakerActionType type,
@@ -26,6 +28,8 @@ public struct MakerAction {
     this.scale = scale;
     this.rotation = Utility.Round (rotation);
     this.parent = parent;
+
+    id = -1;
 
   }
 }
