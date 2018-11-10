@@ -7,5 +7,6 @@ public class AddBlockConfig {
   public bool addOnHold;
   public bool addOnTop;
   public bool isRotationHandle;
+  public bool isUnique;
 
 }

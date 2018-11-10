@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 114791977500822510}
   m_Layer: 17
   m_Name: Target
-  m_TagString: Untagged
+  m_TagString: target
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -397,4 +397,3 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   nextScene: level02
-  fadeAnim: {fileID: 0}

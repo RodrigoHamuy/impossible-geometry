@@ -134,6 +134,8 @@ public class AddOnHold : MonoBehaviour {
 
   void MoveStroke (Vector2 screenPos, bool isFirstTouch) {
 
+    if (!currentConfig.addOnHold && currentRow.Count == 1) return;
+
     if (!secondTouchPass) {
 
       if (!isFirstTouch &&
@@ -171,6 +173,18 @@ public class AddOnHold : MonoBehaviour {
     }
 
     if (spaceTaken) return;
+
+    if (currentConfig.isUnique) {
+
+      var prevObj = GameObject.FindWithTag (currentConfig.prefab.tag);
+
+      if (prevObj) {
+
+        actionsManager.RemoveBlock (prevObj.transform);
+
+      }
+
+    }
 
     var block = actionsManager.AddBlock (
       new MakerAction (

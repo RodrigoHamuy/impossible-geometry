@@ -304,6 +304,14 @@ public class PointInspector : Editor {
 
   }
 
+  [MenuItem ("MyMenu/Print world position")]
+  static void PrintWorldPosition () {
+
+    var target = Selection.activeTransform;
+    Debug.Log (target.position);
+
+  }
+
   static void AddScenes (string dirName) {
 
     var files = GetSceneFiles (dirName);

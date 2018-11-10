@@ -27,7 +27,7 @@ GameObject:
   - component: {fileID: 114510937934966108}
   m_Layer: 17
   m_Name: HalfCube
-  m_TagString: Untagged
+  m_TagString: block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
