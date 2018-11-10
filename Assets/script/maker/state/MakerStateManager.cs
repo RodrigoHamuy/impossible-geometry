@@ -98,7 +98,7 @@ public class MakerStateManager : MonoBehaviour {
 
   void EnterPlayMode () {
 
-    var rotators = world.GetComponentsInChildren<RotateComponent> ();
+    var rotators = world.GetComponentsInChildren<RotateTouchEmitter> ();
     var rotations = world.GetComponentsInChildren<RotateController> ();
     foreach (var r in rotators) {
       r.enabled = true;
@@ -111,7 +111,7 @@ public class MakerStateManager : MonoBehaviour {
 
   void ExitPlayMode () {
 
-    var rotators = world.GetComponentsInChildren<RotateComponent> ();
+    var rotators = world.GetComponentsInChildren<RotateTouchEmitter> ();
     var rotations = world.GetComponentsInChildren<RotateController> ();
     foreach (var r in rotators) {
       r.enabled = false;

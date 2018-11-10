@@ -248,22 +248,20 @@ public class MultiSelect : MonoBehaviour {
       rotateCenter.position,
       rotateCenter.rotation, world
     );
-    var rotateComp = rotateComponent.GetComponent<RotateComponent> ();
+    var rotateComp = rotateComponent.GetComponent<RotateTouchEmitter> ();
     rotateComp.enabled = false;
     rotateComp.transform.up = rotateCenter.Find ("RotationAxis").up;
 
     handle = GameObject.Instantiate (handlePrefab, rotateCenter.position + Vector3.up * .5f, rotateCenter.rotation, world);
-    var handleRotation = handle.gameObject.AddComponent<RotateController> ();
-    rotateComp.onRotationStart.AddListener (handleRotation.OnTouchStart);
-    rotateComp.onRotationMove.AddListener (handleRotation.OnTouchMove);
-    rotateComp.onRotationDone.AddListener (handleRotation.OnTouchEnd);
+    var handleRotationController = handle.gameObject.AddComponent<RotateController> ();
+    handleRotationController.AddRotateTouchEmitter (rotateComp);
     handle.parent = blocks[0];
 
     foreach (var b in blocks) {
       b.parent = rotateComponent;
     }
 
-    var rotateController = rotateComponent.GetComponent<RotateComponent> ();
+    var rotateController = rotateComponent.GetComponent<RotateTouchEmitter> ();
     rotateController.enabled = false;
     rotateController.handleCollider = handle.GetComponentInChildren<Collider> ();
 

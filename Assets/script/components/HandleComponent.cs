@@ -11,12 +11,12 @@ public class HandleComponent : MonoBehaviour {
 
 	void Start () {
 
-		handleParts[0] = transform.Find("Handle/HandlePart0");
-		handleParts[1] = transform.Find("Handle/HandlePart1");
+		handleParts[0] = transform.Find ("Handle/HandlePart0");
+		handleParts[1] = transform.Find ("Handle/HandlePart1");
 
-		var rotateComponent = GetComponent<RotateComponent>();
+		var rotateComponent = GetComponent<RotateTouchEmitter> ();
 
-		rotateComponent.onCanRotateChange.AddListener( (bool value) => {
+		rotateComponent.onCanRotateChange.AddListener ((bool value) => {
 			canRotate = value;
 		});
 
@@ -26,7 +26,7 @@ public class HandleComponent : MonoBehaviour {
 
 		var y = canRotate ? onScale : offScale;
 		var localScale = handleParts[0].localScale;
-		localScale.y = Mathf.Lerp( localScale.y, y, Time.deltaTime*10.0f);
+		localScale.y = Mathf.Lerp (localScale.y, y, Time.deltaTime * 10.0f);
 		handleParts[0].localScale = localScale;
 		handleParts[1].localScale = localScale;
 

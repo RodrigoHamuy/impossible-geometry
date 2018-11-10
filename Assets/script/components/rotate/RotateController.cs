@@ -33,9 +33,21 @@ public class RotateController : MonoBehaviour {
       onRotationStart.AddListener (container.onRotationStart);
     }
 
+    var emitter = GetComponent<RotateTouchEmitter> ();
+
+    if (emitter) AddRotateTouchEmitter (emitter);
+
   }
 
-  public void OnTouchStart () {
+  public void AddRotateTouchEmitter (RotateTouchEmitter emitter) {
+
+    emitter.onRotationStart.AddListener (OnTouchStart);
+    emitter.onRotationMove.AddListener (OnTouchMove);
+    emitter.onRotationDone.AddListener (OnTouchEnd);
+
+  }
+
+  void OnTouchStart () {
 
     isSnapping = false;
     currAngle = .0f;
@@ -45,7 +57,7 @@ public class RotateController : MonoBehaviour {
 
   }
 
-  public void OnTouchMove (float angle) {
+  void OnTouchMove (float angle) {
 
     // print ("angle: " + angle);
 
@@ -55,7 +67,7 @@ public class RotateController : MonoBehaviour {
 
   }
 
-  public void OnTouchEnd () {
+  void OnTouchEnd () {
 
     snapAngle = Mathf.Round (currAngle / 90.0f) * 90.0f;
     isSnapping = true;

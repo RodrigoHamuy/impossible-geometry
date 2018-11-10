@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class RotateComponent : MonoBehaviour {
+public class RotateTouchEmitter : MonoBehaviour {
 
   public UnityEventBool onCanRotateChange = new UnityEventBool ();
 
+  [HideInInspector]
   public UnityEvent onRotationStart = new UnityEvent ();
+  [HideInInspector]
   public UnityEventFloat onRotationMove = new UnityEventFloat ();
+  [HideInInspector]
   public UnityEvent onRotationDone = new UnityEvent ();
 
   public Collider handleCollider;
