@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2923b7a031ad147488a74ad09da77774, type: 3}
   m_Name: 2_PlayerTypeConfig
   m_EditorClassIdentifier: 
-  prefab: {fileID: 4713847047089894, guid: 4ae037a1a06f2b64e9e0c097d2a4b5f5, type: 2}
+  prefab: {fileID: 4938898168015170, guid: c268d44fdb07e4d4686b0be59470b958, type: 2}
   addOnHold: 0
   addOnTop: 1
   isRotationHandle: 0

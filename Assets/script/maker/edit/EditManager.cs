@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Generic;
@@ -15,7 +16,9 @@ public class EditManager : MonoBehaviour {
 
   public UnityEvent OnRotateUIEnable;
 
-  public Transform[] replacePrefabs;
+  public MakerBlockType[] replaceBlockTypes;
+
+  public MakerBlockType[] allBlockTypes;
 
   bool isRotating = false;
   bool isDragging = false;
@@ -35,7 +38,9 @@ public class EditManager : MonoBehaviour {
 
   void Replace (GameObject prefab) {
 
-    var block = manager.ReplaceBlock (prefab.transform, target.transform);
+    var config = Array.Find (replaceBlockTypes, r => r.prefab == prefab);
+
+    var block = manager.ReplaceBlock (config, target.transform);
     ClearTarget ();
     Select (block);
 
@@ -68,11 +73,15 @@ public class EditManager : MonoBehaviour {
 
     if (!gameObject.activeInHierarchy) return;
 
-    var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> ();
+    var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> (true);
 
     foreach (var item in menuItems) {
 
-      item.gameObject.SetActive (replacePrefabs.Contains (item.element));
+      item.gameObject.SetActive (
+        Array.Exists (replaceBlockTypes, r =>
+          r.prefab == item.element
+        )
+      );
 
     }
 
@@ -286,15 +295,15 @@ public class EditManager : MonoBehaviour {
 
     updateDragPosition (touchPos);
 
-    var pos = targetClone.transform.position;
+    // var pos = targetClone.transform.position;
 
-    for (var i = 0; i < 3; i++) {
+    // for (var i = 0; i < 3; i++) {
 
-      pos[i] = Mathf.Round (pos[i]);
+    //   pos[i] = Mathf.Round (pos[i]);
 
-    }
+    // }
 
-    targetClone.transform.position = pos;
+    // targetClone.transform.position = pos;
 
     manager.EditBlock (target.transform, targetClone.transform);
 

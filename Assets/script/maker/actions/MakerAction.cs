@@ -4,7 +4,7 @@ using UnityEngine;
 public struct MakerAction {
   public MakerActionType type;
   public Transform target;
-  public Transform prefab;
+  public MakerBlockType blockType;
   public Vector3 position;
   public Vector3 scale;
   public Quaternion rotation;
@@ -14,7 +14,7 @@ public struct MakerAction {
   public MakerAction (
     MakerActionType type,
     Transform target,
-    Transform prefab,
+    MakerBlockType blockType,
     Vector3 position,
     Vector3 scale,
     Quaternion rotation,
@@ -23,8 +23,8 @@ public struct MakerAction {
 
     this.type = type;
     this.target = target;
-    this.prefab = prefab;
-    this.position = Utility.Round (position, .5f);
+    this.blockType = blockType;
+    this.position = Utility.Round (position, 1.0f);
     this.scale = scale;
     this.rotation = Utility.Round (rotation);
     this.parent = parent;

@@ -8,6 +8,11 @@ TagManager:
   - block
   - target
   - handle
+  - maker.cube
+  - maker.player
+  - maker.halfCube
+  - maker.rotateHandle
+  - maker.target
   layers:
   - Default
   - TransparentFX

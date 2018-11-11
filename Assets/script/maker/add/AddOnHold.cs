@@ -17,11 +17,9 @@ public class AddOnHold : MonoBehaviour {
 
   public GameObject canvas;
 
-  public AddBlockConfig[] config;
+  public MakerBlockType[] config;
 
-  AddBlockConfig currentConfig;
-
-  float positionMargin;
+  MakerBlockType currentConfig;
 
   Vector3 planeNormal = Vector3.up;
 
@@ -61,16 +59,12 @@ public class AddOnHold : MonoBehaviour {
     var cam = Camera.main;
 
     currentConfig = config[0];
-    if (currentConfig.addOnTop) positionMargin = -.5f;
-    else positionMargin = .0f;
 
   }
 
   void OnPrefabSelect (Transform selected) {
 
     currentConfig = Array.Find (config, configItem => configItem.prefab == selected);
-    if (currentConfig.addOnTop) positionMargin = -.5f;
-    else positionMargin = .0f;
 
   }
 
@@ -190,10 +184,10 @@ public class AddOnHold : MonoBehaviour {
       new MakerAction (
         MakerActionType.Add,
         null,
-        currentConfig.prefab,
-        hitPos + planeNormal * positionMargin,
+        currentConfig,
+        hitPos,
         Vector3.one,
-        Quaternion.identity,
+        Quaternion.LookRotation (Vector3.Cross (Vector3.forward, planeNormal), planeNormal),
         world
       ),
       false
@@ -329,10 +323,10 @@ public class AddOnHold : MonoBehaviour {
         new MakerAction (
           MakerActionType.Add,
           null,
-          currentConfig.prefab,
-          middlePos + planeNormal * positionMargin,
+          currentConfig,
+          middlePos,
           Vector3.one,
-          Quaternion.identity,
+          Quaternion.LookRotation (Vector3.Cross (Vector3.forward, planeNormal), planeNormal),
           world
         ),
         false

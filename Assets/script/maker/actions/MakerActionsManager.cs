@@ -48,12 +48,12 @@ public class MakerActionsManager : MonoBehaviour {
 
     var blockData = block.GetComponent<EditableBlock> ();
 
-    var prefab = block.GetComponent<EditableBlock> ().blockPrefab;
+    var blockType = block.GetComponent<EditableBlock> ().blockType;
 
     var action = new MakerAction (
       MakerActionType.Remove,
       block,
-      prefab,
+      blockType,
       block.position,
       block.localScale,
       block.rotation,
@@ -81,15 +81,19 @@ public class MakerActionsManager : MonoBehaviour {
 
   public Transform AddBlock (MakerAction action, bool restore) {
 
+    if (!restore && action.blockType.addOnTop) {
+      action.position -= action.rotation * Vector3.up;
+    }
+
     var block = Instantiate (
-      action.prefab,
+      action.blockType.prefab,
       action.position,
       action.rotation,
       action.parent
     );
 
     var editData = block.gameObject.AddComponent<EditableBlock> ();
-    editData.blockPrefab = action.prefab;
+    editData.blockType = action.blockType;
 
     action.target = block;
 
@@ -106,12 +110,12 @@ public class MakerActionsManager : MonoBehaviour {
 
   }
 
-  public Transform ReplaceBlock (Transform prefab, Transform target) {
+  public Transform ReplaceBlock (MakerBlockType blockType, Transform target) {
 
     var addAction = new MakerAction (
       MakerActionType.Add,
       null,
-      prefab,
+      blockType,
       target.position,
       target.localScale,
       target.rotation,
@@ -126,21 +130,23 @@ public class MakerActionsManager : MonoBehaviour {
 
   public void EditBlock (Transform target, Transform placeholder) {
 
-    target.transform.position = placeholder.transform.position;
-    target.transform.rotation = placeholder.transform.rotation;
-    target.transform.localScale = placeholder.transform.localScale;
+    var blockType = target.GetComponent<EditableBlock> ().blockType;
 
-    var prefab = target.GetComponent<EditableBlock> ().blockPrefab;
-
-    actions.Add (new MakerAction (
+    var action = new MakerAction (
       MakerActionType.Edit,
       target,
-      prefab,
-      target.position,
-      target.localScale,
-      target.rotation,
+      blockType,
+      placeholder.transform.position,
+      placeholder.transform.localScale,
+      placeholder.transform.rotation,
       target.parent
-    ));
+    );
+
+    actions.Add (action);
+
+    target.transform.position = action.position;
+    target.transform.rotation = action.rotation;
+    target.transform.localScale = action.scale;
 
     GameObject.Destroy (placeholder.gameObject);
 
@@ -148,11 +154,11 @@ public class MakerActionsManager : MonoBehaviour {
 
   void RestoreBlockEdition (MakerAction action) {
 
-    var lastPosition = actions.FindLast (a => a.prefab == action.prefab);
+    var lastPosition = actions.FindLast (a => a.blockType == action.blockType);
 
-    action.prefab.transform.position = lastPosition.position;
-    action.prefab.transform.rotation = lastPosition.rotation;
-    action.prefab.transform.localScale = lastPosition.scale;
+    action.target.transform.position = lastPosition.position;
+    action.target.transform.rotation = lastPosition.rotation;
+    action.target.transform.localScale = lastPosition.scale;
 
   }
 

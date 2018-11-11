@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class EditableBlock : MonoBehaviour {
 
-    [HideInInspector]
-    public Transform blockPrefab;
+  [HideInInspector]
+  public MakerBlockType blockType;
 
-    [HideInInspector]
-    public int id;
+  [HideInInspector]
+  public int id;
 
 }

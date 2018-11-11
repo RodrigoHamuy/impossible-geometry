@@ -562,7 +562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e45cbcf67e5727b4ba11c12585484316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  element: {fileID: 4379583769398898, guid: 990ae69bf921bad4996471b2be9ebcf7, type: 2}
+  element: {fileID: 4025759268373398, guid: 9060e6bbd526b5a4db3debbc8f2e1a85, type: 2}
   OnEvent:
     m_PersistentCalls:
       m_Calls:
@@ -2726,9 +2726,15 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  replacePrefabs:
-  - {fileID: 4680396994661690, guid: 8074cee83f1700c488f833e81b011334, type: 2}
-  - {fileID: 4296101848404766, guid: b21d02917c37047f88c9e4c4705969fe, type: 2}
+  replaceBlockTypes:
+  - {fileID: 11400000, guid: 88cc9396f495a5d4aab0d7118a4215b2, type: 2}
+  - {fileID: 11400000, guid: 4a67d121903396e4fb6361adbbc11516, type: 2}
+  allBlockTypes:
+  - {fileID: 11400000, guid: 88cc9396f495a5d4aab0d7118a4215b2, type: 2}
+  - {fileID: 11400000, guid: 4a67d121903396e4fb6361adbbc11516, type: 2}
+  - {fileID: 11400000, guid: fd8fc7fa634cbd74dbaea13644df4e82, type: 2}
+  - {fileID: 11400000, guid: 2dcab98db8017bc4085f4202b547cb61, type: 2}
+  - {fileID: 11400000, guid: e6ae5c2c31dd7b9449de5b87e003c169, type: 2}
 --- !u!114 &309173901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4093,7 +4099,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e45cbcf67e5727b4ba11c12585484316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  element: {fileID: 4713847047089894, guid: 4ae037a1a06f2b64e9e0c097d2a4b5f5, type: 2}
+  element: {fileID: 4938898168015170, guid: c268d44fdb07e4d4686b0be59470b958, type: 2}
   OnEvent:
     m_PersistentCalls:
       m_Calls:
@@ -4570,7 +4576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e45cbcf67e5727b4ba11c12585484316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  element: {fileID: 4768110689205478, guid: fe97350b27ef63e4ab5557abdf105050, type: 2}
+  element: {fileID: 4737771212458568, guid: 411b10c2623d1fd41aa62f7df9a58b32, type: 2}
   OnEvent:
     m_PersistentCalls:
       m_Calls:
@@ -7300,7 +7306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e45cbcf67e5727b4ba11c12585484316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  element: {fileID: 4296101848404766, guid: b21d02917c37047f88c9e4c4705969fe, type: 2}
+  element: {fileID: 4068898633464386, guid: 60508d9bc59f86e47b62ddc315970981, type: 2}
   OnEvent:
     m_PersistentCalls:
       m_Calls:
@@ -8546,7 +8552,7 @@ Prefab:
     - target: {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c,
         type: 2}
       propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 114133052147603826, guid: a7a1ec0077ac4be4f8fd4363533d712c,
         type: 2}
@@ -8783,6 +8789,31 @@ Prefab:
     - target: {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c,
         type: 2}
       propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c,
+        type: 2}
+      propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c,
+        type: 2}
+      propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c,
+        type: 2}
+      propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 716543245}
+    - target: {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c,
+        type: 2}
+      propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
+      value: SetActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c,
+        type: 2}
+      propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -9041,7 +9072,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 2000b654052d69c4f8e9093e7705af08, type: 3}
-  m_Type: 3
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -9657,7 +9688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e45cbcf67e5727b4ba11c12585484316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  element: {fileID: 4680396994661690, guid: 8074cee83f1700c488f833e81b011334, type: 2}
+  element: {fileID: 4323812353110112, guid: d5689e64bb2ba9646a7b090d6f13eb05, type: 2}
   OnEvent:
     m_PersistentCalls:
       m_Calls:
