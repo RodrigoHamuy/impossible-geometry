@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[System.Serializable]
-public class AddBlockConfig {
+[CreateAssetMenu (fileName = "BlockTypeConfig", menuName = "MyMenu/BlockTypeConfig", order = 1)]
+public class AddBlockConfig : ScriptableObject {
 
   public Transform prefab;
   public bool addOnHold;

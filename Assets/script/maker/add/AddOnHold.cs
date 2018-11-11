@@ -78,7 +78,7 @@ public class AddOnHold : MonoBehaviour {
 
     if (!gameObject.activeInHierarchy) return;
 
-    var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> ();
+    var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> (true);
 
     foreach (var item in menuItems) {
 
