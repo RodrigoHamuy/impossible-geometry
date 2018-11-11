@@ -36,7 +36,9 @@ public class EditManager : MonoBehaviour {
   List<Button> allButtons;
   List<bool> allButtonsState;
 
-  void Replace (GameObject prefab) {
+  void Replace (Transform prefab) {
+
+    if (!gameObject.activeInHierarchy) return;
 
     var config = Array.Find (replaceBlockTypes, r => r.prefab == prefab);
 
@@ -61,6 +63,7 @@ public class EditManager : MonoBehaviour {
     rotateController.onRotationDone.AddListener (OnRotationEnd);
 
     stateManager.OnPrefabMenuShow.AddListener (OnPrefabMenuShow);
+    stateManager.OnPrefabSelect.AddListener (Replace);
 
     // stateManager.OnPrefabSelect.AddListener ();
     // stateManager.OnAxisSelect.AddListener();
@@ -75,7 +78,15 @@ public class EditManager : MonoBehaviour {
 
     var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> (true);
 
+    var selectedBlockType = target.GetComponent<EditableBlock> ().blockType;
+
     foreach (var item in menuItems) {
+      item.gameObject.SetActive (false);
+    }
+
+    foreach (var item in menuItems) {
+
+      item.GetComponent<Toggle> ().isOn = item.element == selectedBlockType.prefab;
 
       item.gameObject.SetActive (
         Array.Exists (replaceBlockTypes, r =>

@@ -64,6 +64,8 @@ public class AddOnHold : MonoBehaviour {
 
   void OnPrefabSelect (Transform selected) {
 
+    if (!gameObject.activeInHierarchy) return;
+
     currentConfig = Array.Find (config, configItem => configItem.prefab == selected);
 
   }
@@ -75,14 +77,18 @@ public class AddOnHold : MonoBehaviour {
     var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> (true);
 
     foreach (var item in menuItems) {
+      item.gameObject.SetActive (false);
+    }
+
+    foreach (var item in menuItems) {
+
+      item.GetComponent<Toggle> ().isOn = item.element == currentConfig.prefab;
 
       item.gameObject.SetActive (
         Array.Exists (config, configItem =>
           configItem.prefab == item.element
         )
       );
-
-      item.GetComponent<Toggle> ().isOn = item.element == currentConfig.prefab;
 
     }
 
