@@ -22,12 +22,12 @@ public class EditManager : MonoBehaviour {
 
   Plane dragPlane;
 
-  Renderer target;
+  Transform target;
   Transform targetParent;
-  Renderer targetClone;
+  Transform targetClone;
   MakerActionsManager manager;
   MakerStateManager stateManager;
-  Color targetOriginalColor;
+  List<Color> targetOriginalColors = new List<Color> ();
   TouchComponent touchComponent;
 
   List<Button> allButtons;
@@ -121,7 +121,7 @@ public class EditManager : MonoBehaviour {
     }
 
     manager.EditBlock (target.transform, targetClone.transform);
-    target.enabled = true;
+    target.gameObject.SetActive (true);
     targetClone = null;
     isRotating = false;
 
@@ -151,10 +151,30 @@ public class EditManager : MonoBehaviour {
 
   void Select (Transform block) {
 
-    target = block.GetComponent<Renderer> ();
-    targetParent = target.transform.parent;
-    targetOriginalColor = target.material.color;
-    target.material.color = Color.grey;
+    target = block;
+    targetParent = target.parent;
+
+    targetOriginalColors.Clear ();
+
+    var targetRenderer = target.GetComponent<Renderer> ();
+
+    if (targetRenderer) {
+
+      targetOriginalColors.Add (targetRenderer.material.color);
+      targetRenderer.material.color = Color.grey;
+
+    } else {
+
+      var rendererList = target.GetComponentsInChildren<Renderer> ();
+
+      foreach (var r in rendererList) {
+
+        targetOriginalColors.Add (r.material.color);
+        r.material.color = Color.gray;
+
+      }
+
+    }
 
     OnTargetChange.Invoke (true);
 
@@ -170,9 +190,27 @@ public class EditManager : MonoBehaviour {
 
     if (target) {
 
-      target.material.color = targetOriginalColor;
       target.transform.parent = targetParent;
-      target.enabled = true;
+      target.gameObject.SetActive (true);
+
+      var targetRenderer = target.GetComponent<Renderer> ();
+
+      if (targetRenderer) {
+
+        targetRenderer.material.color = targetOriginalColors[0];
+
+      } else {
+
+        var rendererList = target.GetComponentsInChildren<Renderer> ();
+
+        for (int i = 0; i < targetOriginalColors.Count; i++) {
+
+          rendererList[i].material.color = targetOriginalColors[i];
+
+        }
+
+      }
+
       target = null;
 
     }
@@ -203,7 +241,7 @@ public class EditManager : MonoBehaviour {
   public void ShowRotationUi () {
 
     targetClone = GameObject.Instantiate (target, target.transform.position, target.transform.rotation);
-    target.enabled = false;
+    target.gameObject.SetActive (false);
 
     rotateController.transform.position = targetClone.transform.position;
     targetClone.transform.parent = rotateComponentHolder;
@@ -232,7 +270,7 @@ public class EditManager : MonoBehaviour {
 
     targetClone = GameObject.Instantiate (target, target.transform.position, target.transform.rotation);
 
-    target.enabled = false;
+    target.gameObject.SetActive (false);
 
   }
 
@@ -260,7 +298,7 @@ public class EditManager : MonoBehaviour {
 
     manager.EditBlock (target.transform, targetClone.transform);
 
-    target.enabled = true;
+    target.gameObject.SetActive (true);
 
     targetClone = null;
 

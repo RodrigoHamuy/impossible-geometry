@@ -12,7 +12,7 @@ public class RotateTouchEmitter : MonoBehaviour {
   [HideInInspector]
   public UnityEvent onRotationDone = new UnityEvent ();
 
-  public Collider handleCollider;
+  public SphereCollider handleCollider;
 
   public bool canRotate {
     get;
@@ -113,7 +113,7 @@ public class RotateTouchEmitter : MonoBehaviour {
 
     var normal = handler.up;
 
-    var center = handler.position;
+    var center = handler.position + handleCollider.center;
 
     var plane = new Plane (normal, center);
 

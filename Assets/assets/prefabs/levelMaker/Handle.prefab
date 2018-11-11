@@ -11,23 +11,6 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1705183678811280}
   m_IsPrefabParent: 1
---- !u!1 &1492682838200742
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4407270409695548}
-  - component: {fileID: 135851244472293718}
-  - component: {fileID: 114472497739640836}
-  m_Layer: 0
-  m_Name: Sphere
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1705183678811280
 GameObject:
   m_ObjectHideFlags: 0
@@ -36,7 +19,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4768110689205478}
-  m_Layer: 0
+  - component: {fileID: 135783191321460482}
+  - component: {fileID: 114212683351672058}
+  - component: {fileID: 114842484192221782}
+  m_Layer: 17
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,20 +94,7 @@ Transform:
   m_LocalScale: {x: 0.20000032, y: 2, z: 0.20000032}
   m_Children: []
   m_Father: {fileID: 4768110689205478}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4407270409695548
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1492682838200742}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4768110689205478}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4680702833417428
 Transform:
@@ -134,7 +107,7 @@ Transform:
   m_LocalScale: {x: 0.20000039, y: 0.2000003, z: 1}
   m_Children: []
   m_Father: {fileID: 4768110689205478}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -179.99998, z: -90}
 --- !u!4 &4768110689205478
 Transform:
@@ -146,7 +119,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 7, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4407270409695548}
   - {fileID: 4680702833417428}
   - {fileID: 4929672959263774}
   - {fileID: 4207333097928802}
@@ -164,7 +136,7 @@ Transform:
   m_LocalScale: {x: 0.2000006, y: 2, z: 0.20000044}
   m_Children: []
   m_Father: {fileID: 4768110689205478}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: -179.99998, z: -90}
 --- !u!23 &23460023509311340
 MeshRenderer:
@@ -325,31 +297,68 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114472497739640836
+--- !u!114 &114212683351672058
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1492682838200742}
+  m_GameObject: {fileID: 1705183678811280}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb85f795b33d15a4995a0cf6296354ff, type: 3}
+  m_Script: {fileID: 11500000, guid: f18df1bb85d9a4d0ca4cd26049658195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onMouseDown:
+  onRotationStart:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!135 &135851244472293718
+  onRotationDone:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!114 &114842484192221782
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1705183678811280}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ae6a3e2aba394d668f4d877ac8a94ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onCanRotateChange:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEventBool, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRotationStart:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onRotationMove:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEventFloat, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  onRotationDone:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  handleCollider: {fileID: 135783191321460482}
+--- !u!135 &135783191321460482
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1492682838200742}
+  m_GameObject: {fileID: 1705183678811280}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 1.75
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}

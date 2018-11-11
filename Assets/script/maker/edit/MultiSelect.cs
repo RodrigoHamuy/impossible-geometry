@@ -263,7 +263,7 @@ public class MultiSelect : MonoBehaviour {
 
     var rotateController = rotateComponent.GetComponent<RotateTouchEmitter> ();
     rotateController.enabled = false;
-    rotateController.handleCollider = handle.GetComponentInChildren<Collider> ();
+    rotateController.handleCollider = handle.GetComponentInChildren<SphereCollider> ();
 
   }
 
