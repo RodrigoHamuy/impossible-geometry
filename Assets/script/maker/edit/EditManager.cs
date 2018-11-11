@@ -9,12 +9,9 @@ using UnityEngine.UI;
 public class EditManager : MonoBehaviour {
 
   public RotateController rotateController;
-  public Transform rotateComponentHolder;
   public GameObject canvas;
 
   public UnityEventBool OnTargetChange;
-
-  public UnityEvent OnRotateUIEnable;
 
   public MakerBlockType[] replaceBlockTypes;
 
@@ -27,14 +24,11 @@ public class EditManager : MonoBehaviour {
 
   Transform target;
   Transform targetParent;
-  Transform targetClone;
   MakerActionsManager manager;
   MakerStateManager stateManager;
-  List<Color> targetOriginalColors = new List<Color> ();
   TouchComponent touchComponent;
 
-  List<Button> allButtons;
-  List<bool> allButtonsState;
+  SelectStyleMnger selectStyleManager = new SelectStyleMnger ();
 
   void Replace (Transform prefab) {
 
@@ -50,7 +44,6 @@ public class EditManager : MonoBehaviour {
 
   void Start () {
 
-    allButtons = GameObject.FindObjectsOfType<Button> ().ToList ();
     manager = GameObject.FindObjectOfType<MakerActionsManager> ();
     touchComponent = GetComponent<TouchComponent> ();
     stateManager = GameObject.FindObjectOfType<MakerStateManager> ();
@@ -113,18 +106,14 @@ public class EditManager : MonoBehaviour {
 
   public void SetRotationAxis (Vector3 vector) {
 
-    if (targetClone) targetClone.transform.parent = null;
+    if (target) target.parent = null;
     rotateController.transform.up = vector;
-    if (targetClone) targetClone.transform.parent = rotateComponentHolder;
+    if (target) target.parent = rotateController.transform;
 
   }
 
   void OnRotationStart () {
 
-    allButtonsState = allButtons.ConvertAll (b => b.interactable);
-    foreach (var btn in allButtons) {
-      btn.interactable = false;
-    }
     canvas.SetActive (false);
     isRotating = true;
 
@@ -132,20 +121,12 @@ public class EditManager : MonoBehaviour {
 
   void OnRotationEnd () {
 
-    canvas.SetActive (true);
-
-    for (int i = 0; i < allButtons.Count; i++) {
-
-      allButtons[i].interactable = allButtonsState[i];
-
-    }
-
-    manager.EditBlock (target.transform, targetClone.transform);
-    target.gameObject.SetActive (true);
-    targetClone = null;
+    manager.EditBlock (target);
     isRotating = false;
 
     ShowRotationUi ();
+
+    canvas.SetActive (true);
 
   }
 
@@ -174,27 +155,7 @@ public class EditManager : MonoBehaviour {
     target = block;
     targetParent = target.parent;
 
-    targetOriginalColors.Clear ();
-
-    var targetRenderer = target.GetComponent<Renderer> ();
-
-    if (targetRenderer) {
-
-      targetOriginalColors.Add (targetRenderer.material.color);
-      targetRenderer.material.color = Color.grey;
-
-    } else {
-
-      var rendererList = target.GetComponentsInChildren<Renderer> ();
-
-      foreach (var r in rendererList) {
-
-        targetOriginalColors.Add (r.material.color);
-        r.material.color = Color.gray;
-
-      }
-
-    }
+    selectStyleManager.Select (target);
 
     OnTargetChange.Invoke (true);
 
@@ -211,34 +172,12 @@ public class EditManager : MonoBehaviour {
     if (target) {
 
       target.transform.parent = targetParent;
-      target.gameObject.SetActive (true);
 
       var targetRenderer = target.GetComponent<Renderer> ();
 
-      if (targetRenderer) {
-
-        targetRenderer.material.color = targetOriginalColors[0];
-
-      } else {
-
-        var rendererList = target.GetComponentsInChildren<Renderer> ();
-
-        for (int i = 0; i < targetOriginalColors.Count; i++) {
-
-          rendererList[i].material.color = targetOriginalColors[i];
-
-        }
-
-      }
+      selectStyleManager.Deselect ();
 
       target = null;
-
-    }
-
-    if (targetClone) {
-
-      GameObject.Destroy (targetClone.gameObject);
-      targetClone = null;
 
     }
 
@@ -260,13 +199,9 @@ public class EditManager : MonoBehaviour {
 
   public void ShowRotationUi () {
 
-    targetClone = GameObject.Instantiate (target, target.transform.position, target.transform.rotation);
-    target.gameObject.SetActive (false);
-
-    rotateController.transform.position = targetClone.transform.position;
-    targetClone.transform.parent = rotateComponentHolder;
+    rotateController.transform.position = target.position;
+    target.parent = rotateController.transform;
     rotateController.gameObject.SetActive (true);
-    OnRotateUIEnable.Invoke ();
 
   }
 
@@ -288,10 +223,6 @@ public class EditManager : MonoBehaviour {
 
     dragPlane = new Plane (Vector3.up, block.position);
 
-    targetClone = GameObject.Instantiate (target, target.transform.position, target.transform.rotation);
-
-    target.gameObject.SetActive (false);
-
   }
 
   void MoveDrag (Vector2 touchPos) {
@@ -306,21 +237,7 @@ public class EditManager : MonoBehaviour {
 
     updateDragPosition (touchPos);
 
-    // var pos = targetClone.transform.position;
-
-    // for (var i = 0; i < 3; i++) {
-
-    //   pos[i] = Mathf.Round (pos[i]);
-
-    // }
-
-    // targetClone.transform.position = pos;
-
-    manager.EditBlock (target.transform, targetClone.transform);
-
-    target.gameObject.SetActive (true);
-
-    targetClone = null;
+    manager.EditBlock (target.transform);
 
     canvas.SetActive (true);
 
@@ -336,7 +253,7 @@ public class EditManager : MonoBehaviour {
 
     if (!dragPlane.Raycast (ray, out dist)) return;
 
-    targetClone.transform.position = ray.origin + ray.direction * dist;
+    target.position = ray.origin + ray.direction * dist;
 
   }
 

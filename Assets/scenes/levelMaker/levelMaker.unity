@@ -2681,7 +2681,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateController: {fileID: 1780123537}
-  rotateComponentHolder: {fileID: 1960605084}
   canvas: {fileID: 225345226}
   OnTargetChange:
     m_PersistentCalls:
@@ -2710,22 +2709,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEventBool, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-  OnRotateUIEnable:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 403317947}
-        m_MethodName: set_isOn
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
   replaceBlockTypes:
   - {fileID: 11400000, guid: 88cc9396f495a5d4aab0d7118a4215b2, type: 2}
   - {fileID: 11400000, guid: 4a67d121903396e4fb6361adbbc11516, type: 2}
@@ -3064,7 +3047,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh12666
+  m_Name: pb_Mesh45272
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -3676,12 +3659,6 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224542781434042354, guid: a7a1ec0077ac4be4f8fd4363533d712c,
     type: 2}
   m_PrefabInternal: {fileID: 1713082767}
---- !u!114 &403317947 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114133052147603826, guid: a7a1ec0077ac4be4f8fd4363533d712c,
-    type: 2}
-  m_PrefabInternal: {fileID: 1713082767}
-  m_Script: {fileID: 2109663825, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 --- !u!1 &405389925
 GameObject:
   m_ObjectHideFlags: 0
@@ -8480,68 +8457,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1229625928}
---- !u!1 &1232502942
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 1878114678577468, guid: b44536f212da3f040a44a5b39ded9c3c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1232502943}
-  - component: {fileID: 1232502945}
-  - component: {fileID: 1232502944}
-  m_Layer: 0
-  m_Name: RotateCollider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1232502943
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 4056414159505006, guid: b44536f212da3f040a44a5b39ded9c3c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1232502942}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1780123536}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1232502944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 114941956007786174, guid: b44536f212da3f040a44a5b39ded9c3c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1232502942}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb85f795b33d15a4995a0cf6296354ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onMouseDown:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
---- !u!135 &1232502945
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 135578838218064858, guid: b44536f212da3f040a44a5b39ded9c3c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1232502942}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.75
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1253897389
 Prefab:
   m_ObjectHideFlags: 0
@@ -11618,6 +11533,7 @@ GameObject:
   - component: {fileID: 1780123536}
   - component: {fileID: 1780123538}
   - component: {fileID: 1780123537}
+  - component: {fileID: 1780123539}
   m_Layer: 0
   m_Name: EditorRotateHandle
   m_TagString: Untagged
@@ -11636,8 +11552,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 997647228}
-  - {fileID: 1232502943}
-  - {fileID: 1960605084}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -11748,7 +11662,19 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  handleCollider: {fileID: 1232502945}
+  handleCollider: {fileID: 1780123539}
+--- !u!135 &1780123539
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1780123535}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.75
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1785507910 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1360381158629094, guid: a7a1ec0077ac4be4f8fd4363533d712c,
@@ -13026,34 +12952,6 @@ Transform:
   m_PrefabParentObject: {fileID: 4012145337229944, guid: 2b437b63f4fe71a479307d9552c523f1,
     type: 2}
   m_PrefabInternal: {fileID: 1750978572}
---- !u!1 &1960605083
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1960605084}
-  m_Layer: 0
-  m_Name: ComponentToRotateHolder
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1960605084
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1960605083}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1780123536}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1973296249
 GameObject:
   m_ObjectHideFlags: 0

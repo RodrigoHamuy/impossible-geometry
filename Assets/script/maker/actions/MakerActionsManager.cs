@@ -128,7 +128,7 @@ public class MakerActionsManager : MonoBehaviour {
 
   }
 
-  public void EditBlock (Transform target, Transform placeholder) {
+  public void EditBlock (Transform target) {
 
     var blockType = target.GetComponent<EditableBlock> ().blockType;
 
@@ -136,9 +136,9 @@ public class MakerActionsManager : MonoBehaviour {
       MakerActionType.Edit,
       target,
       blockType,
-      placeholder.transform.position,
-      placeholder.transform.localScale,
-      placeholder.transform.rotation,
+      target.position,
+      target.localScale,
+      target.rotation,
       target.parent
     );
 
@@ -147,8 +147,6 @@ public class MakerActionsManager : MonoBehaviour {
     target.transform.position = action.position;
     target.transform.rotation = action.rotation;
     target.transform.localScale = action.scale;
-
-    GameObject.Destroy (placeholder.gameObject);
 
   }
 
