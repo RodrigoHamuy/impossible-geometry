@@ -10,6 +10,7 @@ public class MakerStateManager : MonoBehaviour {
   public UnityEventVector3 OnAxisSelect;
   public UnityEventTransform OnPrefabSelect;
   public UnityEventTransform OnPrefabMenuShow;
+  public UnityEvent OnEditHandleClick;
 
   public Transform world;
 

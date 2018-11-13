@@ -599,8 +599,8 @@ MonoBehaviour:
   emmiter:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 309173900}
-        m_MethodName: SetRotationAxis
+      - m_Target: {fileID: 1732949757}
+        m_MethodName: EmitAxis
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1855,7 +1855,7 @@ Prefab:
         type: 2}
       propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 309173900}
+      objectReference: {fileID: 309173904}
     - target: {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c,
         type: 2}
       propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -2649,6 +2649,8 @@ GameObject:
   - component: {fileID: 309173901}
   - component: {fileID: 309173900}
   - component: {fileID: 309173902}
+  - component: {fileID: 309173904}
+  - component: {fileID: 309173903}
   m_Layer: 0
   m_Name: SelectManager
   m_TagString: Untagged
@@ -2680,8 +2682,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a6e066ed33821469901f83a159558f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateController: {fileID: 1780123537}
-  canvas: {fileID: 225345226}
   OnTargetChange:
     m_PersistentCalls:
       m_Calls:
@@ -2718,6 +2718,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fd8fc7fa634cbd74dbaea13644df4e82, type: 2}
   - {fileID: 11400000, guid: 2dcab98db8017bc4085f4202b547cb61, type: 2}
   - {fileID: 11400000, guid: e6ae5c2c31dd7b9449de5b87e003c169, type: 2}
+  target: {fileID: 0}
 --- !u!114 &309173901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2756,6 +2757,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 1
+--- !u!114 &309173903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 309173898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09963c947c4157c4d9d54a26e6e316a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &309173904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 309173898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f865e122daca9c45a60371e34789ac9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotateController: {fileID: 1780123537}
+  isRotating: 0
+  rotationMode: 0
 --- !u!1001 &313492161
 Prefab:
   m_ObjectHideFlags: 0
@@ -5329,7 +5355,7 @@ Prefab:
         type: 2}
       propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 309173900}
+      objectReference: {fileID: 309173904}
     - target: {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c,
         type: 2}
       propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -9574,8 +9600,8 @@ MonoBehaviour:
   emmiter:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 309173900}
-        m_MethodName: SetRotationAxis
+      - m_Target: {fileID: 1732949757}
+        m_MethodName: EmitAxis
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10668,7 +10694,7 @@ Prefab:
         type: 2}
       propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 309173900}
+      objectReference: {fileID: 309173904}
     - target: {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c,
         type: 2}
       propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -11202,7 +11228,7 @@ Prefab:
         type: 2}
       propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
-      objectReference: {fileID: 309173900}
+      objectReference: {fileID: 309173904}
     - target: {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c,
         type: 2}
       propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
@@ -11212,6 +11238,10 @@ Prefab:
         type: 2}
       propertyPath: onEnable.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1360381158629094, guid: a7a1ec0077ac4be4f8fd4363533d712c, type: 2}
+      propertyPath: m_Name
+      value: ToggleBtnRotate
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a7a1ec0077ac4be4f8fd4363533d712c, type: 2}
@@ -11271,6 +11301,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEventTransform, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+  OnEditHandleClick:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   world: {fileID: 214087580}
   currentStates: []
 --- !u!224 &1740263700 stripped
@@ -11695,8 +11730,8 @@ MonoBehaviour:
   emmiter:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 309173900}
-        m_MethodName: SetRotationAxis
+      - m_Target: {fileID: 1732949757}
+        m_MethodName: EmitAxis
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

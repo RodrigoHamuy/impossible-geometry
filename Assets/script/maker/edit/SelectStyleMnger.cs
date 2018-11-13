@@ -8,11 +8,7 @@ public class SelectStyleMnger {
 
   Color selectColor = Color.gray;
 
-  Transform target;
-
   public void Select (Transform target) {
-
-    this.target = target;
 
     targetRenderers = target.GetComponentsInChildren<Renderer> ();
     targetOriginalColors = new Color[targetRenderers.Length];
@@ -37,7 +33,6 @@ public class SelectStyleMnger {
 
     targetRenderers = null;
     targetOriginalColors = null;
-    target = null;
   }
 
 }

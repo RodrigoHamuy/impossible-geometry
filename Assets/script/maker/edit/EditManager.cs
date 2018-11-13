@@ -6,10 +6,11 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class EditManager : MonoBehaviour {
+[RequireComponent (typeof (EditRotationHandle))]
+[RequireComponent (typeof (EditRotate))]
+[RequireComponent (typeof (TouchComponent))]
 
-  public RotateController rotateController;
-  public GameObject canvas;
+public class EditManager : MonoBehaviour {
 
   public UnityEventBool OnTargetChange;
 
@@ -17,16 +18,21 @@ public class EditManager : MonoBehaviour {
 
   public MakerBlockType[] allBlockTypes;
 
-  bool isRotating = false;
+  GameObject canvas;
+
   bool isDragging = false;
 
   Plane dragPlane;
 
-  Transform target;
+  [HideInInspector]
+  public Transform target;
+
   Transform targetParent;
   MakerActionsManager manager;
   MakerStateManager stateManager;
   TouchComponent touchComponent;
+
+  EditRotate editRotate;
 
   SelectStyleMnger selectStyleManager = new SelectStyleMnger ();
 
@@ -45,15 +51,15 @@ public class EditManager : MonoBehaviour {
   void Start () {
 
     manager = GameObject.FindObjectOfType<MakerActionsManager> ();
-    touchComponent = GetComponent<TouchComponent> ();
     stateManager = GameObject.FindObjectOfType<MakerStateManager> ();
+    canvas = GameObject.FindObjectOfType<Canvas> ().gameObject;
+
+    touchComponent = GetComponent<TouchComponent> ();
+    editRotate = GetComponent<EditRotate> ();
 
     touchComponent.onTouchStart.AddListener (StartDrag);
     touchComponent.onTouchMove.AddListener (MoveDrag);
     touchComponent.onTouchEnd.AddListener (OnTouchEnd);
-
-    rotateController.onRotationStart.AddListener (OnRotationStart);
-    rotateController.onRotationDone.AddListener (OnRotationEnd);
 
     stateManager.OnPrefabMenuShow.AddListener (OnPrefabMenuShow);
     stateManager.OnPrefabSelect.AddListener (Replace);
@@ -91,45 +97,6 @@ public class EditManager : MonoBehaviour {
 
   }
 
-  void AddRotationAxisListener (Toggle btn, int axis) {
-
-    btn.onValueChanged.AddListener (value => {
-
-      if (!value) return;
-      var vector = Vector3.zero;
-      vector[axis] = 1;
-      SetRotationAxis (vector);
-
-    });
-
-  }
-
-  public void SetRotationAxis (Vector3 vector) {
-
-    if (target) target.parent = null;
-    rotateController.transform.up = vector;
-    if (target) target.parent = rotateController.transform;
-
-  }
-
-  void OnRotationStart () {
-
-    canvas.SetActive (false);
-    isRotating = true;
-
-  }
-
-  void OnRotationEnd () {
-
-    manager.EditBlock (target);
-    isRotating = false;
-
-    ShowRotationUi ();
-
-    canvas.SetActive (true);
-
-  }
-
   void OnTouchEnd (Vector2 touchPos) {
 
     if (isDragging) EndDrag (touchPos);
@@ -140,7 +107,7 @@ public class EditManager : MonoBehaviour {
 
   void Select (Vector2 touchPos) {
 
-    if (isRotating) return;
+    if (editRotate.isRotating) return;
 
     ClearTarget ();
 
@@ -173,17 +140,13 @@ public class EditManager : MonoBehaviour {
 
       target.transform.parent = targetParent;
 
-      var targetRenderer = target.GetComponent<Renderer> ();
-
       selectStyleManager.Deselect ();
 
       target = null;
 
     }
 
-    if (rotateController) rotateController.gameObject.SetActive (false);
-
-    isRotating = false;
+    editRotate.ClearTarget ();
     isDragging = false;
 
     OnTargetChange.Invoke (false);
@@ -197,17 +160,9 @@ public class EditManager : MonoBehaviour {
 
   }
 
-  public void ShowRotationUi () {
-
-    rotateController.transform.position = target.position;
-    target.parent = rotateController.transform;
-    rotateController.gameObject.SetActive (true);
-
-  }
-
   void StartDrag (Vector2 touchPos) {
 
-    if (rotateController.gameObject.activeSelf) return;
+    if (editRotate.rotateController.gameObject.activeSelf) return;
 
     if (!target) return;
 
