@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -388,11 +389,17 @@ public class Utility {
     return TouchPhase.Canceled;
   }
 
-  public static Transform MakerGetBlockOnTapPos (Vector3 tapPos) {
+  public static Transform MakerGetBlockOnTapPos (Vector3 tapPos, string[] filterTags = null) {
 
     var ray = Camera.main.ScreenPointToRay (tapPos);
     var layerMask = LayerMask.GetMask ("maker.object");
     var hits = Physics.RaycastAll (ray, 100.0f, layerMask);
+
+    if (filterTags != null) {
+
+      hits = Array.FindAll (hits, h => Array.Exists (filterTags, f => f == h.collider.tag));
+
+    }
 
     var hitsOrdered = hits.OrderBy (h => h.distance);
 

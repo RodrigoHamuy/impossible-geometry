@@ -136,6 +136,8 @@ public class EditManager : MonoBehaviour {
 
   void ClearTarget () {
 
+    editRotationHandle.ClearTarget ();
+
     if (target) {
 
       target.transform.parent = targetParent;
@@ -161,6 +163,9 @@ public class EditManager : MonoBehaviour {
   }
 
   void StartDrag (Vector2 touchPos) {
+
+    if (editRotate.isRotating) return;
+    if (editRotationHandle.selectMode) return;
 
     if (editRotate.rotateController.gameObject.activeSelf) return;
 

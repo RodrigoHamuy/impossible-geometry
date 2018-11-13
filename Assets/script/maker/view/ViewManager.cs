@@ -14,8 +14,8 @@ public class ViewManager : MonoBehaviour {
   public UnityEventBool OnTargetChange;
 
   bool isRotating = false;
-  Renderer target;
-  Color targetOriginalColor;
+  Transform target;
+  SelectStyleMnger selectStyle = new SelectStyleMnger ();
 
   Quaternion originalQuaternion;
 
@@ -110,9 +110,9 @@ public class ViewManager : MonoBehaviour {
 
   void Select (Transform block) {
 
-    target = block.GetComponent<Renderer> ();
-    targetOriginalColor = target.material.color;
-    target.material.color = Color.grey;
+    target = block;
+
+    selectStyle.Select (block);
 
     ShowRotationUi ();
 
@@ -122,8 +122,7 @@ public class ViewManager : MonoBehaviour {
 
     if (target) {
 
-      target.material.color = targetOriginalColor;
-      target.enabled = true;
+      selectStyle.Deselect ();
       target = null;
       world.parent = null;
 

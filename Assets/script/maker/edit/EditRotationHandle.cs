@@ -36,6 +36,21 @@ public class EditRotationHandle : MonoBehaviour {
 
   }
 
+  public void ClearTarget () {
+
+    selectMode = false;
+
+    foreach (var style in selectStyleManager) {
+
+      style.Deselect ();
+
+    }
+
+    selectStyleManager.Clear ();
+    affectedBlocks.Clear ();
+
+  }
+
   void OnEditHandleClick () {
 
     print ("choose affected blocks");
@@ -51,6 +66,7 @@ public class EditRotationHandle : MonoBehaviour {
 
     rotateContainer.position = editManager.target.position;
     rotateContainer.parent = world;
+    rotateContainer.rotation = editManager.target.rotation;
 
   }
 
@@ -58,7 +74,10 @@ public class EditRotationHandle : MonoBehaviour {
 
     if (!selectMode) return;
 
-    var block = Utility.MakerGetBlockOnTapPos (touchPos);
+    var block = Utility.MakerGetBlockOnTapPos (
+      touchPos,
+      new string[] { "maker.cube", "maker.halfCube" }
+    );
 
     if (block) Select (block);
 
