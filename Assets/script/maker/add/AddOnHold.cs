@@ -261,14 +261,6 @@ public class AddOnHold : MonoBehaviour {
 
   void EndStroke (Vector2 screenPos) {
 
-    int layer = LayerMask.NameToLayer ("Block");
-
-    currentRow.ForEach ((block) => {
-
-      block.gameObject.layer = layer;
-
-    });
-
     lastHitPosNoRound = Vector3.zero;
     lastHitPos = Vector3.zero;
 
@@ -338,8 +330,6 @@ public class AddOnHold : MonoBehaviour {
         false
       );
 
-      midBlock.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
-
       currentRow.Add (midBlock);
 
     }
@@ -379,7 +369,7 @@ public class AddOnHold : MonoBehaviour {
 
     var ray = cam.ScreenPointToRay (screenPos);
 
-    string[] layerNames = { "Block" };
+    string[] layerNames = { "maker.object" };
 
     var layerMask = LayerMask.GetMask (layerNames);
 

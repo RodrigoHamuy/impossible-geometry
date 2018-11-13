@@ -230,7 +230,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4938898168015170}
   - component: {fileID: 136862879034588764}
-  m_Layer: 22
+  m_Layer: 18
   m_Name: PlayerMaker
   m_TagString: maker.player
   m_Icon: {fileID: 0}

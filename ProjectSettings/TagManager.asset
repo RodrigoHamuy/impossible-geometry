@@ -32,10 +32,10 @@ TagManager:
   - Debug.forward
   - Debug.back
   - Block
-  - menuItem
-  - maker.spawn
-  - maker.newBlock
-  - UI.clickable
+  - maker.object
+  - 
+  - 
+  - 
   - 
   - 
   - 

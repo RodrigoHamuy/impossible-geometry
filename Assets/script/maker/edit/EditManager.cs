@@ -144,7 +144,7 @@ public class EditManager : MonoBehaviour {
 
     ClearTarget ();
 
-    var block = Utility.GetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlocksOnTapPos (touchPos);
 
     if (block) Select (block);
 
@@ -211,7 +211,7 @@ public class EditManager : MonoBehaviour {
 
     if (!target) return;
 
-    var block = Utility.GetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlocksOnTapPos (touchPos);
 
     if (!block) return;
 

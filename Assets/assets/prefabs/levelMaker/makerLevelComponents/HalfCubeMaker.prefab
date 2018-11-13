@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4068898633464386}
   - component: {fileID: 65855813961228010}
-  m_Layer: 22
+  m_Layer: 18
   m_Name: HalfCubeMaker
   m_TagString: maker.halfCube
   m_Icon: {fileID: 0}

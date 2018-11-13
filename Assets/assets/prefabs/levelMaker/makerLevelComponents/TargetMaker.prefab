@@ -54,7 +54,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4025759268373398}
   - component: {fileID: 135096511740204234}
-  m_Layer: 22
+  m_Layer: 18
   m_Name: TargetMaker
   m_TagString: maker.target
   m_Icon: {fileID: 0}

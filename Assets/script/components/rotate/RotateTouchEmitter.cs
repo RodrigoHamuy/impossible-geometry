@@ -113,7 +113,7 @@ public class RotateTouchEmitter : MonoBehaviour {
 
     var normal = handler.up;
 
-    var center = handler.position + handleCollider.center;
+    var center = handler.position + transform.rotation * handleCollider.center;
 
     var plane = new Plane (normal, center);
 

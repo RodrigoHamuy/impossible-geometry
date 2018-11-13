@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4737771212458568}
   - component: {fileID: 65334336213499038}
-  m_Layer: 22
+  m_Layer: 18
   m_Name: RotateHandleMaker
   m_TagString: maker.rotateHandle
   m_Icon: {fileID: 0}

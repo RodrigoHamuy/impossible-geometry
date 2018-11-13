@@ -388,10 +388,10 @@ public class Utility {
     return TouchPhase.Canceled;
   }
 
-  public static Transform GetBlocksOnTapPos (Vector3 tapPos) {
+  public static Transform MakerGetBlocksOnTapPos (Vector3 tapPos) {
 
     var ray = Camera.main.ScreenPointToRay (tapPos);
-    var layerMask = LayerMask.GetMask ("Block");
+    var layerMask = LayerMask.GetMask ("maker.object");
     var hits = Physics.RaycastAll (ray, 100.0f, layerMask);
 
     var hitsOrdered = hits.OrderBy (h => h.distance);

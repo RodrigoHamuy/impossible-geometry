@@ -102,7 +102,7 @@ public class ViewManager : MonoBehaviour {
 
     ClearTarget ();
 
-    var block = Utility.GetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlocksOnTapPos (touchPos);
 
     if (block) Select (block);
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TouchUtility {
 
-  public static Vector3 HitPosition (Vector3 screenPos, GameObject plane, bool includeBlocks = false) {
+  public static Vector3 MakerHitPosition (Vector3 screenPos, GameObject plane, bool includeBlocks = false) {
 
     var camera = Camera.main;
 
@@ -11,13 +11,13 @@ public class TouchUtility {
 
     var ray = camera.ScreenPointToRay (screenPos);
 
-    var layerName = new List<string>() {
+    var layerName = new List<string> () {
       LayerMask.LayerToName (plane.layer),
     };
-    
-    if(includeBlocks) layerName.Add("Block");
 
-    var layerMask = LayerMask.GetMask (layerName.ToArray());
+    if (includeBlocks) layerName.Add ("maker.object");
+
+    var layerMask = LayerMask.GetMask (layerName.ToArray ());
 
     RaycastHit hit;
 
