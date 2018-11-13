@@ -17,9 +17,17 @@ public class RotateController : MonoBehaviour {
 
   void Start () {
 
+    Init ();
+
+  }
+
+  public void Init () {
+
     // Set points as rotatable
     var containerComponents = GetComponentsInChildren<PointsContainerComponent> ();
+
     foreach (var containerComponent in containerComponents) {
+
       var container = containerComponent.pathContainer;
 
       SetPointsAsRotatable (container);
@@ -28,9 +36,12 @@ public class RotateController : MonoBehaviour {
         SetPointsAsRotatable (container);
       });
 
-      // Update points before/after rotation
+      onRotationDone.RemoveListener (container.ResetPoints);
+      onRotationStart.RemoveListener (container.onRotationStart);
+
       onRotationDone.AddListener (container.ResetPoints);
       onRotationStart.AddListener (container.onRotationStart);
+
     }
 
     var emitter = GetComponent<RotateTouchEmitter> ();
@@ -40,6 +51,10 @@ public class RotateController : MonoBehaviour {
   }
 
   public void AddRotateTouchEmitter (RotateTouchEmitter emitter) {
+
+    emitter.onRotationStart.RemoveListener (OnTouchStart);
+    emitter.onRotationMove.RemoveListener (OnTouchMove);
+    emitter.onRotationDone.RemoveListener (OnTouchEnd);
 
     emitter.onRotationStart.AddListener (OnTouchStart);
     emitter.onRotationMove.AddListener (OnTouchMove);

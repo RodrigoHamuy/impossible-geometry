@@ -109,6 +109,7 @@ public class MakerStateManager : MonoBehaviour {
       r.enabled = true;
     }
     foreach (var r in rotations) {
+      r.Init ();
       r.enabled = true;
     }
 
