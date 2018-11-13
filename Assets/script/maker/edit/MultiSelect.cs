@@ -162,7 +162,7 @@ public class MultiSelect : MonoBehaviour {
 
   void Select (Vector2 touchPos) {
 
-    var block = Utility.MakerGetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
     if (!block) return;
 
@@ -271,7 +271,7 @@ public class MultiSelect : MonoBehaviour {
 
     if (state != MultiSelectState.AddCenter) return;
 
-    var block = Utility.MakerGetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
     if (!blocks.Exists (b => b == block)) return;
 
@@ -285,7 +285,7 @@ public class MultiSelect : MonoBehaviour {
 
     if (!handle) return;
 
-    var block = Utility.MakerGetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
     if (!block) return;
 

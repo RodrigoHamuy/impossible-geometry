@@ -10,7 +10,7 @@ public class Eraser : MonoBehaviour {
 
   public void OnTouchEnd (Vector2 touchPos) {
 
-    var block = Utility.MakerGetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
     if (block) {
 

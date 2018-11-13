@@ -62,6 +62,10 @@ public class MakerStateManager : MonoBehaviour {
     OnPrefabMenuShow.Invoke (container);
   }
 
+  public void EmitOnEditHandleClick () {
+    OnEditHandleClick.Invoke ();
+  }
+
   public void SetState<T> (MakerStateType type, T state, bool init = false) {
 
     var currState = states[type].Find (s => s.Enable);

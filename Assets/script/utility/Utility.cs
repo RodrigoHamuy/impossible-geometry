@@ -388,7 +388,7 @@ public class Utility {
     return TouchPhase.Canceled;
   }
 
-  public static Transform MakerGetBlocksOnTapPos (Vector3 tapPos) {
+  public static Transform MakerGetBlockOnTapPos (Vector3 tapPos) {
 
     var ray = Camera.main.ScreenPointToRay (tapPos);
     var layerMask = LayerMask.GetMask ("maker.object");

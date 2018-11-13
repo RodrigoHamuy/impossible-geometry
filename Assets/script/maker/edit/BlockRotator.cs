@@ -27,7 +27,7 @@ public class BlockRotator : MonoBehaviour {
       rotateHolder.GetComponentInChildren<Transform> ().parent = null;
     }
 
-    var block = Utility.MakerGetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
     if (block) {
 

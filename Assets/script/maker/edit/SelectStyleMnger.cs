@@ -3,12 +3,16 @@ using UnityEngine;
 
 public class SelectStyleMnger {
 
+  Transform target;
+
   Color[] targetOriginalColors;
   Renderer[] targetRenderers;
 
   Color selectColor = Color.gray;
 
   public void Select (Transform target) {
+
+    this.target = target;
 
     targetRenderers = target.GetComponentsInChildren<Renderer> ();
     targetOriginalColors = new Color[targetRenderers.Length];
@@ -33,6 +37,12 @@ public class SelectStyleMnger {
 
     targetRenderers = null;
     targetOriginalColors = null;
+  }
+
+  public void SetColor (Color color) {
+
+    selectColor = color;
+
   }
 
 }

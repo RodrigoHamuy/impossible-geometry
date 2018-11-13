@@ -13,6 +13,7 @@ TagManager:
   - maker.halfCube
   - maker.rotateHandle
   - maker.target
+  - world
   layers:
   - Default
   - TransparentFX
@@ -33,7 +34,7 @@ TagManager:
   - Debug.back
   - Block
   - maker.object
-  - 
+  - world
   - 
   - 
   - 

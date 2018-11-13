@@ -33,6 +33,7 @@ public class EditManager : MonoBehaviour {
   TouchComponent touchComponent;
 
   EditRotate editRotate;
+  EditRotationHandle editRotationHandle;
 
   SelectStyleMnger selectStyleManager = new SelectStyleMnger ();
 
@@ -56,6 +57,7 @@ public class EditManager : MonoBehaviour {
 
     touchComponent = GetComponent<TouchComponent> ();
     editRotate = GetComponent<EditRotate> ();
+    editRotationHandle = GetComponent<EditRotationHandle> ();
 
     touchComponent.onTouchStart.AddListener (StartDrag);
     touchComponent.onTouchMove.AddListener (MoveDrag);
@@ -63,9 +65,6 @@ public class EditManager : MonoBehaviour {
 
     stateManager.OnPrefabMenuShow.AddListener (OnPrefabMenuShow);
     stateManager.OnPrefabSelect.AddListener (Replace);
-
-    // stateManager.OnPrefabSelect.AddListener ();
-    // stateManager.OnAxisSelect.AddListener();
 
     ClearTarget ();
 
@@ -108,10 +107,11 @@ public class EditManager : MonoBehaviour {
   void Select (Vector2 touchPos) {
 
     if (editRotate.isRotating) return;
+    if (editRotationHandle.selectMode) return;
 
     ClearTarget ();
 
-    var block = Utility.MakerGetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
     if (block) Select (block);
 
@@ -166,7 +166,7 @@ public class EditManager : MonoBehaviour {
 
     if (!target) return;
 
-    var block = Utility.MakerGetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
     if (!block) return;
 
