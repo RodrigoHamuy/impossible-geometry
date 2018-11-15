@@ -5,6 +5,15 @@ TagManager:
   serializedVersion: 2
   tags:
   - slide
+  - block
+  - target
+  - handle
+  - maker.cube
+  - maker.player
+  - maker.halfCube
+  - maker.rotateHandle
+  - maker.target
+  - world
   layers:
   - Default
   - TransparentFX
@@ -24,10 +33,10 @@ TagManager:
   - Debug.forward
   - Debug.back
   - Block
-  - menuItem
-  - maker.spawn
-  - maker.newBlock
-  - UI.clickable
+  - maker.object
+  - world
+  - 
+  - 
   - 
   - 
   - 

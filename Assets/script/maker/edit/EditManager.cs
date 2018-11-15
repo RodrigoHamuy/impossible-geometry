@@ -1,84 +1,98 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
+
+[RequireComponent (typeof (EditRotationHandle))]
+[RequireComponent (typeof (EditRotate))]
+[RequireComponent (typeof (TouchComponent))]
 
 public class EditManager : MonoBehaviour {
 
-  public Button RemoveBlockBtn;
-  public Button RotateBlockBtn;
-  public Button ReplaceBtn;
-  public GameObject SelectBtns;
-  public GameObject ReplaceBtns;
-  public RotateController rotateController;
-  public Transform rotateComponentHolder;
-  public GameObject AddAndSelectButtons;
+  public UnityEventBool OnTargetChange;
 
-  bool isRotating = false;
+  public MakerBlockType[] replaceBlockTypes;
+
+  public MakerBlockType[] allBlockTypes;
+
+  GameObject canvas;
+
   bool isDragging = false;
 
   Plane dragPlane;
 
-  Renderer target;
+  [HideInInspector]
+  public Transform target;
+
   Transform targetParent;
-  Renderer targetClone;
   MakerActionsManager manager;
-  Color targetOriginalColor;
+  MakerStateManager stateManager;
   TouchComponent touchComponent;
 
-  List<Button> allButtons;
-  List<bool> allButtonsState;
+  EditRotate editRotate;
+  EditRotationHandle editRotationHandle;
 
-  public void Replace (GameObject value) {
+  SelectStyleMnger selectStyleManager = new SelectStyleMnger ();
 
-    var block = manager.ReplaceBlock (value.transform, target.transform);
+  void Replace (Transform prefab) {
+
+    if (!gameObject.activeInHierarchy) return;
+
+    var config = Array.Find (replaceBlockTypes, r => r.prefab == prefab);
+
+    var block = manager.ReplaceBlock (config, target.transform);
     ClearTarget ();
     Select (block);
-    ShowSelectUi ();
 
   }
 
   void Start () {
 
-    allButtons = GameObject.FindObjectsOfType<Button> ().ToList ();
     manager = GameObject.FindObjectOfType<MakerActionsManager> ();
+    stateManager = GameObject.FindObjectOfType<MakerStateManager> ();
+    canvas = GameObject.FindObjectOfType<Canvas> ().gameObject;
+
     touchComponent = GetComponent<TouchComponent> ();
+    editRotate = GetComponent<EditRotate> ();
+    editRotationHandle = GetComponent<EditRotationHandle> ();
 
     touchComponent.onTouchStart.AddListener (StartDrag);
     touchComponent.onTouchMove.AddListener (MoveDrag);
     touchComponent.onTouchEnd.AddListener (OnTouchEnd);
 
-    RemoveBlockBtn.onClick.AddListener (RemoveBlock);
-    RotateBlockBtn.onClick.AddListener (ShowRotationUi);
-    ReplaceBtn.onClick.AddListener (ShowReplaceUi);
+    stateManager.OnPrefabMenuShow.AddListener (OnPrefabMenuShow);
+    stateManager.OnPrefabSelect.AddListener (Replace);
 
     ClearTarget ();
 
   }
 
-  void OnRotationStart () {
+  void OnPrefabMenuShow (Transform menuContainer) {
 
-    allButtonsState = allButtons.ConvertAll (b => b.interactable);
-    foreach (var btn in allButtons) {
-      btn.interactable = false;
-    }
-    isRotating = true;
+    if (!gameObject.activeInHierarchy) return;
 
-  }
+    var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> (true);
 
-  void OnRotationEnd () {
+    var selectedBlockType = target.GetComponent<EditableBlock> ().blockType;
 
-    for (int i = 0; i < allButtons.Count; i++) {
-
-      allButtons[i].interactable = allButtonsState[i];
-
+    foreach (var item in menuItems) {
+      item.gameObject.SetActive (false);
     }
 
-    manager.EditBlock (target.transform, targetClone.transform);
-    target.enabled = true;
-    targetClone = null;
-    isRotating = false;
+    foreach (var item in menuItems) {
+
+      item.GetComponent<Toggle> ().isOn = item.element == selectedBlockType.prefab;
+
+      item.gameObject.SetActive (
+        Array.Exists (replaceBlockTypes, r =>
+          r.prefab == item.element
+        )
+      );
+
+    }
 
   }
 
@@ -92,11 +106,12 @@ public class EditManager : MonoBehaviour {
 
   void Select (Vector2 touchPos) {
 
-    if (isRotating) return;
+    if (editRotate.isRotating) return;
+    if (editRotationHandle.isActive) return;
 
     ClearTarget ();
 
-    var block = Utility.GetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
     if (block) Select (block);
 
@@ -104,71 +119,39 @@ public class EditManager : MonoBehaviour {
 
   void Select (Transform block) {
 
-    target = block.GetComponent<Renderer> ();
-    targetParent = target.transform.parent;
-    targetOriginalColor = target.material.color;
-    target.material.color = Color.grey;
-    RemoveBlockBtn.interactable = true;
-    RotateBlockBtn.interactable = true;
-    ReplaceBtn.interactable = true;
-    AddAndSelectButtons.SetActive (false);
-    ReplaceBtns.SetActive (false);
+    target = block;
+    targetParent = target.parent;
 
-  }
+    selectStyleManager.Select (target);
 
-  void OnEnable () {
-
-    ShowSelectUi ();
-
-    rotateController.onRotationStart.AddListener (OnRotationStart);
-
-    rotateController.onRotationDone.AddListener (OnRotationEnd);
+    OnTargetChange.Invoke (true);
 
   }
 
   void OnDisable () {
 
     ClearTarget ();
-    if (SelectBtns) SelectBtns.SetActive (false);
-
-    rotateController.onRotationStart.RemoveListener (OnRotationStart);
-
-    rotateController.onRotationDone.RemoveListener (OnRotationEnd);
 
   }
 
   void ClearTarget () {
 
+    editRotationHandle.ClearTarget ();
+
     if (target) {
 
-      target.material.color = targetOriginalColor;
       target.transform.parent = targetParent;
-      target.enabled = true;
+
+      selectStyleManager.Deselect ();
+
       target = null;
 
     }
 
-    if (targetClone) {
-
-      GameObject.Destroy (targetClone.gameObject);
-      targetClone = null;
-
-    }
-
-    if (RemoveBlockBtn) {
-
-      RemoveBlockBtn.interactable = false;
-      RotateBlockBtn.interactable = false;
-      ReplaceBtn.interactable = false;
-
-    }
-
-    if (rotateController) rotateController.gameObject.SetActive (false);
-
-    isRotating = false;
+    editRotate.ClearTarget ();
     isDragging = false;
 
-    ShowSelectUi ();
+    OnTargetChange.Invoke (false);
 
   }
 
@@ -179,52 +162,26 @@ public class EditManager : MonoBehaviour {
 
   }
 
-  void ShowRotationUi () {
-
-    targetClone = GameObject.Instantiate (target, target.transform.position, target.transform.rotation);
-    target.enabled = false;
-
-    rotateController.transform.position = targetClone.transform.position;
-    targetClone.transform.parent = rotateComponentHolder;
-    rotateController.gameObject.SetActive (true);
-
-  }
-
-  void ShowReplaceUi () {
-
-    ReplaceBtns.SetActive (true);
-    SelectBtns.SetActive (false);
-    AddAndSelectButtons.SetActive (false);
-
-  }
-
-  void ShowSelectUi () {
-
-    if (SelectBtns) SelectBtns.SetActive (true);
-    if (ReplaceBtns) ReplaceBtns.SetActive (false);
-    if (AddAndSelectButtons) AddAndSelectButtons.SetActive (true);
-
-  }
-
   void StartDrag (Vector2 touchPos) {
 
-    if (rotateController.gameObject.activeSelf) return;
+    if (editRotate.isRotating) return;
+    if (editRotationHandle.isActive) return;
+
+    if (editRotate.rotateController.gameObject.activeSelf) return;
 
     if (!target) return;
 
-    var block = Utility.GetBlocksOnTapPos (touchPos);
+    var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
     if (!block) return;
 
     if (block.transform != target.transform) return;
 
+    canvas.SetActive (false);
+
     isDragging = true;
 
     dragPlane = new Plane (Vector3.up, block.position);
-
-    targetClone = GameObject.Instantiate (target, target.transform.position, target.transform.rotation);
-
-    target.enabled = false;
 
   }
 
@@ -240,21 +197,9 @@ public class EditManager : MonoBehaviour {
 
     updateDragPosition (touchPos);
 
-    var pos = targetClone.transform.position;
+    manager.EditBlock (target.transform);
 
-    for (var i = 0; i < 3; i++) {
-
-      pos[i] = Mathf.Round (pos[i]);
-
-    }
-
-    targetClone.transform.position = pos;
-
-    manager.EditBlock (target.transform, targetClone.transform);
-
-    target.enabled = true;
-
-    targetClone = null;
+    canvas.SetActive (true);
 
     isDragging = false;
 
@@ -268,7 +213,7 @@ public class EditManager : MonoBehaviour {
 
     if (!dragPlane.Raycast (ray, out dist)) return;
 
-    targetClone.transform.position = ray.origin + ray.direction * dist;
+    target.position = ray.origin + ray.direction * dist;
 
   }
 

@@ -30,14 +30,14 @@ namespace Maker {
 
     public void StartBlockPreview (Vector2 screenPos) {
 
-      blockPreview.transform.position = TouchUtility.HitPosition (screenPos, gameObject);
+      blockPreview.transform.position = TouchUtility.MakerHitPosition (screenPos, gameObject);
       blockPreview.enabled = true;
 
     }
 
     public void MoveBlockPreview (Vector2 screenPos) {
 
-      blockPreview.transform.position = TouchUtility.HitPosition (screenPos, gameObject);
+      blockPreview.transform.position = TouchUtility.MakerHitPosition (screenPos, gameObject);
 
     }
 

@@ -7,8 +7,6 @@ public class RotateController : MonoBehaviour {
 
   public UnityEvent onRotationDone = new UnityEvent ();
 
-  public RotateComponent rotateComponent;
-
   bool isSnapping = false;
 
   Vector3 startForward;
@@ -17,8 +15,55 @@ public class RotateController : MonoBehaviour {
   float currAngle;
   float snapAngle;
 
-  public void OnTouchStart () {
-    
+  void Start () {
+
+    Init ();
+
+  }
+
+  public void Init () {
+
+    // Set points as rotatable
+    var containerComponents = GetComponentsInChildren<PointsContainerComponent> ();
+
+    foreach (var containerComponent in containerComponents) {
+
+      var container = containerComponent.pathContainer;
+
+      SetPointsAsRotatable (container);
+
+      container.onGeneratePathPointsDone.AddListener (() => {
+        SetPointsAsRotatable (container);
+      });
+
+      onRotationDone.RemoveListener (container.ResetPoints);
+      onRotationStart.RemoveListener (container.onRotationStart);
+
+      onRotationDone.AddListener (container.ResetPoints);
+      onRotationStart.AddListener (container.onRotationStart);
+
+    }
+
+    var emitter = GetComponent<RotateTouchEmitter> ();
+
+    if (emitter) AddRotateTouchEmitter (emitter);
+
+  }
+
+  public void AddRotateTouchEmitter (RotateTouchEmitter emitter) {
+
+    emitter.onRotationStart.RemoveListener (OnTouchStart);
+    emitter.onRotationMove.RemoveListener (OnTouchMove);
+    emitter.onRotationDone.RemoveListener (OnTouchEnd);
+
+    emitter.onRotationStart.AddListener (OnTouchStart);
+    emitter.onRotationMove.AddListener (OnTouchMove);
+    emitter.onRotationDone.AddListener (OnTouchEnd);
+
+  }
+
+  void OnTouchStart () {
+
     isSnapping = false;
     currAngle = .0f;
     startForward = transform.forward;
@@ -27,7 +72,7 @@ public class RotateController : MonoBehaviour {
 
   }
 
-  public void OnTouchMove (float angle) {
+  void OnTouchMove (float angle) {
 
     // print ("angle: " + angle);
 
@@ -37,7 +82,7 @@ public class RotateController : MonoBehaviour {
 
   }
 
-  public void OnTouchEnd () {
+  void OnTouchEnd () {
 
     snapAngle = Mathf.Round (currAngle / 90.0f) * 90.0f;
     isSnapping = true;
@@ -63,14 +108,8 @@ public class RotateController : MonoBehaviour {
       currAngle = snapAngle;
       RotateToAngle (currAngle);
       isSnapping = false;
-      var q = transform.rotation.eulerAngles;
-
-      transform.rotation = Quaternion.Euler (
-        Mathf.Round (q.x / 90.0f) * 90.0f,
-        Mathf.Round (q.y / 90.0f) * 90.0f,
-        Mathf.Round (q.z / 90.0f) * 90.0f
-      );
-
+      transform.rotation = Utility.Round (transform.rotation);
+      print (transform.rotation.eulerAngles);
       onRotationDone.Invoke ();
 
     }
@@ -84,44 +123,6 @@ public class RotateController : MonoBehaviour {
     var forward = Quaternion.AngleAxis (angle, startUp) * startForward;
 
     transform.LookAt (transform.position + forward, startUp);
-
-  }
-
-  void Start () {
-
-    BindEvents ();
-
-  }
-
-  void BindEvents () {
-
-    // Set points as rotatable
-    var containerComponents = GetComponentsInChildren<PointsContainerComponent> ();
-    foreach (var containerComponent in containerComponents) {
-      var container = containerComponent.pathContainer;
-
-      SetPointsAsRotatable (container);
-
-      container.onGeneratePathPointsDone.AddListener (() => {
-        SetPointsAsRotatable (container);
-      });
-
-      // Update points before/after rotation
-      onRotationDone.AddListener (container.ResetPoints);
-      onRotationStart.AddListener (container.onRotationStart);
-    }
-
-    var player = Object.FindObjectOfType<PlayerComponent> ();
-
-    if (player == null) return;
-
-    // Enable/disable rotation during player movement.
-    player.onTargetReached.AddListener (() => {
-      rotateComponent.CanRotate(true);
-    });
-    player.onStartMoving.AddListener (() => {
-      rotateComponent.CanRotate(false);
-    });
 
   }
 

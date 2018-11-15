@@ -4,5 +4,6 @@ using System;
 public enum EditorState {
   EditorAdd,
   EditorSelect,
-  EditorView
+  EditorView,
+  SelectMultiple
 }

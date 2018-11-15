@@ -7,6 +7,17 @@ using UnityEngine.Events;
 
 public class MakerStateManager : MonoBehaviour {
 
+  public UnityEventVector3 OnAxisSelect;
+  public UnityEventTransform OnPrefabSelect;
+  public UnityEventTransform OnPrefabMenuShow;
+  public UnityEvent OnEditHandleClick;
+  public UnityEvent OnSelectAffectedBlocksModeClick;
+  public UnityEvent OnSelectCenterModeClick;
+
+  public Transform world;
+
+  GameObject canvas;
+
   Dictionary<MakerStateType, List<State>> states = new Dictionary<MakerStateType, List<State>> ();
 
 #pragma warning disable 0414
@@ -17,6 +28,8 @@ public class MakerStateManager : MonoBehaviour {
 #pragma warning restore 0414
 
   void Awake () {
+
+    canvas = GameObject.FindObjectOfType<Canvas> ().gameObject;
 
     var makerStates = System.Enum.GetNames (typeof (MakerState)).ToList ();
     var typeId = System.Enum.GetName (typeof (MakerStateType), MakerStateType.General);
@@ -43,6 +56,30 @@ public class MakerStateManager : MonoBehaviour {
 
   }
 
+  public void EmitAxis (Vector3 axis) {
+    OnAxisSelect.Invoke (axis);
+  }
+
+  public void EmitPrefab (Transform prefab) {
+    OnPrefabSelect.Invoke (prefab);
+  }
+
+  public void EmitPrefabMenuShow (Transform container) {
+    OnPrefabMenuShow.Invoke (container);
+  }
+
+  public void EmitOnEditHandleClick () {
+    OnEditHandleClick.Invoke ();
+  }
+
+  public void EmitOnSelectAffectedBlocksModeClick () {
+    OnSelectAffectedBlocksModeClick.Invoke ();
+  }
+
+  public void EmitOnSelectCenterModeClick () {
+    OnSelectCenterModeClick.Invoke ();
+  }
+
   public void SetState<T> (MakerStateType type, T state, bool init = false) {
 
     var currState = states[type].Find (s => s.Enable);
@@ -54,15 +91,86 @@ public class MakerStateManager : MonoBehaviour {
     if (currState != newState) {
 
       if (currState != null) {
+
+        if (currState.Id == EnumToString (MakerState.MakerPlay)) {
+
+          ExitPlayMode ();
+
+        }
+
         currState.Exit ();
       }
 
     } else return;
 
+    if (newState.Id == EnumToString (MakerState.MakerPlay)) {
+
+      EnterPlayMode ();
+
+    }
+
     newState.Enter ();
 
     if (!init) UpdateStateInspector ();
 
+  }
+
+  void EnterPlayMode () {
+
+    var player = world.GetComponentInChildren<PlayerComponent> ();
+
+    if (player) {
+      player.onStartMoving.AddListener (HideCanvas);
+      player.onTargetReached.AddListener (ShowCanvas);
+    }
+
+    var rotators = world.GetComponentsInChildren<RotateTouchEmitter> ();
+    var rotations = world.GetComponentsInChildren<RotateController> ();
+    foreach (var r in rotators) {
+      r.enabled = true;
+    }
+    foreach (var r in rotations) {
+      r.Init ();
+      r.enabled = true;
+      r.onRotationStart.AddListener (HideCanvas);
+      r.onRotationDone.AddListener (ShowCanvas);
+    }
+
+  }
+
+  void ExitPlayMode () {
+
+    var player = world.GetComponentInChildren<PlayerComponent> ();
+
+    if (player) {
+
+      player.onStartMoving.RemoveListener (HideCanvas);
+      player.onTargetReached.RemoveListener (ShowCanvas);
+
+      var playerStart = GameObject.FindWithTag ("maker.player").GetComponent<CapsuleCollider> ();
+      player.transform.position = playerStart.transform.position + playerStart.transform.rotation * playerStart.center * .5f;
+      player.transform.rotation = playerStart.transform.rotation;
+    }
+
+    var rotators = world.GetComponentsInChildren<RotateTouchEmitter> ();
+    var rotations = world.GetComponentsInChildren<RotateController> ();
+    foreach (var r in rotators) {
+      r.enabled = false;
+    }
+    foreach (var r in rotations) {
+      r.enabled = false;
+      r.onRotationStart.RemoveListener (HideCanvas);
+      r.onRotationDone.RemoveListener (ShowCanvas);
+    }
+
+  }
+
+  void HideCanvas () {
+    canvas.SetActive (false);
+  }
+
+  void ShowCanvas () {
+    canvas.SetActive (true);
   }
 
   void UpdateStateInspector () {

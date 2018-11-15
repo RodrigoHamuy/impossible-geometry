@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class AddOnHold : MonoBehaviour {
 
@@ -13,13 +15,16 @@ public class AddOnHold : MonoBehaviour {
   public UnityEvent OnBrushStart;
   public UnityEvent OnBrushEnd;
 
-  public Transform blockPrefab;
-  public Transform cubeBoyPrefab;
-  public Transform targetPrefab;
+  public GameObject canvas;
 
-  public Vector3 planeNormal = Vector3.up;
+  public MakerBlockType[] config;
+
+  MakerBlockType currentConfig;
+
+  Vector3 planeNormal = Vector3.up;
 
   MakerActionsManager actionsManager;
+  MakerStateManager stateManager;
 
   Vector3 currentPlanePoint;
   Vector2 firstTouchPos;
@@ -28,13 +33,8 @@ public class AddOnHold : MonoBehaviour {
 
   List<Transform> currentRow = new List<Transform> ();
 
-  Transform cubeBoy;
-  Transform target;
-
   Vector3 lastHitPosNoRound;
   Vector3 lastHitPos;
-
-  Vector2 margin;
 
   TouchComponent touchComponent;
 
@@ -43,26 +43,60 @@ public class AddOnHold : MonoBehaviour {
     marker.gameObject.SetActive (false);
 
     actionsManager = GameObject.FindObjectOfType<MakerActionsManager> ();
-
+    stateManager = GameObject.FindObjectOfType<MakerStateManager> ();
     touchComponent = gameObject.GetComponent<TouchComponent> ();
 
     touchComponent.onTouchStart.AddListener (StartStroke);
     touchComponent.onTouchMove.AddListener (MoveStroke);
     touchComponent.onTouchEnd.AddListener (EndStroke);
 
+    stateManager.OnAxisSelect.AddListener (SetPlaneAxis);
+    stateManager.OnPrefabMenuShow.AddListener (OnPrefabMenuShow);
+    stateManager.OnPrefabSelect.AddListener (OnPrefabSelect);
+
     currentPlanePoint = transform.position;
 
     var cam = Camera.main;
 
-    margin = cam.WorldToScreenPoint (Vector3.up) - cam.WorldToScreenPoint (Vector3.zero);
+    currentConfig = config[0];
 
   }
 
-  public void StartStroke (Vector2 screenPos) {
+  void OnPrefabSelect (Transform selected) {
+
+    if (!gameObject.activeInHierarchy) return;
+
+    currentConfig = Array.Find (config, configItem => configItem.prefab == selected);
+
+  }
+
+  void OnPrefabMenuShow (Transform menuContainer) {
+
+    if (!gameObject.activeInHierarchy) return;
+
+    var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> (true);
+
+    foreach (var item in menuItems) {
+      item.gameObject.SetActive (false);
+    }
+
+    foreach (var item in menuItems) {
+
+      item.GetComponent<Toggle> ().isOn = item.element == currentConfig.prefab;
+
+      item.gameObject.SetActive (
+        Array.Exists (config, configItem =>
+          configItem.prefab == item.element
+        )
+      );
+
+    }
+
+  }
+
+  void StartStroke (Vector2 screenPos) {
 
     marker.gameObject.SetActive (true);
-
-    screenPos += margin;
 
     bool found;
 
@@ -81,6 +115,8 @@ public class AddOnHold : MonoBehaviour {
 
     currentRow.Clear ();
 
+    canvas.SetActive (false);
+
     OnBrushStart.Invoke ();
 
     firstTouchPos = screenPos;
@@ -88,19 +124,17 @@ public class AddOnHold : MonoBehaviour {
 
     if (found) screenPos = Camera.main.WorldToScreenPoint (hitPos);
 
-    screenPos -= margin;
-
     MoveStroke (screenPos, true);
 
   }
 
-  public void MoveStroke (Vector2 screenPos) {
+  void MoveStroke (Vector2 screenPos) {
     MoveStroke (screenPos, false);
   }
 
-  public void MoveStroke (Vector2 screenPos, bool isFirstTouch) {
+  void MoveStroke (Vector2 screenPos, bool isFirstTouch) {
 
-    screenPos += margin;
+    if (!currentConfig.addOnHold && currentRow.Count == 1) return;
 
     if (!secondTouchPass) {
 
@@ -140,28 +174,41 @@ public class AddOnHold : MonoBehaviour {
 
     if (spaceTaken) return;
 
-    print (screenPos);
+    if (currentConfig.isUnique) {
 
-    var block = actionsManager.AddBlock (blockPrefab, hitPos);
+      var prevObj = GameObject.FindWithTag (currentConfig.prefab.tag);
+
+      if (prevObj) {
+
+        actionsManager.RemoveBlock (prevObj.transform);
+
+      }
+
+    }
+
+    var block = actionsManager.AddBlock (
+      new MakerAction (
+        MakerActionType.Add,
+        null,
+        currentConfig,
+        hitPos,
+        Vector3.one,
+        Quaternion.LookRotation (Vector3.Cross (Vector3.forward, planeNormal), planeNormal),
+        world
+      ),
+      false
+    );
 
     marker.transform.position = hitPos;
 
     currentRow.Add (block);
-
-    if (cubeBoy == null) {
-
-      cubeBoy = Instantiate (cubeBoyPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity, world).transform;
-
-      cubeBoy.RotateAround (cubeBoy.position, Vector3.up, 180.0f);
-
-    }
 
     lastHitPosNoRound = GetHitPosition (screenPos, false);
     lastHitPos = hitPos;
 
   }
 
-  public Vector3 GetDirPosition (Vector2 screenPos) {
+  Vector3 GetDirPosition (Vector2 screenPos) {
 
     if (lastHitPos == Vector3.zero) {
 
@@ -212,44 +259,23 @@ public class AddOnHold : MonoBehaviour {
 
   }
 
-  public void EndStroke (Vector2 screenPos) {
-
-    screenPos += margin;
-
-    int layer = LayerMask.NameToLayer ("Block");
-
-    currentRow.ForEach ((block) => {
-
-      block.gameObject.layer = layer;
-
-    });
-
-    var hitPos = TouchUtility.HitPosition (screenPos, gameObject);
-
-    if (target == null) {
-
-      target = Instantiate (targetPrefab, hitPos + Vector3.up * 0.5f, Quaternion.identity, world).transform;
-
-    }
+  void EndStroke (Vector2 screenPos) {
 
     lastHitPosNoRound = Vector3.zero;
     lastHitPos = Vector3.zero;
+
+    canvas.SetActive (true);
 
     OnBrushEnd.Invoke ();
     marker.gameObject.SetActive (false);
 
   }
 
-  public void SetPlaneNormalUp () {
-    planeNormal = Vector3.up;
-  }
+  void SetPlaneAxis (Vector3 axis) {
 
-  public void SetPlaneNormalRight () {
-    planeNormal = Vector3.right;
-  }
+    if (!gameObject.activeSelf) return;
+    planeNormal = axis;
 
-  public void SetPlaneNormalForward () {
-    planeNormal = Vector3.forward;
   }
 
   Vector3 GetLastBlockDirection () {
@@ -291,9 +317,18 @@ public class AddOnHold : MonoBehaviour {
 
       }
 
-      var midBlock = actionsManager.AddBlock (blockPrefab, middlePos);
-
-      midBlock.gameObject.layer = LayerMask.NameToLayer ("maker.newBlock");
+      var midBlock = actionsManager.AddBlock (
+        new MakerAction (
+          MakerActionType.Add,
+          null,
+          currentConfig,
+          middlePos,
+          Vector3.one,
+          Quaternion.LookRotation (Vector3.Cross (Vector3.forward, planeNormal), planeNormal),
+          world
+        ),
+        false
+      );
 
       currentRow.Add (midBlock);
 
@@ -334,7 +369,7 @@ public class AddOnHold : MonoBehaviour {
 
     var ray = cam.ScreenPointToRay (screenPos);
 
-    string[] layerNames = { "Block" };
+    string[] layerNames = { "maker.object" };
 
     var layerMask = LayerMask.GetMask (layerNames);
 
@@ -389,10 +424,6 @@ public class AddOnHold : MonoBehaviour {
 
     return finalPos;
 
-  }
-
-  public void SetPrefab (Transform element) {
-    blockPrefab = element;
   }
 
 }

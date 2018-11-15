@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,29 +8,20 @@ public class MakerActionsManager : MonoBehaviour {
   public Transform world;
 
   public List<MakerAction> actions = new List<MakerAction> ();
-
-  public UnityEvent2Vector3 OnBlockAdded;
-  public UnityEvent2Vector3 OnBlockRemoved;
   public UnityEventInt OnBlockAmountChange;
   public UnityEvent OnHistoryClear;
 
-  public List<Transform> blockHistory = new List<Transform> ();
+  public List<Transform> blocksInScene = new List<Transform> ();
+
+  int idCounter = 0;
 
   void Start () {
-
-    OnBlockAdded.AddListener ((v1, v2) => {
-      OnBlockAmountChange.Invoke (blockHistory.Count);
-    });
-
-    OnBlockRemoved.AddListener ((v1, v2) => {
-      OnBlockAmountChange.Invoke (blockHistory.Count);
-    });
 
     OnBlockAmountChange.AddListener (amount => {
       if (amount == 0) OnHistoryClear.Invoke ();
     });
 
-    OnBlockAmountChange.Invoke (blockHistory.Count);
+    OnBlockAmountChange.Invoke (blocksInScene.Count);
 
   }
 
@@ -40,10 +32,10 @@ public class MakerActionsManager : MonoBehaviour {
 
     switch (action.type) {
       case MakerActionType.Add:
-        RemoveLastBlock ();
+        RemoveBlock (action);
         break;
       case MakerActionType.Remove:
-        RestoreBlock (action);
+        AddBlock (action, true);
         break;
       case MakerActionType.Edit:
         RestoreBlockEdition (action);
@@ -54,97 +46,113 @@ public class MakerActionsManager : MonoBehaviour {
 
   public void RemoveBlock (Transform block) {
 
-    var i = blockHistory.IndexOf (block);
-    actions.Add (new MakerAction (
+    var blockData = block.GetComponent<EditableBlock> ();
+
+    var blockType = block.GetComponent<EditableBlock> ().blockType;
+
+    var action = new MakerAction (
       MakerActionType.Remove,
       block,
+      blockType,
       block.position,
       block.localScale,
       block.rotation,
-      i
-    ));
-    blockHistory.RemoveAt (i);
+      block.parent
+    );
+    action.id = blockData.id;
+
+    actions.Add (action);
+
+    blocksInScene.Remove (block);
     GameObject.Destroy (block.gameObject);
-    OnBlockRemoved.Invoke (block.position, block.transform.position);
 
   }
 
-  Transform RemoveLastBlock () {
+  void RemoveBlock (MakerAction action) {
 
-    var lastBlock = blockHistory[blockHistory.Count - 1];
-    blockHistory.RemoveAt (blockHistory.Count - 1);
-    GameObject.Destroy (lastBlock.gameObject);
-    OnBlockRemoved.Invoke (lastBlock.position, lastBlock.transform.position);
+    blocksInScene.Remove (action.target);
 
-    return lastBlock;
+    var blocks = GameObject.FindObjectsOfType<EditableBlock> ();
+    var block = Array.Find (blocks, b => b.id == action.id);
 
-  }
-
-  void RestoreBlock (MakerAction action) {
-
-    action.target.gameObject.SetActive (true);
-    blockHistory.Insert (action.historyIndex, action.target);
+    GameObject.Destroy (block.gameObject);
 
   }
 
-  public Transform ReplaceBlock (Transform prefab, Transform target) {
+  public Transform AddBlock (MakerAction action, bool restore) {
 
-    var block = AddBlock (prefab, target.position, target.parent);
-
-    RemoveBlock (target);
-
-    return block;
-
-  }
-
-  public Transform AddBlock (Transform prefab, Vector3 position, bool restore = false, int index = 0, Transform parent = null) {
-
-    if (!parent) parent = world;
-
-    var block = Instantiate (prefab, position, Quaternion.identity, parent);
-
-    if (restore) {
-      blockHistory.Insert (index, block);
-    } else {
-      blockHistory.Add (block);
-      actions.Add (new MakerAction (
-        MakerActionType.Add,
-        block,
-        block.position,
-        block.localScale,
-        block.rotation,
-        blockHistory.Count - 1
-      ));
+    if (!restore && action.blockType.addOnTop) {
+      action.position -= action.rotation * Vector3.up;
     }
-    OnBlockAdded.Invoke (position, Vector3.zero);
+
+    var block = Instantiate (
+      action.blockType.prefab,
+      action.position,
+      action.rotation,
+      action.parent
+    );
+
+    var editData = block.gameObject.AddComponent<EditableBlock> ();
+    editData.blockType = action.blockType;
+
+    action.target = block;
+
+    blocksInScene.Add (block);
+
+    if (!restore) {
+      action.id = ++idCounter;
+      actions.Add (action);
+    }
+
+    editData.id = action.id;
+
     return block;
 
   }
 
-  public void EditBlock (Transform target, Transform placeholder) {
+  public Transform ReplaceBlock (MakerBlockType blockType, Transform target) {
 
-    target.transform.position = placeholder.transform.position;
-    target.transform.rotation = placeholder.transform.rotation;
-    target.transform.localScale = placeholder.transform.localScale;
-
-    var i = blockHistory.IndexOf (target);
-
-    actions.Add (new MakerAction (
-      MakerActionType.Edit,
-      target,
+    var addAction = new MakerAction (
+      MakerActionType.Add,
+      null,
+      blockType,
       target.position,
       target.localScale,
       target.rotation,
-      i
-    ));
+      target.parent
+    );
 
-    GameObject.Destroy (placeholder.gameObject);
+    RemoveBlock (target);
+
+    return AddBlock (addAction, false);
+
+  }
+
+  public void EditBlock (Transform target) {
+
+    var blockType = target.GetComponent<EditableBlock> ().blockType;
+
+    var action = new MakerAction (
+      MakerActionType.Edit,
+      target,
+      blockType,
+      target.position,
+      target.localScale,
+      target.rotation,
+      target.parent
+    );
+
+    actions.Add (action);
+
+    target.transform.position = action.position;
+    target.transform.rotation = action.rotation;
+    target.transform.localScale = action.scale;
 
   }
 
   void RestoreBlockEdition (MakerAction action) {
 
-    var lastPosition = actions.FindLast (a => a.target == action.target);
+    var lastPosition = actions.FindLast (a => a.blockType == action.blockType);
 
     action.target.transform.position = lastPosition.position;
     action.target.transform.rotation = lastPosition.rotation;

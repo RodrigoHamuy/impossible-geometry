@@ -1,28 +1,35 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public struct MakerAction {
   public MakerActionType type;
   public Transform target;
+  public MakerBlockType blockType;
   public Vector3 position;
   public Vector3 scale;
   public Quaternion rotation;
-  public int historyIndex;
+  public Transform parent;
+  public int id;
 
   public MakerAction (
     MakerActionType type,
     Transform target,
+    MakerBlockType blockType,
     Vector3 position,
     Vector3 scale,
     Quaternion rotation,
-    int index
+    Transform parent
   ) {
 
     this.type = type;
     this.target = target;
-    this.position = position;
+    this.blockType = blockType;
+    this.position = Utility.Round (position, 1.0f);
     this.scale = scale;
-    this.rotation = rotation;
-    this.historyIndex = index;
+    this.rotation = Utility.Round (rotation);
+    this.parent = parent;
+
+    id = -1;
 
   }
 }

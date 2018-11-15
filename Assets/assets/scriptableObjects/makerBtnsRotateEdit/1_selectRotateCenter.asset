@@ -1,0 +1,14 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5868796d10f295241b8451c788784510, type: 3}
+  m_Name: 1_selectRotateCenter
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 21300000, guid: 77c3ad5388eb14d4aa0e7519a52b6d27, type: 3}
