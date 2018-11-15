@@ -7,12 +7,16 @@ using UnityEngine;
 
 public class EditRotationHandle : MonoBehaviour {
 
+  public Transform rotateCenterView;
+
   Transform world;
 
   EditManager editManager;
 
   [HideInInspector]
-  public bool selectMode = false;
+  public bool isActive = false;
+
+  EditRotationHandleMode mode = EditRotationHandleMode.SelectAffectedBlocks;
 
   Color affectedBlocksColor = Color.yellow;
 
@@ -31,6 +35,8 @@ public class EditRotationHandle : MonoBehaviour {
     var touchComponent = GetComponent<TouchComponent> ();
 
     stateManager.OnEditHandleClick.AddListener (OnEditHandleClick);
+    stateManager.OnSelectAffectedBlocksModeClick.AddListener (OnSelectAffectedBlocksModeClick);
+    stateManager.OnSelectCenterModeClick.AddListener (OnSelectCenterModeClick);
 
     touchComponent.onTouchEnd.AddListener (OnTouchEnd);
 
@@ -38,7 +44,9 @@ public class EditRotationHandle : MonoBehaviour {
 
   public void ClearTarget () {
 
-    selectMode = false;
+    if (rotateCenterView) rotateCenterView.gameObject.SetActive (false);
+
+    isActive = false;
 
     foreach (var style in selectStyleManager) {
 
@@ -51,39 +59,132 @@ public class EditRotationHandle : MonoBehaviour {
 
   }
 
+  void OnSelectAffectedBlocksModeClick () {
+    print ("choose affected blocks");
+    mode = EditRotationHandleMode.SelectAffectedBlocks;
+    rotateCenterView.gameObject.SetActive (false);
+  }
+
+  void OnSelectCenterModeClick () {
+    print ("choose center");
+    mode = EditRotationHandleMode.ChooseCenter;
+    rotateCenterView.gameObject.SetActive (true);
+    SyncRotateCenterView ();
+  }
+
+  void SyncRotateCenterView () {
+    rotateCenterView.position = rotateContainer.position;
+    rotateCenterView.rotation = rotateContainer.rotation;
+  }
+
   void OnEditHandleClick () {
 
-    print ("choose affected blocks");
-    selectMode = true;
+    isActive = true;
 
-    rotateContainer = new GameObject ().transform;
+    var blockData = editManager.target.GetComponent<EditableBlock> ();
 
-    rotateContainer.gameObject
-      .AddComponent<RotateController> ()
-      .AddRotateTouchEmitter (
-        editManager.target.GetComponentInChildren<RotateTouchEmitter> ()
-      );
+    if (blockData.rotateController) {
 
-    rotateContainer.position = editManager.target.position;
-    rotateContainer.parent = world;
-    rotateContainer.rotation = editManager.target.rotation;
+      rotateContainer = blockData.rotateController;
+
+      foreach (Transform child in rotateContainer.transform) {
+
+        var style = new SelectStyleMnger ();
+        style.SetColor (affectedBlocksColor);
+        style.Select (child);
+        selectStyleManager.Add (style);
+        affectedBlocks.Add (child);
+
+      }
+
+    } else {
+
+      rotateContainer = new GameObject ().transform;
+
+      rotateContainer.gameObject
+        .AddComponent<RotateController> ()
+        .AddRotateTouchEmitter (
+          editManager.target.GetComponentInChildren<RotateTouchEmitter> ()
+        );
+
+      rotateContainer.position = editManager.target.position;
+      rotateContainer.parent = world;
+      rotateContainer.rotation = editManager.target.rotation;
+
+      blockData.rotateController = rotateContainer;
+
+    }
 
   }
 
   void OnTouchEnd (Vector2 touchPos) {
 
-    if (!selectMode) return;
+    if (!isActive) return;
+
+    switch (mode) {
+      case EditRotationHandleMode.SelectAffectedBlocks:
+        SelectBlock (touchPos);
+        break;
+      case EditRotationHandleMode.ChooseCenter:
+        ChooseCenter (touchPos);
+        break;
+    }
+
+  }
+
+  void ChooseCenter (Vector2 touchPos) {
 
     var block = Utility.MakerGetBlockOnTapPos (
       touchPos,
       new string[] { "maker.cube", "maker.halfCube" }
     );
 
-    if (block) Select (block);
+    if (!block) return;
+
+    var childs = new List<Transform> ();
+
+    while (rotateContainer.childCount > 0) {
+
+      var child = rotateContainer.GetChild (0);
+      child.parent = null;
+      childs.Add (child);
+
+    }
+
+    if (rotateContainer.transform.position == block.position) {
+      var up = rotateContainer.up;
+      for (int i = 0; i < 3; i++) {
+        if (Mathf.Abs (up[i]) + .1f > 1.0f) {
+          up[(i + 1) % 3] = Mathf.Round (up[i]) * -1.0f;
+          up[i] = .0f;
+          break;
+        }
+      }
+      rotateContainer.up = up;
+    } else {
+      rotateContainer.transform.position = block.position;
+    }
+
+    foreach (var child in childs) {
+      child.parent = rotateContainer.transform;
+    }
+
+    SyncRotateCenterView ();
 
   }
 
-  void Select (Transform block) {
+  void SelectBlock (Vector2 touchPos) {
+
+    var block = Utility.MakerGetBlockOnTapPos (
+      touchPos,
+      new string[] { "maker.cube", "maker.halfCube" }
+    );
+
+    if (block) SelectBlock (block);
+
+  }
+
+  void SelectBlock (Transform block) {
 
     var style = new SelectStyleMnger ();
     style.SetColor (affectedBlocksColor);
@@ -94,12 +195,6 @@ public class EditRotationHandle : MonoBehaviour {
     selectStyleManager.Add (style);
 
     affectedBlocks.Add (block);
-
-    // targetParent = target.parent;
-
-    // selectStyleManager.Select (target);
-
-    // OnTargetChange.Invoke (true);
 
   }
 

@@ -9,4 +9,7 @@ public class EditableBlock : MonoBehaviour {
   [HideInInspector]
   public int id;
 
+  [HideInInspector]
+  public Transform rotateController;
+
 }

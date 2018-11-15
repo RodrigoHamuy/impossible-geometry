@@ -107,7 +107,7 @@ public class EditManager : MonoBehaviour {
   void Select (Vector2 touchPos) {
 
     if (editRotate.isRotating) return;
-    if (editRotationHandle.selectMode) return;
+    if (editRotationHandle.isActive) return;
 
     ClearTarget ();
 
@@ -165,7 +165,7 @@ public class EditManager : MonoBehaviour {
   void StartDrag (Vector2 touchPos) {
 
     if (editRotate.isRotating) return;
-    if (editRotationHandle.selectMode) return;
+    if (editRotationHandle.isActive) return;
 
     if (editRotate.rotateController.gameObject.activeSelf) return;
 

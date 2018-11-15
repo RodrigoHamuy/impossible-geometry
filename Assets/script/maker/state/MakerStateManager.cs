@@ -11,6 +11,8 @@ public class MakerStateManager : MonoBehaviour {
   public UnityEventTransform OnPrefabSelect;
   public UnityEventTransform OnPrefabMenuShow;
   public UnityEvent OnEditHandleClick;
+  public UnityEvent OnSelectAffectedBlocksModeClick;
+  public UnityEvent OnSelectCenterModeClick;
 
   public Transform world;
 
@@ -64,6 +66,14 @@ public class MakerStateManager : MonoBehaviour {
 
   public void EmitOnEditHandleClick () {
     OnEditHandleClick.Invoke ();
+  }
+
+  public void EmitOnSelectAffectedBlocksModeClick () {
+    OnSelectAffectedBlocksModeClick.Invoke ();
+  }
+
+  public void EmitOnSelectCenterModeClick () {
+    OnSelectCenterModeClick.Invoke ();
   }
 
   public void SetState<T> (MakerStateType type, T state, bool init = false) {
