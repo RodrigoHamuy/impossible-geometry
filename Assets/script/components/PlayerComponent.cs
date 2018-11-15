@@ -5,430 +5,430 @@ using UnityEngine.Events;
 
 public class PlayerComponent : MonoBehaviour {
 
-	Transform world;
+  Transform world;
 
-	[HideInInspector]
-	public UnityEvent onTargetReached = new UnityEvent ();
+  [HideInInspector]
+  public UnityEvent onTargetReached = new UnityEvent ();
 
-	[HideInInspector]
-	public UnityEvent onStartMoving = new UnityEvent ();
+  [HideInInspector]
+  public UnityEvent onStartMoving = new UnityEvent ();
 
-	[HideInInspector]
-	public UnityEvent onNodeReached = new UnityEvent ();
+  [HideInInspector]
+  public UnityEvent onNodeReached = new UnityEvent ();
 
-	[HideInInspector]
-	public UnityEvent onNodeHalfWay = new UnityEvent ();
+  [HideInInspector]
+  public UnityEvent onNodeHalfWay = new UnityEvent ();
 
-	bool _isMoving = false;
+  bool _isMoving = false;
 
-	bool _isOnStairs = false;
+  bool _isOnStairs = false;
 
-	bool _isOnTwistedBlock = false;
+  bool _isOnTwistedBlock = false;
 
-	bool _isOnArchBlock = false;
+  bool _isOnArchBlock = false;
 
-	public bool isMoving {
-		get { return _isMoving; }
-	}
+  public bool isMoving {
+    get { return _isMoving; }
+  }
 
-	public float acceleration = 2.5f;
-	public float maxSpeed = 5.0f;
-	float _speed = 0;
+  public float acceleration = 2.5f;
+  public float maxSpeed = 5.0f;
+  float _speed = 0;
 
-	public float speed {
-		get { return _speed; }
-	}
+  public float speed {
+    get { return _speed; }
+  }
 
-	[HideInInspector]
-	public List<PathPoint> path;
+  [HideInInspector]
+  public List<PathPoint> path;
 
-	Vector3 targetPos;
+  Vector3 targetPos;
 
-	PathPoint _targetPoint;
+  PathPoint _targetPoint;
 
-	public PathPoint targetPoint {
-		get { return _targetPoint; }
-	}
+  public PathPoint targetPoint {
+    get { return _targetPoint; }
+  }
 
-	PathPoint _prevPoint;
+  PathPoint _prevPoint;
 
-	public PathPoint prevPoint {
-		get { return _prevPoint; }
-	}
+  public PathPoint prevPoint {
+    get { return _prevPoint; }
+  }
 
-	[HideInInspector]
-	public Vector3 nextNodeDir;
+  [HideInInspector]
+  public Vector3 nextNodeDir;
 
-	void Start () {
+  void Start () {
 
-		var world = GameObject.Find ("World");
-		if (world) {
-			this.world = world.transform;
-		}
-		CheckParent ();
-	}
+    var world = GameObject.Find ("World");
+    if (world) {
+      this.world = world.transform;
+    }
+    CheckParent ();
+  }
 
-	void CheckParent () {
-		var screenPos = Camera.main.WorldToScreenPoint (transform.position);
-		var ray = Camera.main.ScreenPointToRay (screenPos);
-		var layerMask = LayerMask.GetMask ("Block");
+  void CheckParent () {
+    var screenPos = Camera.main.WorldToScreenPoint (transform.position);
+    var ray = Camera.main.ScreenPointToRay (screenPos);
+    var layerMask = LayerMask.GetMask ("Block");
 
-		var hits = Physics.RaycastAll (ray, 100.0f, layerMask);
+    var hits = Physics.RaycastAll (ray, 100.0f, layerMask);
 
-		if (hits.Length == 0) return;
+    if (hits.Length == 0) return;
 
-		var currBlock = hits
-			.OrderBy (
-				(hit) => (transform.position - hit.point).sqrMagnitude
-			)
-			.First ()
-			.collider.transform;
+    var currBlock = hits
+      .OrderBy (
+        (hit) => (transform.position - hit.point).sqrMagnitude
+      )
+      .First ()
+      .collider.transform;
 
-		if (
-			currBlock.parent != null &&
-			(
-				currBlock.parent.GetComponent<RotateTouchEmitter> () != null ||
-				currBlock.parent.GetComponent<SlideComponent> () != null
-			)
-		) {
-			transform.parent = currBlock.parent;
-		}
+    if (
+      currBlock.parent != null &&
+      (
+        currBlock.parent.GetComponent<RotateTouchEmitter> () != null ||
+        currBlock.parent.GetComponent<SlideComponent> () != null
+      )
+    ) {
+      transform.parent = currBlock.parent;
+    }
 
-	}
+  }
 
-	void UpdateNormal () {
-		var totalDist = (targetPos - prevPoint.position).sqrMagnitude;
+  void UpdateNormal () {
+    var totalDist = (targetPos - prevPoint.position).sqrMagnitude;
 
-		var currDist = (targetPos - transform.position).sqrMagnitude;
+    var currDist = (targetPos - transform.position).sqrMagnitude;
 
-		if (currDist < 0.01f) currDist = 0.0f;
+    if (currDist < 0.01f) currDist = 0.0f;
 
-		transform.up = Vector3.Slerp (prevPoint.normal, targetPoint.normal, (totalDist - currDist) / totalDist);
-	}
+    transform.up = Vector3.Slerp (prevPoint.normal, targetPoint.normal, (totalDist - currDist) / totalDist);
+  }
 
-	void UpdateArchPosBeforePrevEdge (Vector3 prevEdge) {
+  void UpdateArchPosBeforePrevEdge (Vector3 prevEdge) {
 
-		var dir = Utility.CleanNormal (targetPoint.normal);
+    var dir = Utility.CleanNormal (targetPoint.normal);
 
-		var step = dir * _speed * Time.deltaTime;
-		transform.position = transform.position + step;
+    var step = dir * _speed * Time.deltaTime;
+    transform.position = transform.position + step;
 
-	}
+  }
 
-	void UpdateArchPosAfterNextEdge (Vector3 targetEdge) {
+  void UpdateArchPosAfterNextEdge (Vector3 targetEdge) {
 
-		var dir = Utility.CleanNormal (-prevPoint.normal);
-		var step = dir * _speed * Time.deltaTime;
-		transform.position = transform.position + step;
+    var dir = Utility.CleanNormal (-prevPoint.normal);
+    var step = dir * _speed * Time.deltaTime;
+    transform.position = transform.position + step;
 
-	}
+  }
 
-	void UpdateArchPos () {
+  void UpdateArchPos () {
 
-		// TODO: Make player move on straight line until the prevEdge and from the targetEdge until the target.
+    // TODO: Make player move on straight line until the prevEdge and from the targetEdge until the target.
 
-		var circunference = 2.0f * Mathf.PI;
+    var circunference = 2.0f * Mathf.PI;
 
-		_speed = Mathf.Min (_speed + acceleration, maxSpeed);
+    _speed = Mathf.Min (_speed + acceleration, maxSpeed);
 
-		var distToPrev = (transform.position - prevPoint.position).magnitude;
-		var distToNext = (transform.position - targetPoint.position).magnitude;
+    var distToPrev = (transform.position - prevPoint.position).magnitude;
+    var distToNext = (transform.position - targetPoint.position).magnitude;
 
-		var prevEdge = prevPoint.position + targetPoint.normal * .5f;
-		var targetEdge = targetPoint.position + prevPoint.normal * .5f;
+    var prevEdge = prevPoint.position + targetPoint.normal * .5f;
+    var targetEdge = targetPoint.position + prevPoint.normal * .5f;
 
-		if (distToPrev < 0.5f) {
+    if (distToPrev < 0.5f) {
 
-			UpdateArchPosBeforePrevEdge (prevEdge);
+      UpdateArchPosBeforePrevEdge (prevEdge);
 
-		} else if (distToNext <= 0.5f) {
+    } else if (distToNext <= 0.5f) {
 
-			UpdateArchPosAfterNextEdge (targetEdge);
+      UpdateArchPosAfterNextEdge (targetEdge);
 
-		} else {
+    } else {
 
-			var center = targetPoint.position - targetPoint.normal + prevPoint.normal * 0.5f;
+      var center = targetPoint.position - targetPoint.normal + prevPoint.normal * 0.5f;
 
-			var centerToPrev = prevEdge - center;
-			var centerToNext = targetEdge - center;
+      var centerToPrev = prevEdge - center;
+      var centerToNext = targetEdge - center;
 
-			var rotationAxis = Vector3.Cross (prevPoint.normal, targetPoint.normal);
+      var rotationAxis = Vector3.Cross (prevPoint.normal, targetPoint.normal);
 
-			var centerToPlayer = transform.position - center;
+      var centerToPlayer = transform.position - center;
 
-			var currAngle = Vector3.SignedAngle (centerToNext, centerToPlayer, rotationAxis);
+      var currAngle = Vector3.SignedAngle (centerToNext, centerToPlayer, rotationAxis);
 
-			var currArchDist = circunference * (currAngle / 360.0f);
+      var currArchDist = circunference * (currAngle / 360.0f);
 
-			var nextArchDist = currArchDist + _speed * Time.deltaTime * .5f;
+      var nextArchDist = currArchDist + _speed * Time.deltaTime * .5f;
 
-			var nextAngle = (nextArchDist / circunference) * 360.0f + 90.0f;
+      var nextAngle = (nextArchDist / circunference) * 360.0f + 90.0f;
 
-			if (nextAngle >= 90) {
-				transform.position = targetEdge;
-				transform.up = targetPoint.normal;
-				return;
-			}
+      if (nextAngle >= 90) {
+        transform.position = targetEdge;
+        transform.up = targetPoint.normal;
+        return;
+      }
 
-			var rotation = Quaternion.AngleAxis (nextAngle, rotationAxis);
+      var rotation = Quaternion.AngleAxis (nextAngle, rotationAxis);
 
-			var newPos = rotation * centerToPrev + center;
+      var newPos = rotation * centerToPrev + center;
 
-			transform.up = (transform.position - center).normalized;
+      transform.up = (transform.position - center).normalized;
 
-			transform.position = newPos;
+      transform.position = newPos;
 
-			centerToPlayer = transform.position - center;
+      centerToPlayer = transform.position - center;
 
-		}
+    }
 
-	}
+  }
 
-	void UpdateStep () {
+  void UpdateStep () {
 
-		var dir = (targetPos - transform.position).normalized;
+    var dir = (targetPos - transform.position).normalized;
 
-		_speed = Mathf.Min (_speed + acceleration, maxSpeed);
+    _speed = Mathf.Min (_speed + acceleration, maxSpeed);
 
-		var step = dir * _speed * Time.deltaTime;
-		transform.position = transform.position + step;
+    var step = dir * _speed * Time.deltaTime;
+    transform.position = transform.position + step;
 
-	}
+  }
 
-	void Update () {
+  void Update () {
 
-		if (!isMoving) return;
+    if (!isMoving) return;
 
-		var prevDistance = (targetPos - transform.position).sqrMagnitude;
+    var prevDistance = (targetPos - transform.position).sqrMagnitude;
 
-		if (_isOnArchBlock) {
+    if (_isOnArchBlock) {
 
-			UpdateArchPos ();
+      UpdateArchPos ();
 
-		} else {
+    } else {
 
-			UpdateStep ();
+      UpdateStep ();
 
-		}
+    }
 
-		var newDistance = (targetPos - transform.position).sqrMagnitude;
+    var newDistance = (targetPos - transform.position).sqrMagnitude;
 
-		if (prevDistance >= 0.5f && newDistance <= 0.5f) {
-			onNodeHalfWay.Invoke ();
-		}
+    if (prevDistance >= 0.5f && newDistance <= 0.5f) {
+      onNodeHalfWay.Invoke ();
+    }
 
-		if (_isOnTwistedBlock) {
-			UpdateNormal ();
-		}
+    if (_isOnTwistedBlock) {
+      UpdateNormal ();
+    }
 
-		if (
-			(transform.position - targetPos).sqrMagnitude < 0.01f
-		) {
-			onNodeReached.Invoke ();
-			if (_targetPoint.switchButton != null) {
-				_targetPoint.switchButton.Press ();
-			}
-			if (path.Count > 1 || _isOnStairs) {
-				MoveToNextPoint ();
-			} else {
-				Debug.Log ("Target reached");
-				path.Clear ();
-				_isMoving = false;
-				transform.position = targetPos;
-				if (_targetPoint.canMove) {
-					transform.parent = _targetPoint.container.component.transform.parent;
-				} else {
-					transform.parent = world;
-				}
-				onTargetReached.Invoke ();
-			}
-		}
+    if (
+      (transform.position - targetPos).sqrMagnitude < 0.01f
+    ) {
+      onNodeReached.Invoke ();
+      if (_targetPoint.switchButton != null) {
+        _targetPoint.switchButton.Press ();
+      }
+      if (path.Count > 1 || _isOnStairs) {
+        MoveToNextPoint ();
+      } else {
+        Debug.Log ("Target reached");
+        path.Clear ();
+        _isMoving = false;
+        transform.position = targetPos;
+        if (_targetPoint.canMove) {
+          transform.parent = _targetPoint.container.component.transform.parent;
+        } else {
+          transform.parent = world;
+        }
+        onTargetReached.Invoke ();
+      }
+    }
 
-	}
+  }
 
-	public void Walk (List<PathPoint> path) {
+  public void Walk (List<PathPoint> path) {
 
-		this.path = path;
+    this.path = path;
 
-		MoveToNextPoint ();
+    MoveToNextPoint ();
 
-		_isMoving = true;
+    _isMoving = true;
 
-		onStartMoving.Invoke ();
+    onStartMoving.Invoke ();
 
-	}
+  }
 
-	bool StairsLogic () {
-		if (_targetPoint.stairConn == _prevPoint) {
-			_isOnStairs = true;
-			Debug.Log ("_isOnStairs");
-			var axis = Utility.GetNormalAxis (Utility.CleanNormal (transform.up));
+  bool StairsLogic () {
+    if (_targetPoint.stairConn == _prevPoint) {
+      _isOnStairs = true;
+      Debug.Log ("_isOnStairs");
+      var axis = Utility.GetNormalAxis (Utility.CleanNormal (transform.up));
 
-			if (_targetPoint.stairPos == PathPoint.StairPos.top) {
-				targetPos = _prevPoint.position;
-				targetPos[axis] = _targetPoint.position[axis];
-			} else {
-				targetPos = _targetPoint.position;
-				targetPos[axis] = _prevPoint.position[axis];
-			}
-			return true;
-		}
-		return false;
-	}
+      if (_targetPoint.stairPos == PathPoint.StairPos.top) {
+        targetPos = _prevPoint.position;
+        targetPos[axis] = _targetPoint.position[axis];
+      } else {
+        targetPos = _targetPoint.position;
+        targetPos[axis] = _prevPoint.position[axis];
+      }
+      return true;
+    }
+    return false;
+  }
 
-	bool StairsLogicLastStep () {
-		if (_isOnStairs && targetPos != _targetPoint.position) {
-			targetPos = _targetPoint.position;
-			_isOnStairs = false;
-			return true;
-		}
-		return false;
-	}
+  bool StairsLogicLastStep () {
+    if (_isOnStairs && targetPos != _targetPoint.position) {
+      targetPos = _targetPoint.position;
+      _isOnStairs = false;
+      return true;
+    }
+    return false;
+  }
 
-	bool StairsDiagonalLogic () {
+  bool StairsDiagonalLogic () {
 
-		if (_targetPoint.stairDiagonalConn != _prevPoint) return false;
+    if (_targetPoint.stairDiagonalConn != _prevPoint) return false;
 
-		targetPos = _targetPoint.position;
-		return true;
-	}
+    targetPos = _targetPoint.position;
+    return true;
+  }
 
-	bool TwistedBlockLogic () {
-		if (
-			_targetPoint.twistedBlockConn != null &&
-			_targetPoint.twistedBlockConn == prevPoint
-		) {
-			targetPos = _targetPoint.position;
-			_isOnTwistedBlock = true;
+  bool TwistedBlockLogic () {
+    if (
+      _targetPoint.twistedBlockConn != null &&
+      _targetPoint.twistedBlockConn == prevPoint
+    ) {
+      targetPos = _targetPoint.position;
+      _isOnTwistedBlock = true;
 
-			return true;
-		}
-		_isOnTwistedBlock = false;
-		return false;
+      return true;
+    }
+    _isOnTwistedBlock = false;
+    return false;
 
-	}
+  }
 
-	bool ArchBlockLogic () {
-		if (
-			_targetPoint.archBlockConn != null &&
-			_targetPoint.archBlockConn == prevPoint
-		) {
-			targetPos = _targetPoint.position;
-			_isOnArchBlock = true;
+  bool ArchBlockLogic () {
+    if (
+      _targetPoint.archBlockConn != null &&
+      _targetPoint.archBlockConn == prevPoint
+    ) {
+      targetPos = _targetPoint.position;
+      _isOnArchBlock = true;
 
-			return true;
-		}
-		_isOnArchBlock = false;
-		return false;
+      return true;
+    }
+    _isOnArchBlock = false;
+    return false;
 
-	}
+  }
 
-	void MoveToNextPoint () {
+  void MoveToNextPoint () {
 
-		if (StairsLogicLastStep ()) return;
+    if (StairsLogicLastStep ()) return;
 
-		_prevPoint = path[0];
-		path.RemoveAt (0);
-		_targetPoint = path[0];
+    _prevPoint = path[0];
+    path.RemoveAt (0);
+    _targetPoint = path[0];
 
-		if (TwistedBlockLogic ()) return;
+    if (TwistedBlockLogic ()) return;
 
-		if (StairsDiagonalLogic ()) return;
+    if (StairsDiagonalLogic ()) return;
 
-		if (StairsLogic ()) return;
+    if (StairsLogic ()) return;
 
-		if (ArchBlockLogic ()) return;
+    if (ArchBlockLogic ()) return;
 
-		_isOnStairs = false;
+    _isOnStairs = false;
 
-		if (
-			_targetPoint.door != null &&
-			_targetPoint.door.conn.point == _prevPoint
-		) {
-			targetPos = _targetPoint.position;
-			transform.position = targetPos;
-			transform.up = _targetPoint.normal;
-			return;
-		}
-		var camera = Camera.main;
+    if (
+      _targetPoint.door != null &&
+      _targetPoint.door.conn.point == _prevPoint
+    ) {
+      targetPos = _targetPoint.position;
+      transform.position = targetPos;
+      transform.up = _targetPoint.normal;
+      return;
+    }
+    var camera = Camera.main;
 
-		// this dir is projected because the two points may be
-		// at different depth from the camera perspective.
-		nextNodeDir = Utility.getDirFromScreenView (_prevPoint.position, _targetPoint.position);
+    // this dir is projected because the two points may be
+    // at different depth from the camera perspective.
+    nextNodeDir = Utility.getDirFromScreenView (_prevPoint.position, _targetPoint.position);
 
-		// TODO: I think this is only working when Player normal is up.
-		// Need to make it dynamic to support player walking on walls/roofs.
+    // TODO: I think this is only working when Player normal is up.
+    // Need to make it dynamic to support player walking on walls/roofs.
 
-		Vector3 overlappingPos;
+    Vector3 overlappingPos;
 
-		if (isOverlapped (_targetPoint, out overlappingPos)) {
+    if (isOverlapped (_targetPoint, out overlappingPos)) {
 
-			var nextDir = Utility.getDirFromScreenView (_targetPoint.position, overlappingPos);
-			transform.position = overlappingPos - nextDir - nextNodeDir;
-			targetPos = overlappingPos - nextDir;
+      var nextDir = Utility.getDirFromScreenView (_targetPoint.position, overlappingPos);
+      transform.position = overlappingPos - nextDir - nextNodeDir;
+      targetPos = overlappingPos - nextDir;
 
-		} else if (isOverlapped (_prevPoint, out overlappingPos)) {
+    } else if (isOverlapped (_prevPoint, out overlappingPos)) {
 
-			var nextDir = Utility.getDirFromScreenView (overlappingPos, _prevPoint.position);
-			transform.position = overlappingPos + nextDir;
-			targetPos = overlappingPos + nextDir + nextNodeDir;
+      var nextDir = Utility.getDirFromScreenView (overlappingPos, _prevPoint.position);
+      transform.position = overlappingPos + nextDir;
+      targetPos = overlappingPos + nextDir + nextNodeDir;
 
-		} else if (_prevPoint.position.y < _targetPoint.position.y) {
+    } else if (_prevPoint.position.y < _targetPoint.position.y) {
 
-			transform.position = _targetPoint.position - nextNodeDir;
-			targetPos = _targetPoint.position;
+      transform.position = _targetPoint.position - nextNodeDir;
+      targetPos = _targetPoint.position;
 
-		} else {
+    } else {
 
-			transform.position = _prevPoint.position;
-			targetPos = _prevPoint.position + nextNodeDir;
+      transform.position = _prevPoint.position;
+      targetPos = _prevPoint.position + nextNodeDir;
 
-		}
+    }
 
-	}
+  }
 
-	bool isOverlapped (PathPoint point, out Vector3 overlappingPos) {
+  bool isOverlapped (PathPoint point, out Vector3 overlappingPos) {
 
-		overlappingPos = Vector3.zero;
+    overlappingPos = Vector3.zero;
 
-		var neighbours = Utility.getNextPoints (
-			point,
-			Utility.CleanNormal (transform.up)
-		);
+    var neighbours = Utility.getNextPoints (
+      point,
+      Utility.CleanNormal (transform.up)
+    );
 
-		var up = point.position + transform.up;
+    var up = point.position + transform.up;
 
-		neighbours.AddRange (
-			Utility.getPointsAtWorldPos (
-				up - Vector3.right * 0.1f,
-				Utility.CleanNormal (-Vector3.right)
-			)
-		);
-		neighbours.AddRange (
-			Utility.getPointsAtWorldPos (
-				up - Vector3.forward * 0.1f,
-				Utility.CleanNormal (-Vector3.forward)
-			)
-		);
+    neighbours.AddRange (
+      Utility.getPointsAtWorldPos (
+        up - Vector3.right * 0.1f,
+        Utility.CleanNormal (-Vector3.right)
+      )
+    );
+    neighbours.AddRange (
+      Utility.getPointsAtWorldPos (
+        up - Vector3.forward * 0.1f,
+        Utility.CleanNormal (-Vector3.forward)
+      )
+    );
 
-		// remove the ones that are bellow player,
-		// as they won't overllap the player0
-		neighbours.RemoveAll (p => {
-			var dir = (p.camPosition - point.camPosition).normalized;
-			return Vector3.Dot (Vector3.up, dir) < 0;
-		});
+    // remove the ones that are bellow player,
+    // as they won't overllap the player0
+    neighbours.RemoveAll (p => {
+      var dir = (p.camPosition - point.camPosition).normalized;
+      return Vector3.Dot (Vector3.up, dir) < 0;
+    });
 
-		if (neighbours.Count == 0) return false;
+    if (neighbours.Count == 0) return false;
 
-		var neighbour = neighbours.OrderBy (p => {
-				return p.realCamPosition.z;
-			})
-			.ToList () [0];
+    var neighbour = neighbours.OrderBy (p => {
+        return p.realCamPosition.z;
+      })
+      .ToList () [0];
 
-		overlappingPos = neighbour.position;
+    overlappingPos = neighbour.position;
 
-		return neighbour.realCamPosition.z < point.realCamPosition.z;
+    return neighbour.realCamPosition.z < point.realCamPosition.z;
 
-	}
+  }
 
 }
