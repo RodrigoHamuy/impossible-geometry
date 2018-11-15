@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 [CanEditMultipleObjects]
 [CustomEditor (typeof (PathPointComponent))]
@@ -180,11 +181,29 @@ public class PointInspector : Editor {
 
       foreach (var comp in componentList) {
 
-        foreach (var prop in comp.GetType ().GetFields ()) {
+        foreach (var attrInfo in comp.GetType ().GetFields ()) {
 
           try {
 
-            var attr = prop.GetValue (comp);
+            var attr = attrInfo.GetValue (comp);
+
+            if ((attr.GetType ().IsSubclassOf (typeof (UnityEventBase)))) {
+
+              var thisEvent = attr as UnityEventBase;
+
+              for (int i = 0; i < thisEvent.GetPersistentEventCount (); i++) {
+
+                var listener = thisEvent.GetPersistentTarget (i);
+
+                if ((listener as GameObject).transform != target) continue;
+
+                matchList.Add (comp.gameObject);
+
+                break;
+
+              }
+
+            }
 
             if (attr.GetType ().IsGenericType && attr.GetType ().GetGenericTypeDefinition () == typeof (List<>)) {
 
