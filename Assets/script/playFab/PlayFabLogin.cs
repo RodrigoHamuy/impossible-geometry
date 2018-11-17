@@ -1,16 +1,27 @@
-﻿using PlayFab;
+﻿using System.Collections.Generic;
+using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
 
 public class PlayFabLogin : MonoBehaviour {
 
   public void Start () {
-    //Note: Setting title Id here can be skipped if you have set the value in Editor Extensions already.
-    if (string.IsNullOrEmpty (PlayFabSettings.TitleId)) {
-      PlayFabSettings.TitleId = "144"; // Please change this value to your own titleId from PlayFab Game Manager
-    }
     var request = new LoginWithCustomIDRequest { CustomId = "GettingStartedGuide", CreateAccount = true };
     PlayFabClientAPI.LoginWithCustomID (request, OnLoginSuccess, OnLoginFailure);
+  }
+
+  void Save () {
+
+    var world = GameObject.Find ("world");
+    PlayFabClientAPI.UpdateUserData (new UpdateUserDataRequest () {
+        Data = new Dictionary<string, string> () { { "Ancestor", "Arthur" }, { "Successor", "Fred" }
+        }
+      },
+      result => Debug.Log ("Successfully updated user data"),
+      error => {
+        Debug.Log ("Got error setting user data Ancestor to Arthur");
+        Debug.Log (error.GenerateErrorReport ());
+      });
   }
 
   void OnLoginSuccess (LoginResult result) {
