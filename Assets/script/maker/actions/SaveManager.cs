@@ -97,10 +97,12 @@ public class SaveManager : MonoBehaviour {
         Keys = new List<string> { "level_0" }
       },
       result => {
+        isLoading = false;
         Debug.Log ("Got user data:");
         LoadLevel (result.Data["level_0"].Value);
       },
       error => {
+        isLoading = false;
         ++consecutiveErrors;
         Debug.Log ("Got error getting user data");
         Debug.Log (error.GenerateErrorReport ());
