@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent (typeof (MakerActionsManager))]
 
@@ -23,6 +24,8 @@ public class SaveManager : MonoBehaviour {
 
   int consecutiveErrors = 0;
 
+  string currLevelName = "level_0";
+
   public void Start () {
 
     actionsManager = GetComponent<MakerActionsManager> ();
@@ -34,8 +37,14 @@ public class SaveManager : MonoBehaviour {
       var request = new LoginWithCustomIDRequest { CustomId = "GettingStartedGuide", CreateAccount = true };
       PlayFabClientAPI.LoginWithCustomID (request, OnLoginSuccess, OnLoginFailure);
 
+    } else {
+      InitLevel ();
     }
 
+  }
+
+  public void OnBackToMenuClick () {
+    SceneManager.LoadScene ("communityLevels");
   }
 
   void Update () {
@@ -46,21 +55,28 @@ public class SaveManager : MonoBehaviour {
 
   }
 
+  void InitLevel () {
+    readyToSave = true;
+    if (CommunityLevelMenu.loadLevel) {
+      CommunityLevelMenu.loadLevel = false;
+      currLevelName = CommunityLevelMenu.levelName;
+      LoadLevel ();
+    } else {
+      currLevelName = CommunityLevelMenu.levelName;
+    }
+  }
+
   public void Save () {
 
     if (isLoading) return;
 
     if (
-      isSaving || !
-      readyToSave ||
+      isSaving || !readyToSave ||
       consecutiveErrors > maxConsecutiveErrorsAllow
     ) {
       saveRequest = true;
       return;
     }
-
-    isSaving = true;
-    saveRequest = false;
 
     var allBlocks = world.GetComponentsInChildren<EditableBlock> ();
 
@@ -68,15 +84,43 @@ public class SaveManager : MonoBehaviour {
 
     var allBlocksDataJson = JsonConvert.SerializeObject (allBlocksData);
 
+    var allBlocksDataJsonSplitted = SplitStringInChunks (allBlocksDataJson, 9999);
+
+    if (allBlocksDataJsonSplitted.Count > 9) {
+
+      print ("your level is to big and can't be saved.");
+      return;
+
+    }
+
+    Debug.Log ("Save Request");
+
+    isSaving = true;
+    saveRequest = false;
+    readyToSave = false;
+
+    var data = new Dictionary<string, string> ();
+
+    var levelKeys = new List<string> ();
+
+    for (int i = 0; i < allBlocksDataJsonSplitted.Count; i++) {
+
+      var key = currLevelName + "_" + i;
+
+      levelKeys.Add (key);
+
+      data[key] = allBlocksDataJsonSplitted[i];
+
+    }
+
+    data[currLevelName] = JsonConvert.SerializeObject (levelKeys);
+
     PlayFabClientAPI.UpdateUserData (
-      new UpdateUserDataRequest () {
-        Data = new Dictionary<string, string> () { { "level_0", allBlocksDataJson }
-        }
-      },
+      new UpdateUserDataRequest () { Data = data },
       result => {
-        Debug.Log ("Successfully updated user data");
+        Debug.Log ("Save Done");
         isSaving = false;
-        Invoke ("ResetReadyToSave", 5.0f);
+        Invoke ("ResetReadyToSave", 16.0f);
         consecutiveErrors = 0;
       },
       error => {
@@ -86,27 +130,75 @@ public class SaveManager : MonoBehaviour {
       });
   }
 
-  public void Load () {
+  List<string> SplitStringInChunks (string value, int chunkSize) {
+
+    var i = 0;
+
+    var values = new List<string> ();
+
+    while (i < value.Length) {
+
+      var limit = i + chunkSize > value.Length ? value.Length - i : chunkSize;
+
+      values.Add (value.Substring (i, limit));
+      i += chunkSize;
+
+    }
+
+    return values;
+
+  }
+
+  void LoadLevel () {
 
     if (isLoading) return;
 
     isLoading = true;
 
+    GetLevelFragmentNames ();
+  }
+
+  void GetLevelFragmentNames () {
+
     PlayFabClientAPI.GetUserData (
       new GetUserDataRequest () {
-        Keys = new List<string> { "level_0" }
+        Keys = new List<string> { currLevelName }
       },
-      result => {
-        isLoading = false;
-        Debug.Log ("Got user data:");
-        LoadLevel (result.Data["level_0"].Value);
+      GetLevelFragments,
+      OnRequestError
+    );
+
+  }
+
+  void GetLevelFragments (GetUserDataResult fragResult) {
+
+    Debug.Log ("GetLevelFragmentNames Response.");
+    var levelPartNamesJson = fragResult.Data[currLevelName].Value;
+    var levelPartNames = JsonConvert.DeserializeObject<List<string>> (levelPartNamesJson);
+
+    PlayFabClientAPI.GetUserData (
+      new GetUserDataRequest () {
+        Keys = levelPartNames
       },
-      error => {
-        isLoading = false;
-        ++consecutiveErrors;
-        Debug.Log ("Got error getting user data");
-        Debug.Log (error.GenerateErrorReport ());
-      });
+      result => { GetAllLevelFraments (result, levelPartNames); },
+      OnRequestError
+    );
+
+  }
+
+  void GetAllLevelFraments (GetUserDataResult result, List<string> levelPartNames) {
+
+    Debug.Log ("GetAllLevelFraments Response.");
+
+    var levelJson = "";
+
+    foreach (var value in levelPartNames) {
+      levelJson += result.Data[value].Value;
+    }
+
+    isLoading = false;
+
+    LoadLevel (levelJson);
 
   }
 
@@ -136,14 +228,21 @@ public class SaveManager : MonoBehaviour {
   }
 
   void OnLoginSuccess (LoginResult result) {
-    readyToSave = true;
     Debug.Log ("Congratulations, you made your first successful API call!");
+    InitLevel ();
   }
 
   void OnLoginFailure (PlayFabError error) {
     Debug.LogWarning ("Something went wrong with your first API call.  :(");
     Debug.LogError ("Here's some debug information:");
     Debug.LogError (error.GenerateErrorReport ());
+  }
+
+  void OnRequestError (PlayFabError error) {
+    isLoading = false;
+    ++consecutiveErrors;
+    Debug.Log ("Got error getting user data");
+    Debug.Log (error.GenerateErrorReport ());
   }
 
 }
