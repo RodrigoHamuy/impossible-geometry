@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent (typeof (SaveManager))]
+
 public class MakerActionsManager : MonoBehaviour {
 
   public Transform world;
@@ -13,9 +15,15 @@ public class MakerActionsManager : MonoBehaviour {
 
   public List<Transform> blocksInScene = new List<Transform> ();
 
+  public MakerBlockType[] makerBlockTypes;
+
   int idCounter = 0;
 
+  SaveManager saveManager;
+
   void Start () {
+
+    saveManager = GetComponent<SaveManager> ();
 
     OnBlockAmountChange.AddListener (amount => {
       if (amount == 0) OnHistoryClear.Invoke ();
@@ -46,9 +54,8 @@ public class MakerActionsManager : MonoBehaviour {
 
   public void RemoveBlock (Transform block) {
 
-    var blockData = block.GetComponent<EditableBlock> ();
-
-    var blockType = block.GetComponent<EditableBlock> ().blockType;
+    var blockData = block.GetComponent<EditableBlock> ().data;
+    var blockType = GetMakerBlockType (blockData.blockType);
 
     var action = new MakerAction (
       MakerActionType.Remove,
@@ -73,9 +80,11 @@ public class MakerActionsManager : MonoBehaviour {
     blocksInScene.Remove (action.target);
 
     var blocks = GameObject.FindObjectsOfType<EditableBlock> ();
-    var block = Array.Find (blocks, b => b.id == action.id);
+    var block = Array.Find (blocks, b => b.data.id == action.id);
 
     GameObject.Destroy (block.gameObject);
+
+    saveManager.Save ();
 
   }
 
@@ -92,8 +101,11 @@ public class MakerActionsManager : MonoBehaviour {
       action.parent
     );
 
-    var editData = block.gameObject.AddComponent<EditableBlock> ();
-    editData.blockType = action.blockType;
+    var editData = block.gameObject.AddComponent<EditableBlock> ().data;
+    editData.blockType = action.blockType.prefabName;
+    editData.position = action.position;
+    editData.rotation = action.rotation;
+    editData.scale = action.scale;
 
     action.target = block;
 
@@ -105,6 +117,8 @@ public class MakerActionsManager : MonoBehaviour {
     }
 
     editData.id = action.id;
+
+    saveManager.Save ();
 
     return block;
 
@@ -130,7 +144,9 @@ public class MakerActionsManager : MonoBehaviour {
 
   public void EditBlock (Transform target) {
 
-    var blockType = target.GetComponent<EditableBlock> ().blockType;
+    var blockData = target.GetComponent<EditableBlock> ().data;
+
+    var blockType = GetMakerBlockType (blockData.blockType);
 
     var action = new MakerAction (
       MakerActionType.Edit,
@@ -148,6 +164,12 @@ public class MakerActionsManager : MonoBehaviour {
     target.transform.rotation = action.rotation;
     target.transform.localScale = action.scale;
 
+    blockData.position = action.position;
+    blockData.rotation = action.rotation;
+    blockData.scale = action.scale;
+
+    saveManager.Save ();
+
   }
 
   void RestoreBlockEdition (MakerAction action) {
@@ -157,6 +179,12 @@ public class MakerActionsManager : MonoBehaviour {
     action.target.transform.position = lastPosition.position;
     action.target.transform.rotation = lastPosition.rotation;
     action.target.transform.localScale = lastPosition.scale;
+
+  }
+
+  public MakerBlockType GetMakerBlockType (string name) {
+
+    return Array.Find (makerBlockTypes, m => m.prefabName == name);
 
   }
 

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Name: 1_HalfBlockTypeConfig
   m_EditorClassIdentifier: 
   prefab: {fileID: 4068898633464386, guid: 60508d9bc59f86e47b62ddc315970981, type: 2}
+  prefabName: HalfCubeMaker
   addOnHold: 0
   addOnTop: 0
   isRotationHandle: 0

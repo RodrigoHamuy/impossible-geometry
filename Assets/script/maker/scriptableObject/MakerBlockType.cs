@@ -4,6 +4,7 @@ using UnityEngine;
 public class MakerBlockType : ScriptableObject {
 
   public Transform prefab;
+  public string prefabName;
   public bool addOnHold;
   public bool addOnTop;
   public bool isRotationHandle;

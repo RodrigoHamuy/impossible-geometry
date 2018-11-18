@@ -9,11 +9,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2923b7a031ad147488a74ad09da77774, type: 3}
-  m_Name: 4_RotateHandleTypeConfig
+  m_Name: 5_EmptyRotateController
   m_EditorClassIdentifier: 
-  prefab: {fileID: 4737771212458568, guid: 411b10c2623d1fd41aa62f7df9a58b32, type: 2}
+  prefab: {fileID: 4820962874804208, guid: 4fa949cfe03bd87408ef2d34ee5fbcb0, type: 2}
   prefabName: RotateHandleMaker
   addOnHold: 0
-  addOnTop: 1
-  isRotationHandle: 1
+  addOnTop: 0
+  isRotationHandle: 0
   isUnique: 0

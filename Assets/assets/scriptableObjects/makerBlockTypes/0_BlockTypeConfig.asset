@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Name: 0_BlockTypeConfig
   m_EditorClassIdentifier: 
   prefab: {fileID: 4323812353110112, guid: d5689e64bb2ba9646a7b090d6f13eb05, type: 2}
+  prefabName: CubeMaker
   addOnHold: 1
   addOnTop: 0
   isRotationHandle: 0

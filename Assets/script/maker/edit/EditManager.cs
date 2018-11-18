@@ -28,7 +28,7 @@ public class EditManager : MonoBehaviour {
   public Transform target;
 
   Transform targetParent;
-  MakerActionsManager manager;
+  MakerActionsManager actionsManager;
   MakerStateManager stateManager;
   TouchComponent touchComponent;
 
@@ -43,7 +43,7 @@ public class EditManager : MonoBehaviour {
 
     var config = Array.Find (replaceBlockTypes, r => r.prefab == prefab);
 
-    var block = manager.ReplaceBlock (config, target.transform);
+    var block = actionsManager.ReplaceBlock (config, target.transform);
     ClearTarget ();
     Select (block);
 
@@ -51,7 +51,7 @@ public class EditManager : MonoBehaviour {
 
   void Start () {
 
-    manager = GameObject.FindObjectOfType<MakerActionsManager> ();
+    actionsManager = GameObject.FindObjectOfType<MakerActionsManager> ();
     stateManager = GameObject.FindObjectOfType<MakerStateManager> ();
     canvas = GameObject.FindObjectOfType<Canvas> ().gameObject;
 
@@ -76,7 +76,9 @@ public class EditManager : MonoBehaviour {
 
     var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> (true);
 
-    var selectedBlockType = target.GetComponent<EditableBlock> ().blockType;
+    var selectedBlockData = target.GetComponent<EditableBlock> ().data;
+
+    var selectedBlockPrefab = actionsManager.GetMakerBlockType (selectedBlockData.blockType);
 
     foreach (var item in menuItems) {
       item.gameObject.SetActive (false);
@@ -84,7 +86,7 @@ public class EditManager : MonoBehaviour {
 
     foreach (var item in menuItems) {
 
-      item.GetComponent<Toggle> ().isOn = item.element == selectedBlockType.prefab;
+      item.GetComponent<Toggle> ().isOn = item.element == selectedBlockPrefab.prefab;
 
       item.gameObject.SetActive (
         Array.Exists (replaceBlockTypes, r =>
@@ -157,7 +159,7 @@ public class EditManager : MonoBehaviour {
 
   public void RemoveBlock () {
 
-    if (target) manager.RemoveBlock (target.transform);
+    if (target) actionsManager.RemoveBlock (target.transform);
     ClearTarget ();
 
   }
@@ -197,7 +199,7 @@ public class EditManager : MonoBehaviour {
 
     updateDragPosition (touchPos);
 
-    manager.EditBlock (target.transform);
+    actionsManager.EditBlock (target.transform);
 
     canvas.SetActive (true);
 

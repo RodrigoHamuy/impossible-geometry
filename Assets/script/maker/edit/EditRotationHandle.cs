@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Generic;
 using UnityEngine;
@@ -9,9 +10,13 @@ public class EditRotationHandle : MonoBehaviour {
 
   public Transform rotateCenterView;
 
+  public MakerBlockType emptyRotateController;
+
   Transform world;
 
   EditManager editManager;
+
+  MakerActionsManager actionsManager;
 
   [HideInInspector]
   public bool isActive = false;
@@ -31,6 +36,8 @@ public class EditRotationHandle : MonoBehaviour {
     world = GameObject.FindWithTag ("world").transform;
 
     editManager = GetComponent<EditManager> ();
+    actionsManager = GameObject.FindObjectOfType<MakerActionsManager> ();
+
     var stateManager = GameObject.FindObjectOfType<MakerStateManager> ();
     var touchComponent = GetComponent<TouchComponent> ();
 
@@ -81,11 +88,17 @@ public class EditRotationHandle : MonoBehaviour {
 
     isActive = true;
 
-    var blockData = editManager.target.GetComponent<EditableBlock> ();
+    var blockData = editManager.target.GetComponent<EditableBlock> ().data;
 
-    if (blockData.rotateController) {
+    // var blockType = actionsManager.GetMakerBlockType (blockData.blockType);
 
-      rotateContainer = blockData.rotateController;
+    if (blockData.rotateControllerId != -1) {
+
+      var allBlocks = world.GetComponentsInChildren<EditableBlock> ();
+
+      var rotateBlock = Array.Find (allBlocks, a => a.data.id == blockData.rotateControllerId);
+
+      rotateContainer = rotateBlock.transform;
 
       foreach (Transform child in rotateContainer.transform) {
 
@@ -99,19 +112,27 @@ public class EditRotationHandle : MonoBehaviour {
 
     } else {
 
-      rotateContainer = new GameObject ().transform;
+      rotateContainer = actionsManager.AddBlock (
+        new MakerAction (
+          MakerActionType.Add,
+          null,
+          emptyRotateController,
+          editManager.target.position,
+          editManager.target.localScale,
+          editManager.target.rotation,
+          world
+        ),
+        false
+      );
 
-      rotateContainer.gameObject
-        .AddComponent<RotateController> ()
+      rotateContainer
+        .GetComponent<RotateController> ()
         .AddRotateTouchEmitter (
           editManager.target.GetComponentInChildren<RotateTouchEmitter> ()
         );
 
-      rotateContainer.position = editManager.target.position;
-      rotateContainer.parent = world;
-      rotateContainer.rotation = editManager.target.rotation;
-
-      blockData.rotateController = rotateContainer;
+      blockData.rotateControllerId = rotateContainer
+        .GetComponent<EditableBlock> ().data.id;
 
     }
 

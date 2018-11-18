@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Name: 2_PlayerTypeConfig
   m_EditorClassIdentifier: 
   prefab: {fileID: 4938898168015170, guid: c268d44fdb07e4d4686b0be59470b958, type: 2}
+  prefabName: PlayerMaker
   addOnHold: 0
   addOnTop: 1
   isRotationHandle: 0
