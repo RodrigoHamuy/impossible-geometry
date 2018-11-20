@@ -206,6 +206,8 @@ public class SaveManager : MonoBehaviour {
 
     var levelData = JsonConvert.DeserializeObject<EditableBlockData[]> (levelDataJson);
 
+    var blocks = new List<EditableBlock> ();
+
     foreach (var blockData in levelData) {
 
       var blockType = actionsManager.GetMakerBlockType (blockData.blockType);
@@ -217,7 +219,15 @@ public class SaveManager : MonoBehaviour {
         world
       );
 
-      block.gameObject.AddComponent<EditableBlock> ().data = blockData;
+      var blockEditData = block.gameObject.AddComponent<EditableBlock> ();
+      blockEditData.data = blockData;
+      blocks.Add (blockEditData);
+
+    }
+
+    foreach (var block in blocks) {
+
+      block.SyncTransform (blocks);
 
     }
 

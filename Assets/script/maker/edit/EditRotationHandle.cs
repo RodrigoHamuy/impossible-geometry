@@ -213,6 +213,8 @@ public class EditRotationHandle : MonoBehaviour {
 
     block.parent = rotateContainer;
 
+    actionsManager.EditBlock (block);
+
     selectStyleManager.Add (style);
 
     affectedBlocks.Add (block);

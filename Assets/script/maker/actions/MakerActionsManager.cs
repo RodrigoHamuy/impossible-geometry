@@ -103,11 +103,10 @@ public class MakerActionsManager : MonoBehaviour {
       action.parent
     );
 
-    var editData = block.gameObject.AddComponent<EditableBlock> ().data;
-    editData.blockType = action.blockType.prefabName;
-    editData.position = block.localPosition;
-    editData.rotation = block.localRotation;
-    editData.scale = action.scale;
+    var blockData = block.gameObject.AddComponent<EditableBlock> ();
+    blockData.data.blockType = action.blockType.prefabName;
+
+    blockData.SyncData ();
 
     action.target = block;
 
@@ -118,7 +117,7 @@ public class MakerActionsManager : MonoBehaviour {
       actions.Add (action);
     }
 
-    editData.id = action.id;
+    blockData.data.id = action.id;
 
     saveManager.Save ();
 
@@ -146,9 +145,9 @@ public class MakerActionsManager : MonoBehaviour {
 
   public void EditBlock (Transform target) {
 
-    var blockData = target.GetComponent<EditableBlock> ().data;
+    var blockData = target.GetComponent<EditableBlock> ();
 
-    var blockType = GetMakerBlockType (blockData.blockType);
+    var blockType = GetMakerBlockType (blockData.data.blockType);
 
     var action = new MakerAction (
       MakerActionType.Edit,
@@ -166,9 +165,7 @@ public class MakerActionsManager : MonoBehaviour {
     target.transform.rotation = action.rotation;
     target.transform.localScale = action.scale;
 
-    blockData.position = action.position;
-    blockData.rotation = action.rotation;
-    blockData.scale = action.scale;
+    blockData.SyncData ();
 
     saveManager.Save ();
 
