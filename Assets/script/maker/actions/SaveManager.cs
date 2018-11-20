@@ -82,7 +82,7 @@ public class SaveManager : MonoBehaviour {
 
     var allBlocksData = Array.ConvertAll (allBlocks, a => a.data);
 
-    var allBlocksDataJson = JsonConvert.SerializeObject (allBlocksData);
+    var allBlocksDataJson = Zipper.Zip (JsonConvert.SerializeObject (allBlocksData));
 
     var allBlocksDataJsonSplitted = SplitStringInChunks (allBlocksDataJson, 9999);
 
@@ -198,7 +198,7 @@ public class SaveManager : MonoBehaviour {
 
     isLoading = false;
 
-    LoadLevel (levelJson);
+    LoadLevel (Zipper.Unzip (levelJson));
 
   }
 

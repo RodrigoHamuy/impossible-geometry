@@ -73,6 +73,8 @@ public class MakerActionsManager : MonoBehaviour {
     blocksInScene.Remove (block);
     GameObject.Destroy (block.gameObject);
 
+    saveManager.Save ();
+
   }
 
   void RemoveBlock (MakerAction action) {
@@ -103,8 +105,8 @@ public class MakerActionsManager : MonoBehaviour {
 
     var editData = block.gameObject.AddComponent<EditableBlock> ().data;
     editData.blockType = action.blockType.prefabName;
-    editData.position = block.position - world.position;
-    editData.rotation = GetRotationInWorldSpace (block);
+    editData.position = block.localPosition;
+    editData.rotation = block.localRotation;
     editData.scale = action.scale;
 
     action.target = block;
@@ -121,21 +123,6 @@ public class MakerActionsManager : MonoBehaviour {
     saveManager.Save ();
 
     return block;
-
-  }
-
-  Quaternion GetRotationInWorldSpace (Transform block) {
-
-    var rotation = block.localRotation;
-
-    while (block.parent && block.parent != world) {
-
-      rotation *= block.parent.localRotation;
-      block = block.parent;
-
-    }
-
-    return rotation;
 
   }
 
