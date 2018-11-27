@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GenerateText : MonoBehaviour {
 
@@ -13,5 +14,13 @@ public class GenerateText : MonoBehaviour {
   public Transform p;
   [TextArea]
   public string jsonString;
+
+  public string nextScene;
+
+  public void LoadScene () {
+
+    SceneManager.LoadScene (nextScene);
+
+  }
 
 }

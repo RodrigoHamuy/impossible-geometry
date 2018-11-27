@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/scenes/menu/participantInfo.unity
+    guid: 45e979217ea87a045b18e7cf780c90ce
+  - enabled: 1
+    path: Assets/scenes/menu/consentForm.unity
+    guid: 714327260adb4ed4e981d7e1504e243a
+  - enabled: 1
     path: Assets/scenes/levelMaker/levelMaker.unity
     guid: 14108683c6052bc45887376442b5d875
   - enabled: 1
