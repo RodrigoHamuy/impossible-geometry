@@ -18,6 +18,8 @@ public class PointInspector : Editor {
   PathPointComponent lastPoint;
   GUIStyle style;
 
+  static string scenesFolder = "Assets/_strangeTriangle/scenes";
+
   List<Vector3> lineSegments = new List<Vector3> ();
 
   void Awake () {
@@ -156,12 +158,12 @@ public class PointInspector : Editor {
 
   [MenuItem ("MyMenu/Add level scenes to Build")]
   static void AddAllLevelScenes () {
-    AddScenes ("Assets/scenes/levels/");
+    AddScenes (scenesFolder + "/levels/");
   }
 
   [MenuItem ("MyMenu/Add test scenes to Build")]
   static void AddAllTestScenes () {
-    AddScenes ("Assets/scenes/tests/");
+    AddScenes (scenesFolder + "/tests/");
   }
 
   [MenuItem ("MyMenu/Find all references in scene")]
