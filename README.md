@@ -28,7 +28,7 @@
 ## TODO
 
 29/11/2018
-- Multiselect objects, drag them, undo action. Undo doesn't work.
+- Multiselect objects, drag them, undo action. Undo doesn't work. Solution: Refactor Action to contain current and previous EditableBlockData.
 
 (OLD)
 

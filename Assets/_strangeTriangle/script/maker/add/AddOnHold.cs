@@ -186,18 +186,7 @@ public class AddOnHold : MonoBehaviour {
 
     }
 
-    var block = actionsManager.AddBlock (
-      new MakerAction (
-        MakerActionType.Add,
-        null,
-        currentConfig,
-        hitPos,
-        Vector3.one,
-        Quaternion.LookRotation (Vector3.Cross (Vector3.forward, planeNormal), planeNormal),
-        world
-      ),
-      false
-    );
+    var block = AddBlock (hitPos);
 
     marker.transform.position = hitPos;
 
@@ -317,22 +306,37 @@ public class AddOnHold : MonoBehaviour {
 
       }
 
-      var midBlock = actionsManager.AddBlock (
-        new MakerAction (
-          MakerActionType.Add,
-          null,
-          currentConfig,
-          middlePos,
-          Vector3.one,
-          Quaternion.LookRotation (Vector3.Cross (Vector3.forward, planeNormal), planeNormal),
-          world
-        ),
-        false
-      );
+      var midBlock = AddBlock (middlePos);
 
       currentRow.Add (midBlock);
 
     }
+  }
+
+  Transform AddBlock (Vector3 pos) {
+
+    var rotation = Quaternion.identity;
+
+    if (planeNormal == Vector3.forward) {
+      rotation = Quaternion.LookRotation (Vector3.up, -Vector3.forward);
+    } else if (planeNormal == Vector3.right) {
+      rotation = Quaternion.LookRotation (Vector3.up, -Vector3.right);
+    }
+    var block = actionsManager.AddBlock (
+      new MakerAction (
+        MakerActionType.Add,
+        null,
+        currentConfig,
+        pos,
+        Vector3.one,
+        rotation,
+        world
+      ),
+      false
+    );
+
+    return block;
+
   }
 
   Vector3 GetHitPosition (Vector2 screenPos, bool round = true) {
