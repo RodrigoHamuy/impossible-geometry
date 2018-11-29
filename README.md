@@ -27,6 +27,11 @@
 
 ## TODO
 
+29/11/2018
+- Multiselect objects, drag them, undo action. Undo doesn't work.
+
+(OLD)
+
 - When hit play, if player is not in the scene, ask to add player.
 - Avoid adding block on top of player.
 - Move Player.

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: 5_EmptyRotateController
   m_EditorClassIdentifier: 
   prefab: {fileID: 4820962874804208, guid: 4fa949cfe03bd87408ef2d34ee5fbcb0, type: 2}
-  prefabName: RotateHandleMaker
+  prefabName: EmptyRotateControllerMaker
   addOnHold: 0
   addOnTop: 0
   isRotationHandle: 0

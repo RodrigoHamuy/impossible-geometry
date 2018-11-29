@@ -88,9 +88,9 @@ public class EditRotationHandle : MonoBehaviour {
 
     isActive = true;
 
-    var blockData = editManager.target.GetComponent<EditableBlock> ().data;
+    var target = editManager.selected[0].GetTarget ();
 
-    // var blockType = actionsManager.GetMakerBlockType (blockData.blockType);
+    var blockData = target.GetComponent<EditableBlock> ().data;
 
     if (blockData.rotateControllerId != -1) {
 
@@ -117,9 +117,9 @@ public class EditRotationHandle : MonoBehaviour {
           MakerActionType.Add,
           null,
           emptyRotateController,
-          editManager.target.position,
-          editManager.target.localScale,
-          editManager.target.rotation,
+          target.position,
+          target.localScale,
+          target.rotation,
           world
         ),
         false
@@ -128,7 +128,7 @@ public class EditRotationHandle : MonoBehaviour {
       rotateContainer
         .GetComponent<RotateController> ()
         .AddRotateTouchEmitter (
-          editManager.target.GetComponentInChildren<RotateTouchEmitter> ()
+          target.GetComponentInChildren<RotateTouchEmitter> ()
         );
 
       blockData.rotateControllerId = rotateContainer

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Vector3Emmiter : MonoBehaviour {
+public class Vector3Emitter : MonoBehaviour {
 
   public Vector3 value;
 

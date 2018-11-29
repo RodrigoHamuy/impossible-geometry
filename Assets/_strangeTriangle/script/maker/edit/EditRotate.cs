@@ -34,8 +34,9 @@ public class EditRotate : MonoBehaviour {
 
   public void ShowRotationUi () {
 
-    rotateController.transform.position = editManager.target.position;
-    editManager.target.parent = rotateController.transform;
+    MoveRotateToCenter ();
+    AttachBlocksToRotate (true);
+
     rotateController.gameObject.SetActive (true);
 
   }
@@ -44,17 +45,38 @@ public class EditRotate : MonoBehaviour {
 
     if (!gameObject.activeInHierarchy) return;
 
-    if (editManager.target) editManager.target.parent = null;
+    AttachBlocksToRotate (false);
 
     rotateController.transform.up = vector;
 
-    if (editManager.target) editManager.target.parent = rotateController.transform;
+    AttachBlocksToRotate (true);
 
   }
 
   public void ClearTarget () {
 
     if (rotateController) rotateController.gameObject.SetActive (false);
+
+  }
+
+  void MoveRotateToCenter () {
+
+    var center = Vector3.zero;
+
+    foreach (var item in editManager.selected) {
+      var target = item.GetTarget ();
+      center += target.position;
+    }
+
+    rotateController.transform.position = Utility.Round (center / editManager.selected.Count, 1.0f);
+
+  }
+
+  void AttachBlocksToRotate (bool attach) {
+
+    foreach (var item in editManager.selected) {
+      item.GetTarget ().parent = attach ? rotateController.transform : item.GetParent ();
+    }
 
   }
 
@@ -67,7 +89,10 @@ public class EditRotate : MonoBehaviour {
 
   void OnRotationEnd () {
 
-    actionsManager.EditBlock (editManager.target);
+    foreach (var item in editManager.selected) {
+      actionsManager.EditBlock (item.GetTarget ());
+    }
+
     isRotating = false;
 
     ShowRotationUi ();

@@ -4,6 +4,8 @@ using UnityEngine;
 public class SelectStyleMnger {
 
   Transform target;
+  Transform parent;
+  Vector3 startPos;
 
   Color[] targetOriginalColors;
   Renderer[] targetRenderers;
@@ -14,8 +16,12 @@ public class SelectStyleMnger {
 
     this.target = target;
 
+    parent = target.parent;
+
     targetRenderers = target.GetComponentsInChildren<Renderer> ();
     targetOriginalColors = new Color[targetRenderers.Length];
+
+    startPos = target.position;
 
     for (int i = 0; i < targetRenderers.Length; i++) {
 
@@ -43,6 +49,30 @@ public class SelectStyleMnger {
 
     selectColor = color;
 
+  }
+
+  public Transform GetTarget () {
+    return target;
+  }
+
+  public Transform GetParent () {
+    return parent;
+  }
+
+  public void SetParent (Transform parent) {
+    this.parent = parent;
+  }
+
+  public void SyncParent () {
+    target.parent = parent;
+  }
+
+  public Vector3 GetStartPos () {
+    return startPos;
+  }
+
+  public void SyncStartPos () {
+    startPos = target.position;
   }
 
 }

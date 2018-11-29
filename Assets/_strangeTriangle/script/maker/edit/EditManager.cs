@@ -18,16 +18,15 @@ public class EditManager : MonoBehaviour {
 
   public MakerBlockType[] allBlockTypes;
 
+  [HideInInspector]
+  public List<SelectStyleMnger> selected = new List<SelectStyleMnger> ();
+
   GameObject canvas;
 
   bool isDragging = false;
 
   Plane dragPlane;
 
-  [HideInInspector]
-  public Transform target;
-
-  Transform targetParent;
   MakerActionsManager actionsManager;
   MakerStateManager stateManager;
   TouchComponent touchComponent;
@@ -35,7 +34,7 @@ public class EditManager : MonoBehaviour {
   EditRotate editRotate;
   EditRotationHandle editRotationHandle;
 
-  SelectStyleMnger selectStyleManager = new SelectStyleMnger ();
+  bool selectMultiple = false;
 
   void Replace (Transform prefab) {
 
@@ -43,9 +42,19 @@ public class EditManager : MonoBehaviour {
 
     var config = Array.Find (replaceBlockTypes, r => r.prefab == prefab);
 
-    var block = actionsManager.ReplaceBlock (config, target.transform);
-    ClearTarget ();
-    Select (block);
+    var newBlocks = new List<Transform> ();
+
+    foreach (var item in selected) {
+      newBlocks.Add (
+        actionsManager.ReplaceBlock (config, item.GetTarget ())
+      );
+    }
+
+    ClearTargets ();
+
+    foreach (var item in newBlocks) {
+      Select (item);
+    }
 
   }
 
@@ -66,13 +75,21 @@ public class EditManager : MonoBehaviour {
     stateManager.OnPrefabMenuShow.AddListener (OnPrefabMenuShow);
     stateManager.OnPrefabSelect.AddListener (Replace);
 
-    ClearTarget ();
+    ClearTargets ();
 
+  }
+
+  public void OnSelectMultipleChange (bool value) {
+    selectMultiple = value;
   }
 
   void OnPrefabMenuShow (Transform menuContainer) {
 
     if (!gameObject.activeInHierarchy) return;
+
+    if (selectMultiple) return;
+
+    var target = selected[0].GetTarget ();
 
     var menuItems = menuContainer.gameObject.GetComponentsInChildren<TransformEventEmitter> (true);
 
@@ -111,7 +128,7 @@ public class EditManager : MonoBehaviour {
     if (editRotate.isRotating) return;
     if (editRotationHandle.isActive) return;
 
-    ClearTarget ();
+    if (!selectMultiple) ClearTargets ();
 
     var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
@@ -121,35 +138,37 @@ public class EditManager : MonoBehaviour {
 
   void Select (Transform block) {
 
-    target = block;
-    targetParent = target.parent;
+    var select = new SelectStyleMnger ();
+    selected.Add (select);
 
-    selectStyleManager.Select (target);
+    select.Select (block);
 
     OnTargetChange.Invoke (true);
 
   }
 
-  void OnDisable () {
+  void OnEnable () {
 
-    ClearTarget ();
+    selectMultiple = false;
 
   }
 
-  void ClearTarget () {
+  void OnDisable () {
+
+    ClearTargets ();
+
+  }
+
+  void ClearTargets () {
 
     editRotationHandle.ClearTarget ();
 
-    if (target) {
-
-      target.transform.parent = targetParent;
-
-      selectStyleManager.Deselect ();
-
-      target = null;
-
+    foreach (var item in selected) {
+      item.SyncParent ();
+      item.Deselect ();
     }
 
+    selected.Clear ();
     editRotate.ClearTarget ();
     isDragging = false;
 
@@ -159,10 +178,14 @@ public class EditManager : MonoBehaviour {
 
   public void RemoveBlock () {
 
-    if (target) actionsManager.RemoveBlock (target.transform);
-    ClearTarget ();
+    foreach (var item in selected) {
+      actionsManager.RemoveBlock (item.GetTarget ());
+    }
+    ClearTargets ();
 
   }
+
+  Vector3 startDragPos;
 
   void StartDrag (Vector2 touchPos) {
 
@@ -171,19 +194,23 @@ public class EditManager : MonoBehaviour {
 
     if (editRotate.rotateController.gameObject.activeSelf) return;
 
-    if (!target) return;
+    if (selected.Count == 0) return;
 
     var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
     if (!block) return;
 
-    if (block.transform != target.transform) return;
+    var blocks = selected.ConvertAll (s => s.GetTarget ());
+
+    if (!blocks.Contains (block)) return;
 
     canvas.SetActive (false);
 
     isDragging = true;
 
     dragPlane = new Plane (Vector3.up, block.position);
+
+    startDragPos = block.position;
 
   }
 
@@ -199,7 +226,10 @@ public class EditManager : MonoBehaviour {
 
     updateDragPosition (touchPos);
 
-    actionsManager.EditBlock (target.transform);
+    foreach (var item in selected) {
+      actionsManager.EditBlock (item.GetTarget ());
+      item.SyncStartPos ();
+    }
 
     canvas.SetActive (true);
 
@@ -215,7 +245,13 @@ public class EditManager : MonoBehaviour {
 
     if (!dragPlane.Raycast (ray, out dist)) return;
 
-    target.position = ray.origin + ray.direction * dist;
+    var diff = ray.origin + ray.direction * dist - startDragPos;
+
+    foreach (var item in selected) {
+
+      item.GetTarget ().position = item.GetStartPos () + diff;
+
+    }
 
   }
 
