@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -213,15 +213,14 @@ Prefab:
     - target: {fileID: 114898796769076802, guid: d4c3c121a7a8b9348aa81d16f632739b,
         type: 2}
       propertyPath: m_text
-      value: "  - be interviewed by the researcher \n  - complete questionnaires asking
-        me about the method used and my impressions about the experiment \n - use
-        a computer or mobile device to play a game and complete the game proposed
-        tasks"
+      value: "- be interviewed by the researcher \n- complete questionnaires asking
+        me about the method used and my impressions about the experiment \n- use a
+        computer or mobile device to play a game and complete the game proposed tasks"
       objectReference: {fileID: 0}
     - target: {fileID: 114898796769076802, guid: d4c3c121a7a8b9348aa81d16f632739b,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114898796769076802, guid: d4c3c121a7a8b9348aa81d16f632739b,
         type: 2}
@@ -241,26 +240,31 @@ Prefab:
     - target: {fileID: 114898796769076802, guid: d4c3c121a7a8b9348aa81d16f632739b,
         type: 2}
       propertyPath: m_textInfo.characterCount
-      value: 225
+      value: 220
       objectReference: {fileID: 0}
     - target: {fileID: 114898796769076802, guid: d4c3c121a7a8b9348aa81d16f632739b,
         type: 2}
       propertyPath: m_textInfo.spaceCount
-      value: 44
-      objectReference: {fileID: 0}
-    - target: {fileID: 114898796769076802, guid: d4c3c121a7a8b9348aa81d16f632739b,
-        type: 2}
-      propertyPath: m_textInfo.wordCount
       value: 39
       objectReference: {fileID: 0}
     - target: {fileID: 114898796769076802, guid: d4c3c121a7a8b9348aa81d16f632739b,
         type: 2}
+      propertyPath: m_textInfo.wordCount
+      value: 38
+      objectReference: {fileID: 0}
+    - target: {fileID: 114898796769076802, guid: d4c3c121a7a8b9348aa81d16f632739b,
+        type: 2}
       propertyPath: m_textInfo.lineCount
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 114898796769076802, guid: d4c3c121a7a8b9348aa81d16f632739b,
         type: 2}
       propertyPath: m_margin.w
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114898796769076802, guid: d4c3c121a7a8b9348aa81d16f632739b,
+        type: 2}
+      propertyPath: m_margin.x
       value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -864,7 +868,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 24384114}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.32690647
+  m_Size: 0.31395635
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
