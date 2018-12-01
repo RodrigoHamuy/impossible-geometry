@@ -2179,6 +2179,7 @@ GameObject:
   - component: {fileID: 309173902}
   - component: {fileID: 309173904}
   - component: {fileID: 309173903}
+  - component: {fileID: 309173905}
   m_Layer: 0
   m_Name: SelectManager
   m_TagString: Untagged
@@ -2328,6 +2329,18 @@ MonoBehaviour:
   rotateCenter: {fileID: 892925010}
   isRotating: 0
   isActive: 0
+--- !u!114 &309173905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 309173898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d123a53e2dc7a648b860b1ab32acf88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  joinBlocksBtn: {fileID: 1693791700}
 --- !u!1001 &313492161
 Prefab:
   m_ObjectHideFlags: 0
@@ -10615,12 +10628,18 @@ Prefab:
       value: 
       objectReference: {fileID: 21300000, guid: 2e8d999023f57484386fff77ed35d5ce,
         type: 3}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114696037416971198, guid: a7a1ec0077ac4be4f8fd4363533d712c, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: a7a1ec0077ac4be4f8fd4363533d712c, type: 2}
   m_IsPrefabParent: 0
 --- !u!224 &1693791699 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224542781434042354, guid: a7a1ec0077ac4be4f8fd4363533d712c,
+    type: 2}
+  m_PrefabInternal: {fileID: 1693791698}
+--- !u!1 &1693791700 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1360381158629094, guid: a7a1ec0077ac4be4f8fd4363533d712c,
     type: 2}
   m_PrefabInternal: {fileID: 1693791698}
 --- !u!1 &1712528450

@@ -136,7 +136,9 @@ public class EditManager : MonoBehaviour {
 
     var block = Utility.MakerGetBlockOnTapPos (touchPos);
 
-    if (block) Select (block);
+    if (!block) return;
+
+    Select (block);
 
   }
 
