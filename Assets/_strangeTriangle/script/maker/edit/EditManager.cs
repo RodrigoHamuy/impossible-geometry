@@ -34,7 +34,11 @@ public class EditManager : MonoBehaviour {
   EditRotate editRotate;
   EditRotationHandle editRotationHandle;
 
-  bool selectMultiple = false;
+  [HideInInspector]
+  public bool selectMultiple = false;
+
+  [HideInInspector]
+  public Vector3 normal = Vector3.up;
 
   void Replace (Transform prefab) {
 
@@ -125,7 +129,7 @@ public class EditManager : MonoBehaviour {
 
   void Select (Vector2 touchPos) {
 
-    if (editRotate.isRotating) return;
+    if (editRotate.isActive) return;
     if (editRotationHandle.isActive) return;
 
     if (!selectMultiple) ClearTargets ();
@@ -189,6 +193,7 @@ public class EditManager : MonoBehaviour {
 
   void StartDrag (Vector2 touchPos) {
 
+    if (editRotate.isActive) return;
     if (editRotate.isRotating) return;
     if (editRotationHandle.isActive) return;
 
@@ -208,9 +213,15 @@ public class EditManager : MonoBehaviour {
 
     isDragging = true;
 
-    dragPlane = new Plane (Vector3.up, block.position);
+    UpdatePlane (block.position);
 
     startDragPos = block.position;
+
+  }
+
+  public void UpdatePlane (Vector3 pos) {
+
+    dragPlane = new Plane (normal, pos);
 
   }
 
@@ -239,19 +250,38 @@ public class EditManager : MonoBehaviour {
 
   void updateDragPosition (Vector2 touchPos) {
 
-    var ray = Camera.main.ScreenPointToRay (touchPos);
+    var hit = false;
 
-    float dist;
+    var pos = RaycastPlane (touchPos, out hit);
 
-    if (!dragPlane.Raycast (ray, out dist)) return;
+    if (!hit) return;
 
-    var diff = ray.origin + ray.direction * dist - startDragPos;
+    var diff = pos - startDragPos;
 
     foreach (var item in selected) {
 
       item.GetTarget ().position = item.GetStartPos () + diff;
 
     }
+
+  }
+
+  public Vector3 RaycastPlane (Vector2 touchPos, out bool hit) {
+
+    var ray = Camera.main.ScreenPointToRay (touchPos);
+
+    float dist;
+
+    if (!dragPlane.Raycast (ray, out dist)) {
+
+      hit = false;
+      return Vector3.zero;
+
+    }
+
+    hit = true;
+
+    return ray.origin + ray.direction * dist;
 
   }
 

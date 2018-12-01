@@ -12,6 +12,8 @@ public class EditRotationHandle : MonoBehaviour {
 
   public MakerBlockType emptyRotateController;
 
+  public GameObject RotateBtns;
+
   Transform world;
 
   EditManager editManager;
@@ -41,7 +43,7 @@ public class EditRotationHandle : MonoBehaviour {
     var stateManager = GameObject.FindObjectOfType<MakerStateManager> ();
     var touchComponent = GetComponent<TouchComponent> ();
 
-    stateManager.OnEditHandleClick.AddListener (OnEditHandleClick);
+    stateManager.OnEditBtnClick.AddListener (OnEditBtnClick);
     stateManager.OnSelectAffectedBlocksModeClick.AddListener (OnSelectAffectedBlocksModeClick);
     stateManager.OnSelectCenterModeClick.AddListener (OnSelectCenterModeClick);
 
@@ -84,13 +86,32 @@ public class EditRotationHandle : MonoBehaviour {
     rotateCenterView.rotation = rotateContainer.rotation;
   }
 
-  void OnEditHandleClick () {
+  void SetRotateBtnsVisibility (bool value) {
+    RotateBtns.SetActive (value);
+  }
 
-    isActive = true;
+  void OnEditBtnClick () {
+
+    if (editManager.selectMultiple) {
+
+      SetRotateBtnsVisibility (false);
+      return;
+
+    }
 
     var target = editManager.selected[0].GetTarget ();
-
     var blockData = target.GetComponent<EditableBlock> ().data;
+
+    if (blockData.blockType != "RotateHandleMaker") {
+
+      SetRotateBtnsVisibility (false);
+      return;
+
+    }
+
+    SetRotateBtnsVisibility (true);
+
+    isActive = true;
 
     if (blockData.rotateControllerId != -1) {
 

@@ -10,7 +10,7 @@ public class MakerStateManager : MonoBehaviour {
   public UnityEventVector3 OnAxisSelect;
   public UnityEventTransform OnPrefabSelect;
   public UnityEventTransform OnPrefabMenuShow;
-  public UnityEvent OnEditHandleClick;
+  public UnityEvent OnEditBtnClick;
   public UnityEvent OnSelectAffectedBlocksModeClick;
   public UnityEvent OnSelectCenterModeClick;
 
@@ -68,8 +68,8 @@ public class MakerStateManager : MonoBehaviour {
     OnPrefabMenuShow.Invoke (container);
   }
 
-  public void EmitOnEditHandleClick () {
-    OnEditHandleClick.Invoke ();
+  public void EmitOnEditBtnClick () {
+    OnEditBtnClick.Invoke ();
   }
 
   public void EmitOnSelectAffectedBlocksModeClick () {

@@ -1,3 +1,4 @@
+using Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,15 +8,21 @@ public class EditRotate : MonoBehaviour {
 
   public RotateController rotateController;
 
+  public Transform rotateCenter;
+
   GameObject canvas;
 
   MakerActionsManager actionsManager;
   EditManager editManager;
+  TouchComponent touchComponent;
 
   [HideInInspector]
   public bool isRotating = false;
   [HideInInspector]
-  public bool rotationMode = false;
+  public bool isActive = false;
+
+  bool chooseCenterMode = false;
+  bool hasCustomPivot = false;
 
   void Start () {
 
@@ -30,14 +37,43 @@ public class EditRotate : MonoBehaviour {
 
     stateManager.OnAxisSelect.AddListener (SetRotationAxis);
 
+    touchComponent = GetComponent<TouchComponent> ();
+    touchComponent.onTouchEnd.AddListener (OnTouchEnd);
+
+  }
+
+  public void OnChooseCenterToggle (bool isOn) {
+
+    if (isOn) {
+
+      rotateCenter.position = rotateController.transform.position;
+      rotateCenter.rotation = rotateController.transform.rotation;
+      AttachBlocksToRotate (false);
+      rotateCenter.gameObject.SetActive (true);
+      rotateController.gameObject.SetActive (false);
+      chooseCenterMode = true;
+      editManager.UpdatePlane (rotateCenter.position);
+      hasCustomPivot = true;
+
+    } else {
+
+      rotateController.transform.position = rotateCenter.position;
+      rotateCenter.gameObject.SetActive (false);
+      rotateController.gameObject.SetActive (true);
+      AttachBlocksToRotate (true);
+      chooseCenterMode = false;
+
+    }
+
   }
 
   public void ShowRotationUi () {
 
-    MoveRotateToCenter ();
+    UpdateRotaionPivot ();
     AttachBlocksToRotate (true);
 
     rotateController.gameObject.SetActive (true);
+    isActive = true;
 
   }
 
@@ -59,7 +95,48 @@ public class EditRotate : MonoBehaviour {
 
   }
 
-  void MoveRotateToCenter () {
+  void OnDisable () {
+    isActive = false;
+    hasCustomPivot = false;
+    rotateCenter.gameObject.SetActive (false);
+  }
+
+  void OnTouchEnd (Vector2 touchPos) {
+    if (!chooseCenterMode) return;
+    SetRotationCenter (touchPos);
+  }
+
+  void SetRotationCenter (Vector2 touchPos) {
+
+    Vector3 pos;
+    var block = Utility.MakerGetBlockOnTapPos (touchPos);
+
+    if (block) {
+
+      pos = block.position;
+
+    } else {
+
+      var hit = false;
+
+      pos = editManager.RaycastPlane (touchPos, out hit);
+      if (!hit) return;
+
+    }
+
+    pos = Utility.Round (pos, 1.0f);
+
+    rotateCenter.position = pos;
+
+  }
+
+  void UpdateRotaionPivot () {
+
+    if (hasCustomPivot) {
+
+      return;
+
+    }
 
     var center = Vector3.zero;
 
