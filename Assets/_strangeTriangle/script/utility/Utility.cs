@@ -415,6 +415,8 @@ public class Utility {
 
   }
 
+  // Math
+
   public static Vector3 Round (Vector3 value, float roundFactor) {
     for (int i = 0; i < 3; i++) {
       value[i] = Mathf.Round (value[i] / roundFactor) * roundFactor;
@@ -424,6 +426,20 @@ public class Utility {
 
   public static Quaternion Round (Quaternion value, float roundFactor = 90.0f) {
     return Quaternion.Euler (Utility.Round (value.eulerAngles, 90f));
+  }
+
+  public static Vector3 GetPlaneHitFromScreen (Vector2 screenPos, Vector3 planePos, Vector3 planeNormal) {
+
+    var plane = new Plane (planeNormal, planePos);
+
+    var ray = Camera.main.ScreenPointToRay (screenPos);
+
+    float enter;
+
+    plane.Raycast (ray, out enter);
+
+    return ray.origin + ray.direction * enter;
+
   }
 
 }

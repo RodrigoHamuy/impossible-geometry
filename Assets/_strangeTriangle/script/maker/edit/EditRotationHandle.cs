@@ -69,49 +69,25 @@ public class EditRotationHandle : MonoBehaviour {
   }
 
   void OnSelectAffectedBlocksModeClick () {
+
     print ("choose affected blocks");
     mode = EditRotationHandleMode.SelectAffectedBlocks;
     rotateCenterView.gameObject.SetActive (false);
+
+    isActive = true;
+
   }
 
   void OnSelectCenterModeClick () {
+
     print ("choose center");
     mode = EditRotationHandleMode.ChooseCenter;
     rotateCenterView.gameObject.SetActive (true);
     SyncRotateCenterView ();
-  }
-
-  void SyncRotateCenterView () {
-    rotateCenterView.position = rotateContainer.position;
-    rotateCenterView.rotation = rotateContainer.rotation;
-  }
-
-  void SetRotateBtnsVisibility (bool value) {
-    RotateBtns.SetActive (value);
-  }
-
-  void OnEditBtnClick () {
-
-    if (editManager.selectMultiple) {
-
-      SetRotateBtnsVisibility (false);
-      return;
-
-    }
 
     var target = editManager.selected[0].GetTarget ();
+
     var blockData = target.GetComponent<EditableBlock> ().data;
-
-    if (blockData.blockType != "RotateHandleMaker") {
-
-      SetRotateBtnsVisibility (false);
-      return;
-
-    }
-
-    SetRotateBtnsVisibility (true);
-
-    isActive = true;
 
     if (blockData.rotateControllerId != -1) {
 
@@ -156,6 +132,40 @@ public class EditRotationHandle : MonoBehaviour {
         .GetComponent<EditableBlock> ().data.id;
 
     }
+
+    isActive = true;
+
+  }
+
+  void SyncRotateCenterView () {
+    rotateCenterView.position = rotateContainer.position;
+    rotateCenterView.rotation = rotateContainer.rotation;
+  }
+
+  void SetRotateBtnsVisibility (bool value) {
+    RotateBtns.SetActive (value);
+  }
+
+  void OnEditBtnClick () {
+
+    if (editManager.selectMultiple) {
+
+      SetRotateBtnsVisibility (false);
+      return;
+
+    }
+
+    var target = editManager.selected[0].GetTarget ();
+    var blockData = target.GetComponent<EditableBlock> ().data;
+
+    if (blockData.blockType != "RotateHandleMaker") {
+
+      SetRotateBtnsVisibility (false);
+      return;
+
+    }
+
+    SetRotateBtnsVisibility (true);
 
   }
 

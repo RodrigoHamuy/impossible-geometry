@@ -30,6 +30,7 @@ public class EditManager : MonoBehaviour {
   MakerActionsManager actionsManager;
   MakerStateManager stateManager;
   TouchComponent touchComponent;
+  EditJoin editJoin;
 
   EditRotate editRotate;
   EditRotationHandle editRotationHandle;
@@ -71,6 +72,7 @@ public class EditManager : MonoBehaviour {
     touchComponent = GetComponent<TouchComponent> ();
     editRotate = GetComponent<EditRotate> ();
     editRotationHandle = GetComponent<EditRotationHandle> ();
+    editJoin = GetComponent<EditJoin> ();
 
     touchComponent.onTouchStart.AddListener (StartDrag);
     touchComponent.onTouchMove.AddListener (MoveDrag);
@@ -129,6 +131,7 @@ public class EditManager : MonoBehaviour {
 
   void Select (Vector2 touchPos) {
 
+    if (editJoin.isActive) return;
     if (editRotate.isActive) return;
     if (editRotationHandle.isActive) return;
 
