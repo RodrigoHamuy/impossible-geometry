@@ -10,18 +10,15 @@ public class EditableBlock : MonoBehaviour {
     data.position = transform.localPosition;
     data.rotation = transform.localRotation;
     data.scale = transform.localScale;
+    data.parent = -1;
+
+    if (!transform.parent) return;
 
     var parentData = transform.parent.GetComponent<EditableBlock> ();
 
-    if (parentData) {
+    if (!parentData) return;
 
-      data.parent = parentData.data.id;
-
-    } else {
-
-      data.parent = -1;
-
-    }
+    data.parent = parentData.data.id;
 
   }
 

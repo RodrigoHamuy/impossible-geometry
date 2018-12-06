@@ -137,9 +137,19 @@ public class EditRotationHandle : MonoBehaviour {
 
   }
 
+  void InitRotateContainer () {
+    if (!rotateContainer) {
+
+    }
+  }
+
   void SyncRotateCenterView () {
+
+    if (!rotateContainer) return;
+
     rotateCenterView.position = rotateContainer.position;
     rotateCenterView.rotation = rotateContainer.rotation;
+
   }
 
   void SetRotateBtnsVisibility (bool value) {
