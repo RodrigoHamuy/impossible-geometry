@@ -73,7 +73,7 @@ public class EditRotationHandle : MonoBehaviour {
     print ("choose affected blocks");
     mode = EditRotationHandleMode.SelectAffectedBlocks;
     rotateCenterView.gameObject.SetActive (false);
-
+    SelectRotateContainer ();
     isActive = true;
 
   }
@@ -83,64 +83,37 @@ public class EditRotationHandle : MonoBehaviour {
     print ("choose center");
     mode = EditRotationHandleMode.ChooseCenter;
     rotateCenterView.gameObject.SetActive (true);
+    SelectRotateContainer ();
     SyncRotateCenterView ();
+    isActive = true;
+
+  }
+
+  void SelectRotateContainer () {
 
     var target = editManager.selected[0].GetTarget ();
 
     var blockData = target.GetComponent<EditableBlock> ().data;
 
-    if (blockData.rotateControllerId != -1) {
+    var allBlocks = world.GetComponentsInChildren<EditableBlock> ();
 
-      var allBlocks = world.GetComponentsInChildren<EditableBlock> ();
+    rotateContainer = Array.Find (allBlocks, a => a.data.id == blockData.rotateControllerId).transform;
 
-      var rotateBlock = Array.Find (allBlocks, a => a.data.id == blockData.rotateControllerId);
+    var innerBlocks = Array.ConvertAll (
+      rotateContainer.GetComponentsInChildren<EditableBlock> (),
+      c => c.transform
+    );
 
-      rotateContainer = rotateBlock.transform;
+    foreach (Transform child in innerBlocks) {
 
-      foreach (Transform child in rotateContainer.transform) {
-
-        var style = new SelectStyleMnger ();
-        style.SetColor (affectedBlocksColor);
-        style.Select (child);
-        selectStyleManager.Add (style);
-        affectedBlocks.Add (child);
-
-      }
-
-    } else {
-
-      rotateContainer = actionsManager.AddBlock (
-        new MakerAction (
-          MakerActionType.Add,
-          null,
-          emptyRotateController,
-          target.position,
-          target.localScale,
-          target.rotation,
-          world
-        ),
-        false
-      );
-
-      rotateContainer
-        .GetComponent<RotateController> ()
-        .AddRotateTouchEmitter (
-          target.GetComponentInChildren<RotateTouchEmitter> ()
-        );
-
-      blockData.rotateControllerId = rotateContainer
-        .GetComponent<EditableBlock> ().data.id;
+      var style = new SelectStyleMnger ();
+      style.SetColor (affectedBlocksColor);
+      style.Select (child);
+      selectStyleManager.Add (style);
+      affectedBlocks.Add (child);
 
     }
 
-    isActive = true;
-
-  }
-
-  void InitRotateContainer () {
-    if (!rotateContainer) {
-
-    }
   }
 
   void SyncRotateCenterView () {

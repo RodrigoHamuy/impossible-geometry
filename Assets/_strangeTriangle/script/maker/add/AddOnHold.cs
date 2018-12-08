@@ -335,6 +335,35 @@ public class AddOnHold : MonoBehaviour {
       false
     );
 
+    if (currentConfig.prefabName == MakerBlockType.Names.RotateHandleMaker) {
+
+      var emptyRotate = actionsManager.GetMakerBlockType (MakerBlockType.Names.EmptyRotateControllerMaker);
+
+      var rotateContainer = actionsManager.AddBlock (
+        new MakerAction (
+          MakerActionType.Add,
+          null,
+          emptyRotate,
+          pos,
+          Vector3.one,
+          rotation,
+          block
+        ),
+        false
+      );
+
+      rotateContainer
+        .GetComponent<RotateController> ()
+        .AddRotateTouchEmitter (
+          block.GetComponentInChildren<RotateTouchEmitter> ()
+        );
+
+      var blockData = block.GetComponentInChildren<EditableBlock> ().data;
+
+      blockData.rotateControllerId = rotateContainer.GetComponent<EditableBlock> ().data.id;
+
+    }
+
     return block;
 
   }
