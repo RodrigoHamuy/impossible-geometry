@@ -1,5 +1,8 @@
+using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MakerTutorial : MonoBehaviour {
 
@@ -32,6 +35,8 @@ public class MakerTutorial : MonoBehaviour {
       gameLevels[0]
     );
 
+    TutorialPlay.SetActive (true);
+
   }
 
   void Start () {
@@ -44,6 +49,20 @@ public class MakerTutorial : MonoBehaviour {
   }
 
   void Play () {
+
+    // TutorialPlay.GetComponent<Image> ().DOFade (0, 1.0f);
+    // TutorialPlay.transform.DOMoveX (100, 1);
+
+    iTween.FadeTo (TutorialPlay, 0, 10.0f);
+    // iTween.FadeTo (TutorialPlay, new Hashtable () {
+    //   {
+    //     "alpha",
+    //     0.0f
+    //   }, {
+    //     "time",
+    //     1.0f
+    //   },
+    // });
 
     manager.SetState (
       MakerStateType.General,
