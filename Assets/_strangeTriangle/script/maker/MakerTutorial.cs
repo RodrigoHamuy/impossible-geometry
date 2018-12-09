@@ -1,5 +1,4 @@
 using System.Collections;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -19,11 +18,13 @@ public class MakerTutorial : MonoBehaviour {
     // "H4sIAAAAAAAAC9WXz2/CIBTH/xfOpQGEAr0txmQ7LFmMt2WH6ogxstZUjOuM//sqo1Fbf6XdoXCBwCvvfb68Ptr3HZjqbLacFCsFYjDcTNVrslQ5CMDiE8SDAOSZSYwaZqnJM61V/lJOQxyAVZKr1Lhxtl6YRZaCeAe+D1MhCkABYnTof0DMQrR3Ox2tUM3I9lsQ24fVpnT1lM61Wl8335ebrmeJVs6kcoudCbYmtwlpK8J6MD0GZK0APTpBjFsRco8ISStC4RFhu0Ij+0s4tjTPSfqpz0mvFBzMbpJS5xKyUEaIRpSKEUTiFjVHHKNIXGSHJ8tNCQj/JxFGXytTjGu0Z2q0q070sXPvgQKNREf3gW0qXL5vIAkHgmLBuCyPn1u3JES2EdrUoKRkDoNZ47+JbTVoksvKlZPgKrptYlApcGjYRVStUnFXD9lNDhxiSZAkRzUq35h4qIbopMZphP6x807szUSAXmdC1EmNC1UCelUm3nRS1G6KBxTx7FdkkuRzZc4gH3gJev4Z9PELbciwrVIOAAA=",
   };
 
+  Canvas canvas;
   SaveManager saveManager;
   MakerStateManager manager;
 
   void Awake () {
 
+    canvas = GameObject.FindObjectOfType<Canvas> ();
     manager = GameObject.FindObjectOfType<MakerStateManager> ();
 
     if (LevelMakerConfig.Data != null) return;
@@ -50,19 +51,50 @@ public class MakerTutorial : MonoBehaviour {
 
   void Play () {
 
-    // TutorialPlay.GetComponent<Image> ().DOFade (0, 1.0f);
-    // TutorialPlay.transform.DOMoveX (100, 1);
+    TutorialPlay.GetComponent<VerticalLayoutGroup> ().enabled = false;
 
-    iTween.FadeTo (TutorialPlay, 0, 10.0f);
-    // iTween.FadeTo (TutorialPlay, new Hashtable () {
-    //   {
-    //     "alpha",
-    //     0.0f
-    //   }, {
-    //     "time",
-    //     1.0f
-    //   },
-    // });
+    iTween.FadeTo (TutorialPlay, new Hashtable () {
+      {
+        "alpha",
+        0.0f
+      }, {
+        "time",
+        1.0f
+      }, {
+        "delay",
+        3.0f
+      },
+    });
+
+    var childA = TutorialPlay.transform.GetChild (0).GetComponent<RectTransform> ();
+
+    iTween.MoveAdd (childA.gameObject, new Hashtable () {
+      {
+        "amount",
+        new Vector3 (childA.position.x * 2.0f, 0, 0)
+      }, {
+        "time",
+        1.0f
+      }, {
+        "delay",
+        3.0f
+      },
+    });
+
+    var childB = TutorialPlay.transform.GetChild (1).GetComponent<RectTransform> ();
+
+    iTween.MoveAdd (childB.gameObject, new Hashtable () {
+      {
+        "amount",
+        -new Vector3 (childA.position.x * 2.0f, 0, 0)
+      }, {
+        "time",
+        1.0f
+      }, {
+        "delay",
+        3.0f
+      },
+    });
 
     manager.SetState (
       MakerStateType.General,
