@@ -24,8 +24,6 @@ public class SaveManager : MonoBehaviour {
 
   int consecutiveErrors = 0;
 
-  string currLevelName = "level_0";
-
   public void Start () {
 
     actionsManager = GetComponent<MakerActionsManager> ();
@@ -37,8 +35,15 @@ public class SaveManager : MonoBehaviour {
       var request = new LoginWithCustomIDRequest { CustomId = "GettingStartedGuide", CreateAccount = true };
       PlayFabClientAPI.LoginWithCustomID (request, OnLoginSuccess, OnLoginFailure);
 
+      if (
+        LevelMakerConfig.Data != null &&
+        LevelMakerConfig.Data.AvailableOffline
+      ) InitLevel ();
+
     } else {
+
       InitLevel ();
+
     }
 
   }
@@ -56,17 +61,16 @@ public class SaveManager : MonoBehaviour {
   }
 
   void InitLevel () {
-    readyToSave = true;
-    if (CommunityLevelMenu.loadLevel) {
-      CommunityLevelMenu.loadLevel = false;
-      currLevelName = CommunityLevelMenu.levelName;
-      LoadLevel ();
-    } else {
-      currLevelName = CommunityLevelMenu.levelName;
-    }
+
+    if (LevelMakerConfig.Data == null) return;
+
+    if (LevelMakerConfig.Data.CanLoad) LoadLevel ();
+
   }
 
   public void Save () {
+
+    if (!LevelMakerConfig.Data.CanSave) return;
 
     if (isLoading) return;
 
@@ -75,6 +79,7 @@ public class SaveManager : MonoBehaviour {
       consecutiveErrors > maxConsecutiveErrorsAllow
     ) {
       saveRequest = true;
+      Debug.Log ("Save Request");
       return;
     }
 
@@ -93,8 +98,7 @@ public class SaveManager : MonoBehaviour {
 
     }
 
-    Debug.Log ("Save Request");
-
+    Debug.Log ("Saving");
     isSaving = true;
     saveRequest = false;
     readyToSave = false;
@@ -105,7 +109,7 @@ public class SaveManager : MonoBehaviour {
 
     for (int i = 0; i < allBlocksDataJsonSplitted.Count; i++) {
 
-      var key = currLevelName + "_" + i;
+      var key = LevelMakerConfig.Data.LevelName + "_" + i;
 
       levelKeys.Add (key);
 
@@ -113,7 +117,7 @@ public class SaveManager : MonoBehaviour {
 
     }
 
-    data[currLevelName] = JsonConvert.SerializeObject (levelKeys);
+    data[LevelMakerConfig.Data.LevelName] = JsonConvert.SerializeObject (levelKeys);
 
     PlayFabClientAPI.UpdateUserData (
       new UpdateUserDataRequest () { Data = data },
@@ -151,18 +155,25 @@ public class SaveManager : MonoBehaviour {
 
   void LoadLevel () {
 
-    if (isLoading) return;
-
     isLoading = true;
 
-    GetLevelFragmentNames ();
+    if (LevelMakerConfig.Data.AvailableOffline) {
+
+      LoadLevel (Zipper.Unzip (LevelMakerConfig.Data.LevelData));
+
+    } else {
+
+      GetLevelFragmentNames ();
+
+    }
+
   }
 
   void GetLevelFragmentNames () {
 
     PlayFabClientAPI.GetUserData (
       new GetUserDataRequest () {
-        Keys = new List<string> { currLevelName }
+        Keys = new List<string> { LevelMakerConfig.Data.LevelName }
       },
       GetLevelFragments,
       OnRequestError
@@ -173,7 +184,7 @@ public class SaveManager : MonoBehaviour {
   void GetLevelFragments (GetUserDataResult fragResult) {
 
     Debug.Log ("GetLevelFragmentNames Response.");
-    var levelPartNamesJson = fragResult.Data[currLevelName].Value;
+    var levelPartNamesJson = fragResult.Data[LevelMakerConfig.Data.LevelName].Value;
     var levelPartNames = JsonConvert.DeserializeObject<List<string>> (levelPartNamesJson);
 
     PlayFabClientAPI.GetUserData (
@@ -238,8 +249,17 @@ public class SaveManager : MonoBehaviour {
   }
 
   void OnLoginSuccess (LoginResult result) {
-    Debug.Log ("Congratulations, you made your first successful API call!");
-    InitLevel ();
+
+    Debug.Log ("LoginSuccess");
+
+    if (
+      LevelMakerConfig.Data == null ||
+      (
+        LevelMakerConfig.Data != null &&
+        !LevelMakerConfig.Data.AvailableOffline
+      )
+    ) InitLevel ();
+
   }
 
   void OnLoginFailure (PlayFabError error) {

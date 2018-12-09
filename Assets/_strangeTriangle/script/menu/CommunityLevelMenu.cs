@@ -10,9 +10,6 @@ using UnityEngine.UI;
 
 public class CommunityLevelMenu : MonoBehaviour {
 
-  public static bool loadLevel = true;
-  public static string levelName = "";
-
   public Transform levelBtnsContainer;
   public Button newLevelBtn;
 
@@ -94,8 +91,7 @@ public class CommunityLevelMenu : MonoBehaviour {
 
   void LoadLevel (string levelName) {
 
-    loadLevel = true;
-    CommunityLevelMenu.levelName = levelName;
+    LevelMakerConfig.Data = new LevelMakerSetting (levelName, true, true);
     SceneManager.LoadScene ("levelMaker");
 
   }
@@ -118,8 +114,7 @@ public class CommunityLevelMenu : MonoBehaviour {
 
   void OnLoadNewLevelSaved (string level) {
 
-    loadLevel = false;
-    CommunityLevelMenu.levelName = level;
+    LevelMakerConfig.Data = new LevelMakerSetting (level, false, true);
     SceneManager.LoadScene ("levelMaker");
 
   }
