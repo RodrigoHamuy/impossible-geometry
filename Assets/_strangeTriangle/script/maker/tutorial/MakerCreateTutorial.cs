@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MakerCreateTutorial : MonoBehaviour {
+
+  public GameObject ObjectivePrefab;
+
+  public TutorialObjective[] TutorialObjective;
 
   public GameObject IntroScreen;
 
@@ -35,6 +40,8 @@ public class MakerCreateTutorial : MonoBehaviour {
       return;
     }
 
+    InitObjectivesUI ();
+
     IntroScreen.SetActive (true);
 
   }
@@ -43,13 +50,33 @@ public class MakerCreateTutorial : MonoBehaviour {
 
     actionsManager = GameObject.FindObjectOfType<MakerActionsManager> ();
 
-    IntroScreen.GetComponent<VerticalLayoutGroup> ().enabled = false;
-
     IntroScreen.GetComponent<Button> ().onClick.AddListener (FadeIntro);
 
     actionsManager.OnSceneChange.AddListener (CheckBlocks);
 
     Invoke ("HideBtns", .1f);
+
+  }
+
+  void InitObjectivesUI () {
+
+    var objectivesUI = IntroScreen.transform.Find ("Objectives");
+
+    foreach (Transform child in objectivesUI) {
+
+      GameObject.Destroy (child.gameObject);
+
+    }
+
+    foreach (var objectiveData in TutorialObjective) {
+
+      var objective = Instantiate (ObjectivePrefab, Vector3.zero, Quaternion.identity, objectivesUI);
+
+      objective.transform.Find ("Icon").GetComponent<Image> ().sprite = objectiveData.icon;
+      var textMesh = objective.transform.GetComponentInChildren<TextMeshPro> ();
+      if (textMesh) textMesh.SetText (objectiveData.text);
+
+    }
 
   }
 

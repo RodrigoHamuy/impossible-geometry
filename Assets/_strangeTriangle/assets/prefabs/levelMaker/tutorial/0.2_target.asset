@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e06c31258d8a074e883c8cec494496c, type: 3}
+  m_Name: 0.2_target
+  m_EditorClassIdentifier: 
+  id: 
+  text: Add the Target
+  icon: {fileID: 21300000, guid: e86cbdfcd51a3a9489371784f203c051, type: 3}
