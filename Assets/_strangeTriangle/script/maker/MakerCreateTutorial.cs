@@ -23,7 +23,7 @@ public class MakerCreateTutorial : MonoBehaviour {
   public GameObject SelectBtn;
   public GameObject ViewBtn;
 
-  // Second row btns
+  MakerActionsManager actionsManager;
 
   void Awake () {
 
@@ -41,11 +41,27 @@ public class MakerCreateTutorial : MonoBehaviour {
 
   void Start () {
 
+    actionsManager = GameObject.FindObjectOfType<MakerActionsManager> ();
+
     IntroScreen.GetComponent<VerticalLayoutGroup> ().enabled = false;
 
     IntroScreen.GetComponent<Button> ().onClick.AddListener (FadeIntro);
 
+    actionsManager.OnSceneChange.AddListener (CheckBlocks);
+
     Invoke ("HideBtns", .1f);
+
+  }
+
+  void CheckBlocks () {
+
+    var hasPlayer = actionsManager.blocksInScene.Exists (a => a.tag == MakerTags.Player);
+    var hasBlocks = actionsManager.blocksInScene.Exists (a => a.tag == MakerTags.Cube);
+    var hasTarget = actionsManager.blocksInScene.Exists (a => a.tag == MakerTags.Target);
+
+    if (hasPlayer && hasBlocks && hasTarget) {
+      PlayBtn.GetComponent<RectTransform> ().sizeDelta = new Vector2 (30.0f, 30.0f);
+    }
 
   }
 
@@ -83,7 +99,7 @@ public class MakerCreateTutorial : MonoBehaviour {
         0
       }, {
         "time",
-        1
+        .3f
       }, {
         "oncomplete",
         "RemoveIntro"
@@ -93,13 +109,13 @@ public class MakerCreateTutorial : MonoBehaviour {
       }
     });
 
-    var childA = IntroScreen.transform.GetChild (0).GetComponent<RectTransform> ();
+    // var childA = IntroScreen.transform.GetChild (0).GetComponent<RectTransform> ();
 
-    iTween.MoveAdd (childA.gameObject, new Vector3 (childA.position.x * 2.0f, 0, 0), 1);
+    // iTween.MoveAdd (childA.gameObject, new Vector3 (childA.position.x * 2.0f, 0, 0), 1);
 
-    var childB = IntroScreen.transform.GetChild (1).GetComponent<RectTransform> ();
+    // var childB = IntroScreen.transform.GetChild (1).GetComponent<RectTransform> ();
 
-    iTween.MoveAdd (childB.gameObject, -new Vector3 (childA.position.x * 2.0f, 0, 0), 1);
+    // iTween.MoveAdd (childB.gameObject, -new Vector3 (childA.position.x * 2.0f, 0, 0), 1);
 
   }
 
