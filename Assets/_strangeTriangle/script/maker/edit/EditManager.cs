@@ -170,7 +170,7 @@ public class EditManager : MonoBehaviour {
 
   void ClearTargets () {
 
-    editRotationHandle.ClearTarget ();
+    if (editRotationHandle) editRotationHandle.ClearTarget ();
 
     foreach (var item in selected) {
       item.SyncParent ();
@@ -178,7 +178,9 @@ public class EditManager : MonoBehaviour {
     }
 
     selected.Clear ();
-    editRotate.ClearTarget ();
+
+    if (editRotate) editRotate.ClearTarget ();
+
     isDragging = false;
 
     OnTargetChange.Invoke (false);

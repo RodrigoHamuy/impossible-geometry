@@ -3,11 +3,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MakerTutorial : MonoBehaviour {
+public class MakerPlayTutorial : MonoBehaviour {
 
-  public GameObject PlayUI;
-  public GameObject TutorialPlay;
-  public GameObject TutorialCreate;
+  public GameObject PauseBtn;
+  public GameObject IntroScreen;
 
   string[] gameLevels = new string[] {
     // Level 0 - The basics
@@ -24,8 +23,20 @@ public class MakerTutorial : MonoBehaviour {
 
   void Awake () {
 
+    if (
+      LevelMakerConfig.Data != null &&
+      !LevelMakerConfig.Data.LevelName.Contains ("tutorial_play_")
+    ) {
+
+      enabled = false;
+      return;
+
+    }
+
     canvas = GameObject.FindObjectOfType<Canvas> ();
     manager = GameObject.FindObjectOfType<MakerStateManager> ();
+
+    IntroScreen.SetActive (true);
 
     if (LevelMakerConfig.Data != null) return;
 
@@ -36,79 +47,61 @@ public class MakerTutorial : MonoBehaviour {
       gameLevels[0]
     );
 
-    TutorialPlay.SetActive (true);
-
   }
 
   void Start () {
 
-    if (
-      LevelMakerConfig.Data != null &&
-      LevelMakerConfig.Data.LevelName.Contains ("tutorial_play_")
-    ) Invoke ("Play", .1f);
+    IntroScreen.GetComponent<VerticalLayoutGroup> ().enabled = false;
+
+    IntroScreen.GetComponent<Button> ().onClick.AddListener (FadeIntro);
 
   }
 
-  void Play () {
+  void FadeIntro () {
 
-    TutorialPlay.GetComponent<VerticalLayoutGroup> ().enabled = false;
-
-    iTween.FadeTo (TutorialPlay, new Hashtable () {
+    iTween.FadeTo (IntroScreen, new Hashtable () {
       {
         "alpha",
-        0.0f
+        0
       }, {
         "time",
-        1.0f
+        1
       }, {
-        "delay",
-        3.0f
-      },
+        "oncomplete",
+        "RemoveIntro"
+      }, {
+        "oncompletetarget",
+        gameObject
+      }
     });
 
-    var childA = TutorialPlay.transform.GetChild (0).GetComponent<RectTransform> ();
+    var childA = IntroScreen.transform.GetChild (0).GetComponent<RectTransform> ();
 
-    iTween.MoveAdd (childA.gameObject, new Hashtable () {
-      {
-        "amount",
-        new Vector3 (childA.position.x * 2.0f, 0, 0)
-      }, {
-        "time",
-        1.0f
-      }, {
-        "delay",
-        3.0f
-      },
-    });
+    iTween.MoveAdd (childA.gameObject, new Vector3 (childA.position.x * 2.0f, 0, 0), 1);
 
-    var childB = TutorialPlay.transform.GetChild (1).GetComponent<RectTransform> ();
+    var childB = IntroScreen.transform.GetChild (1).GetComponent<RectTransform> ();
 
-    iTween.MoveAdd (childB.gameObject, new Hashtable () {
-      {
-        "amount",
-        -new Vector3 (childA.position.x * 2.0f, 0, 0)
-      }, {
-        "time",
-        1.0f
-      }, {
-        "delay",
-        3.0f
-      },
-    });
+    iTween.MoveAdd (childB.gameObject, -new Vector3 (childA.position.x * 2.0f, 0, 0), 1);
 
     manager.SetState (
       MakerStateType.General,
       MakerState.MakerPlay
     );
 
-    PlayUI.SetActive (false);
+    PauseBtn.SetActive (false);
 
     var target = GameObject.FindObjectOfType<TargetComponent> ();
-    target.onTargetReached.AddListener (OnTargetReached);
+    target.onTargetReached.AddListener (OnLevelCompleted);
 
   }
 
-  void OnTargetReached () {
+  void RemoveIntro () {
+
+    IntroScreen.SetActive (false);
+
+  }
+
+  void OnLevelCompleted () {
 
     var player = GameObject.FindObjectOfType<PlayerComponent> ();
     player.enabled = false;

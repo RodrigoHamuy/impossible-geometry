@@ -96,9 +96,12 @@ public class EditRotate : MonoBehaviour {
   }
 
   void OnDisable () {
+
     isActive = false;
     hasCustomPivot = false;
-    rotateCenter.gameObject.SetActive (false);
+
+    if (rotateCenter) rotateCenter.gameObject.SetActive (false);
+
   }
 
   void OnTouchEnd (Vector2 touchPos) {

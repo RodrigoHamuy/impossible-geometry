@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 [RequireComponent (typeof (SaveManager))]
 
@@ -9,9 +10,10 @@ public class MakerActionsManager : MonoBehaviour {
 
   public Transform world;
 
+  public GameObject UndoBtn;
+
   public List<MakerAction> actions = new List<MakerAction> ();
-  public UnityEventInt OnBlockAmountChange;
-  public UnityEvent OnHistoryClear;
+  public UnityEvent OnSceneChange;
 
   public List<Transform> blocksInScene = new List<Transform> ();
 
@@ -25,11 +27,14 @@ public class MakerActionsManager : MonoBehaviour {
 
     saveManager = GetComponent<SaveManager> ();
 
-    OnBlockAmountChange.AddListener (amount => {
-      if (amount == 0) OnHistoryClear.Invoke ();
+    OnSceneChange.AddListener (() => {
+
+      UndoBtn.GetComponent<Button> ().interactable = actions.Count > 0;
+      saveManager.Save ();
+
     });
 
-    OnBlockAmountChange.Invoke (blocksInScene.Count);
+    OnSceneChange.Invoke ();
 
   }
 
@@ -72,8 +77,7 @@ public class MakerActionsManager : MonoBehaviour {
 
     blocksInScene.Remove (block);
     GameObject.Destroy (block.gameObject);
-
-    saveManager.Save ();
+    OnSceneChange.Invoke ();
 
   }
 
@@ -86,7 +90,7 @@ public class MakerActionsManager : MonoBehaviour {
 
     GameObject.Destroy (block.gameObject);
 
-    saveManager.Save ();
+    OnSceneChange.Invoke ();
 
   }
 
@@ -119,7 +123,7 @@ public class MakerActionsManager : MonoBehaviour {
 
     blockData.data.id = action.id;
 
-    saveManager.Save ();
+    OnSceneChange.Invoke ();
 
     return block;
 
@@ -167,7 +171,7 @@ public class MakerActionsManager : MonoBehaviour {
 
     blockData.SyncData ();
 
-    saveManager.Save ();
+    OnSceneChange.Invoke ();
 
   }
 
