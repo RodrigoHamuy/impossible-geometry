@@ -30,6 +30,8 @@ public class MakerCreateTutorial : MonoBehaviour {
 
   MakerActionsManager actionsManager;
 
+  Transform objectivesUI;
+
   void Awake () {
 
     if (
@@ -60,21 +62,15 @@ public class MakerCreateTutorial : MonoBehaviour {
 
   void InitObjectivesUI () {
 
-    var objectivesUI = IntroScreen.transform.Find ("Objectives");
-
-    foreach (Transform child in objectivesUI) {
-
-      GameObject.Destroy (child.gameObject);
-
-    }
+    objectivesUI = IntroScreen.transform.Find ("Objectives");
 
     foreach (var objectiveData in TutorialObjective) {
 
       var objective = Instantiate (ObjectivePrefab, Vector3.zero, Quaternion.identity, objectivesUI);
 
       objective.transform.Find ("Icon").GetComponent<Image> ().sprite = objectiveData.icon;
-      var textMesh = objective.transform.GetComponentInChildren<TextMeshPro> ();
-      if (textMesh) textMesh.SetText (objectiveData.text);
+      var textMesh = objective.transform.GetComponentInChildren<TMP_Text> ();
+      textMesh.SetText (objectiveData.text);
 
     }
 
@@ -82,14 +78,22 @@ public class MakerCreateTutorial : MonoBehaviour {
 
   void CheckBlocks () {
 
-    var hasPlayer = actionsManager.blocksInScene.Exists (a => a.tag == MakerTags.Player);
     var hasBlocks = actionsManager.blocksInScene.Exists (a => a.tag == MakerTags.Cube);
+    var hasPlayer = actionsManager.blocksInScene.Exists (a => a.tag == MakerTags.Player);
     var hasTarget = actionsManager.blocksInScene.Exists (a => a.tag == MakerTags.Target);
 
     if (hasPlayer && hasBlocks && hasTarget) {
       PlayBtn.GetComponent<RectTransform> ().sizeDelta = new Vector2 (30.0f, 30.0f);
     }
 
+    objectivesUI.GetChild (0).Find ("CheckBox/Empty").GetComponent<Image> ().color = hasBlocks ? new Color (255, 255, 255, 0) : Color.white;
+    objectivesUI.GetChild (0).Find ("CheckBox/Checked").GetComponent<Image> ().color = hasBlocks ? Color.white : new Color (255, 255, 255, 0);
+
+    objectivesUI.GetChild (1).Find ("CheckBox/Empty").GetComponent<Image> ().color = hasPlayer ? new Color (255, 255, 255, 0) : Color.white;
+    objectivesUI.GetChild (1).Find ("CheckBox/Checked").GetComponent<Image> ().color = hasPlayer ? Color.white : new Color (255, 255, 255, 0);
+
+    objectivesUI.GetChild (2).Find ("CheckBox/Empty").GetComponent<Image> ().color = hasTarget ? new Color (255, 255, 255, 0) : Color.white;
+    objectivesUI.GetChild (2).Find ("CheckBox/Checked").GetComponent<Image> ().color = hasTarget ? Color.white : new Color (255, 255, 255, 0);
   }
 
   void HideBtns () {
