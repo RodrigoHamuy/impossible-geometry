@@ -8,7 +8,9 @@ public class MakerCreateTutorial : MonoBehaviour {
 
   public GameObject ObjectivePrefab;
 
-  public TutorialObjective[] TutorialObjective;
+  public TutorialObjective[] TutorialObjectiveList;
+
+  public GameObject ShowObjectivesBtn;
 
   public GameObject IntroScreen;
 
@@ -28,9 +30,14 @@ public class MakerCreateTutorial : MonoBehaviour {
   public GameObject SelectBtn;
   public GameObject ViewBtn;
 
+  Canvas canvas;
   MakerActionsManager actionsManager;
-
   Transform objectivesUI;
+  RectTransform objectiveBadge;
+
+  bool hasBlocks;
+  bool hasPlayer;
+  bool hasTarget;
 
   void Awake () {
 
@@ -41,6 +48,10 @@ public class MakerCreateTutorial : MonoBehaviour {
       enabled = false;
       return;
     }
+
+    canvas = GameObject.FindObjectOfType<Canvas> ();
+
+    ShowObjectivesBtn.GetComponent<Button> ().onClick.AddListener (OnShowObjectivesClick);
 
     InitObjectivesUI ();
 
@@ -56,6 +67,8 @@ public class MakerCreateTutorial : MonoBehaviour {
 
     actionsManager.OnSceneChange.AddListener (CheckBlocks);
 
+    CheckBlocks ();
+
     Invoke ("HideBtns", .1f);
 
   }
@@ -64,36 +77,111 @@ public class MakerCreateTutorial : MonoBehaviour {
 
     objectivesUI = IntroScreen.transform.Find ("Objectives");
 
-    foreach (var objectiveData in TutorialObjective) {
+    foreach (var objectiveData in TutorialObjectiveList) {
 
       var objective = Instantiate (ObjectivePrefab, Vector3.zero, Quaternion.identity, objectivesUI);
 
-      objective.transform.Find ("Icon").GetComponent<Image> ().sprite = objectiveData.icon;
-      var textMesh = objective.transform.GetComponentInChildren<TMP_Text> ();
-      textMesh.SetText (objectiveData.text);
+      SetObjectiveUI (objective.transform, objectiveData);
 
     }
+
+    objectiveBadge = Instantiate (ObjectivePrefab, Vector3.zero, Quaternion.identity, canvas.transform).GetComponent<RectTransform> ();
+    objectiveBadge.anchoredPosition = Vector2.zero;
+
+  }
+
+  void SetObjectiveUI (Transform view, TutorialObjective model) {
+
+    view.Find ("Icon").GetComponent<Image> ().sprite = model.icon;
+    var textMesh = view.GetComponentInChildren<TMP_Text> ();
+    textMesh.SetText (model.text);
 
   }
 
   void CheckBlocks () {
 
-    var hasBlocks = actionsManager.blocksInScene.Exists (a => a.tag == MakerTags.Cube);
-    var hasPlayer = actionsManager.blocksInScene.Exists (a => a.tag == MakerTags.Player);
-    var hasTarget = actionsManager.blocksInScene.Exists (a => a.tag == MakerTags.Target);
+    hasBlocks = CheckObjective (MakerTags.Cube, hasBlocks, 0, TutorialObjectiveList[0]);
+    hasPlayer = CheckObjective (MakerTags.Player, hasPlayer, 1, TutorialObjectiveList[1]);
+    hasTarget = CheckObjective (MakerTags.Target, hasTarget, 2, TutorialObjectiveList[2]);
 
-    if (hasPlayer && hasBlocks && hasTarget) {
-      PlayBtn.GetComponent<RectTransform> ().sizeDelta = new Vector2 (30.0f, 30.0f);
+  }
+
+  void ShowCompletedTaskBadge () {
+
+    iTween.ValueTo (objectiveBadge.gameObject, new Hashtable () {
+      {
+        "from",
+        objectiveBadge.anchoredPosition
+      }, {
+        "to",
+        new Vector2 (objectiveBadge.rect.width, 0)
+      }, {
+        "time",
+        .5f
+      }, {
+        "onupdatetarget",
+        gameObject
+      }, {
+        "onupdate",
+        "TweenBadge"
+      }, {
+        "oncomplete",
+        "OnTweenSlideInDone"
+      }, {
+        "oncompletetarget",
+        gameObject
+      }
+    });
+
+  }
+
+  void TweenBadge (Vector2 pos) {
+
+    objectiveBadge.GetComponent<RectTransform> ().anchoredPosition = pos;
+
+  }
+
+  void OnTweenSlideInDone () {
+
+    iTween.ValueTo (objectiveBadge.gameObject, new Hashtable () {
+      {
+        "from",
+        objectiveBadge.GetComponent<RectTransform> ().anchoredPosition
+      }, {
+        "to",
+        Vector2.zero
+      }, {
+        "time",
+        .5f
+      }, {
+        "onupdatetarget",
+        gameObject
+      }, {
+        "onupdate",
+        "TweenBadge"
+      }, {
+        "delay",
+        2
+      }
+    });
+
+  }
+
+  bool CheckObjective (string tagName, bool oldHas, int index, TutorialObjective objective) {
+
+    var newHas = actionsManager.blocksInScene.Exists (a => a.tag == tagName);
+
+    if (!oldHas && newHas) {
+
+      SetObjectiveUI (objectiveBadge, objective);
+      ShowCompletedTaskBadge ();
     }
 
-    objectivesUI.GetChild (0).Find ("CheckBox/Empty").GetComponent<Image> ().color = hasBlocks ? new Color (255, 255, 255, 0) : Color.white;
-    objectivesUI.GetChild (0).Find ("CheckBox/Checked").GetComponent<Image> ().color = hasBlocks ? Color.white : new Color (255, 255, 255, 0);
+    objectivesUI.GetChild (index).Find ("CheckBox/Empty").GetComponent<Image> ().color = newHas ? new Color (255, 255, 255, 0) : Color.white;
+    objectivesUI.GetChild (index).Find ("CheckBox/Checked").GetComponent<Image> ().color = newHas ? Color.white : new Color (255, 255, 255, 0);
 
-    objectivesUI.GetChild (1).Find ("CheckBox/Empty").GetComponent<Image> ().color = hasPlayer ? new Color (255, 255, 255, 0) : Color.white;
-    objectivesUI.GetChild (1).Find ("CheckBox/Checked").GetComponent<Image> ().color = hasPlayer ? Color.white : new Color (255, 255, 255, 0);
+    return newHas;
 
-    objectivesUI.GetChild (2).Find ("CheckBox/Empty").GetComponent<Image> ().color = hasTarget ? new Color (255, 255, 255, 0) : Color.white;
-    objectivesUI.GetChild (2).Find ("CheckBox/Checked").GetComponent<Image> ().color = hasTarget ? Color.white : new Color (255, 255, 255, 0);
   }
 
   void HideBtns () {
@@ -153,6 +241,12 @@ public class MakerCreateTutorial : MonoBehaviour {
   void RemoveIntro () {
 
     IntroScreen.SetActive (false);
+
+  }
+
+  void OnShowObjectivesClick () {
+
+    IntroScreen.SetActive (true);
 
   }
 

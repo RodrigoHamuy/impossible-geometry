@@ -8,16 +8,16 @@ using UnityEngine.UI;
 
 public class AddOnHold : MonoBehaviour {
 
-  public Transform world;
-
   public Transform marker;
 
   public UnityEvent OnBrushStart;
   public UnityEvent OnBrushEnd;
 
-  public GameObject canvas;
-
   public MakerBlockType[] config;
+
+  GameObject canvas;
+  Transform world;
+  GameObject editUI;
 
   MakerBlockType currentConfig;
 
@@ -39,6 +39,10 @@ public class AddOnHold : MonoBehaviour {
   TouchComponent touchComponent;
 
   void Start () {
+
+    canvas = GameObject.FindObjectOfType<Canvas> ().gameObject;
+    world = GameObject.Find ("World").transform;
+    editUI = GameObject.Find ("Canvas/EditUI");
 
     marker.gameObject.SetActive (false);
 
@@ -115,7 +119,7 @@ public class AddOnHold : MonoBehaviour {
 
     currentRow.Clear ();
 
-    canvas.SetActive (false);
+    editUI.SetActive (false);
 
     OnBrushStart.Invoke ();
 
@@ -253,7 +257,7 @@ public class AddOnHold : MonoBehaviour {
     lastHitPosNoRound = Vector3.zero;
     lastHitPos = Vector3.zero;
 
-    canvas.SetActive (true);
+    editUI.SetActive (true);
 
     OnBrushEnd.Invoke ();
     marker.gameObject.SetActive (false);
