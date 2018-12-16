@@ -37,6 +37,14 @@ public class MakerCreateTutorial : MonoBehaviour {
   public GameObject SelectBtn;
   public GameObject ViewBtn;
 
+  // Add Buttons
+
+  public GameObject ObjectTypeBtn;
+
+  // Block types on tutorial
+
+  public MakerBlockType[] supportedBlocks;
+
   Canvas canvas;
   MakerActionsManager actionsManager;
   Transform objectivesUI;
@@ -62,6 +70,8 @@ public class MakerCreateTutorial : MonoBehaviour {
     canvas = GameObject.FindObjectOfType<Canvas> ();
 
     ShowObjectivesBtn.GetComponent<Button> ().onClick.AddListener (OnShowObjectivesClick);
+
+    GameObject.FindObjectOfType<AddOnHold> ().config = supportedBlocks;
 
     InitObjectivesUI ();
 
@@ -256,11 +266,11 @@ public class MakerCreateTutorial : MonoBehaviour {
 
     ShowTutorial (1);
 
-    AddBtn.GetComponent<ToggleEnableEvent> ().onEnable.AddListener (() => {
+  }
 
-      TutorialSteps.SetActive (false);
+  void ShowTutorial2 () {
 
-    });
+    ShowTutorial (2);
 
   }
 
@@ -270,15 +280,37 @@ public class MakerCreateTutorial : MonoBehaviour {
 
     var director = TutorialSteps.GetComponent<PlayableDirector> ();
 
-    director.playableAsset = tutorialAnimations[i];
+    if (i == 0) {
 
-    TutorialSteps.SetActive (true);
+      director.playableAsset = tutorialAnimations[0];
 
-    if (i == 1) {
+    } else if (i == 1) {
+
+      director.playableAsset = tutorialAnimations[1];
 
       director.transform.position = AddBtn.transform.position;
 
+      AddBtn.GetComponent<ToggleEnableEvent> ().onEnable.AddListener (() => {
+
+        Invoke ("ShowTutorial2", 1);
+
+      });
+
+    } else if (i == 2) {
+
+      director.playableAsset = tutorialAnimations[1];
+
+      director.transform.position = ObjectTypeBtn.transform.position;
+
+      ObjectTypeBtn.GetComponent<ToggleEnableEvent> ().onEnable.AddListener (() => {
+
+        TutorialSteps.SetActive (false);
+
+      });
     }
+
+    TutorialSteps.SetActive (true);
+    director.Play ();
 
   }
 

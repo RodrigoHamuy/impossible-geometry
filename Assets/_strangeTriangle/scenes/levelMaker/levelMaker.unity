@@ -3960,7 +3960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -7019,17 +7019,6 @@ MonoBehaviour:
   onTouchMove:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: MoveStroke
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 7262761}
         m_MethodName: UpdatePosition
         m_Mode: 0
@@ -9029,6 +9018,11 @@ MonoBehaviour:
   AddBtn: {fileID: 2140212505}
   SelectBtn: {fileID: 1096572820}
   ViewBtn: {fileID: 1847759723}
+  ObjectTypeBtn: {fileID: 630693995}
+  supportedBlocks:
+  - {fileID: 11400000, guid: 88cc9396f495a5d4aab0d7118a4215b2, type: 2}
+  - {fileID: 11400000, guid: fd8fc7fa634cbd74dbaea13644df4e82, type: 2}
+  - {fileID: 11400000, guid: 2dcab98db8017bc4085f4202b547cb61, type: 2}
 --- !u!114 &1195983007
 MonoBehaviour:
   m_ObjectHideFlags: 0
