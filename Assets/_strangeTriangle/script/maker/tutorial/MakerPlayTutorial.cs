@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -68,10 +69,7 @@ public class MakerPlayTutorial : MonoBehaviour {
         1
       }, {
         "oncomplete",
-        "RemoveIntro"
-      }, {
-        "oncompletetarget",
-        gameObject
+        new Action (RemoveIntro)
       }
     });
 

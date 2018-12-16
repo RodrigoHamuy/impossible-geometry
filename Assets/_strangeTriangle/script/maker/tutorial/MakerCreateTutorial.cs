@@ -1,7 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
 using UnityEngine.UI;
 
 public class MakerCreateTutorial : MonoBehaviour {
@@ -10,9 +14,12 @@ public class MakerCreateTutorial : MonoBehaviour {
 
   public TutorialObjective[] TutorialObjectiveList;
 
+  public TimelineAsset[] tutorialAnimations;
+
   public GameObject ShowObjectivesBtn;
 
   public GameObject IntroScreen;
+  public GameObject TutorialSteps;
 
   // First row container
   public GameObject Row1Container;
@@ -34,6 +41,9 @@ public class MakerCreateTutorial : MonoBehaviour {
   MakerActionsManager actionsManager;
   Transform objectivesUI;
   RectTransform objectiveBadge;
+  TouchComponent touchComponent;
+
+  bool didShowTutorialSteps = false;
 
   bool hasBlocks;
   bool hasPlayer;
@@ -56,6 +66,7 @@ public class MakerCreateTutorial : MonoBehaviour {
     InitObjectivesUI ();
 
     IntroScreen.SetActive (true);
+    touchComponent = GetComponent<TouchComponent> ();
 
   }
 
@@ -100,6 +111,8 @@ public class MakerCreateTutorial : MonoBehaviour {
 
   void CheckBlocks () {
 
+    if (TutorialSteps.activeInHierarchy) TutorialSteps.SetActive (false);
+
     hasBlocks = CheckObjective (MakerTags.Cube, hasBlocks, 0, TutorialObjectiveList[0]);
     hasPlayer = CheckObjective (MakerTags.Player, hasPlayer, 1, TutorialObjectiveList[1]);
     hasTarget = CheckObjective (MakerTags.Target, hasTarget, 2, TutorialObjectiveList[2]);
@@ -114,7 +127,7 @@ public class MakerCreateTutorial : MonoBehaviour {
         objectiveBadge.anchoredPosition
       }, {
         "to",
-        new Vector2 (objectiveBadge.rect.width, 0)
+        new Vector2 (objectiveBadge.rect.width + 20.0f, 0)
       }, {
         "time",
         .5f
@@ -126,10 +139,7 @@ public class MakerCreateTutorial : MonoBehaviour {
         "TweenBadge"
       }, {
         "oncomplete",
-        "OnTweenSlideInDone"
-      }, {
-        "oncompletetarget",
-        gameObject
+        new Action (OnTweenSlideInDone)
       }
     });
 
@@ -175,6 +185,13 @@ public class MakerCreateTutorial : MonoBehaviour {
 
       SetObjectiveUI (objectiveBadge, objective);
       ShowCompletedTaskBadge ();
+
+      if (tagName == MakerTags.Cube) {
+
+        Invoke ("ShowTutorial1", 1);
+
+      }
+
     }
 
     objectivesUI.GetChild (index).Find ("CheckBox/Empty").GetComponent<Image> ().color = newHas ? new Color (255, 255, 255, 0) : Color.white;
@@ -221,26 +238,47 @@ public class MakerCreateTutorial : MonoBehaviour {
         .3f
       }, {
         "oncomplete",
-        "RemoveIntro"
-      }, {
-        "oncompletetarget",
-        gameObject
+        new Action (RemoveIntro)
       }
     });
-
-    // var childA = IntroScreen.transform.GetChild (0).GetComponent<RectTransform> ();
-
-    // iTween.MoveAdd (childA.gameObject, new Vector3 (childA.position.x * 2.0f, 0, 0), 1);
-
-    // var childB = IntroScreen.transform.GetChild (1).GetComponent<RectTransform> ();
-
-    // iTween.MoveAdd (childB.gameObject, -new Vector3 (childA.position.x * 2.0f, 0, 0), 1);
 
   }
 
   void RemoveIntro () {
 
     IntroScreen.SetActive (false);
+
+    if (!didShowTutorialSteps) ShowTutorial (0);
+
+  }
+
+  void ShowTutorial1 () {
+
+    ShowTutorial (1);
+
+    AddBtn.GetComponent<ToggleEnableEvent> ().onEnable.AddListener (() => {
+
+      TutorialSteps.SetActive (false);
+
+    });
+
+  }
+
+  void ShowTutorial (int i) {
+
+    didShowTutorialSteps = true;
+
+    var director = TutorialSteps.GetComponent<PlayableDirector> ();
+
+    director.playableAsset = tutorialAnimations[i];
+
+    TutorialSteps.SetActive (true);
+
+    if (i == 1) {
+
+      director.transform.position = AddBtn.transform.position;
+
+    }
 
   }
 

@@ -6738,6 +6738,17 @@ public class iTween : MonoBehaviour {
 
 	void CallBack (string callbackType) {
 		if (tweenArguments.Contains (callbackType) && !tweenArguments.Contains ("ischild")) {
+
+			if (callbackType == "oncomplete") {
+
+				var action = (Action) tweenArguments[callbackType];
+
+				action ();
+
+				return;
+
+			}
+
 			//establish target:
 			GameObject target;
 			if (tweenArguments.Contains (callbackType + "target")) {
