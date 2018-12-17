@@ -292,7 +292,7 @@ public class MakerCreateTutorial : MonoBehaviour {
 
       AddBtn.GetComponent<ToggleEnableEvent> ().onEnable.AddListener (() => {
 
-        Invoke ("ShowTutorial2", 1);
+        Invoke ("ShowTutorial2", .1f);
 
       });
 

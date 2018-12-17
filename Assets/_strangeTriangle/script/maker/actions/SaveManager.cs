@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Assets.SimpleZip;
 using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.ClientModels;
@@ -42,6 +43,8 @@ public class SaveManager : MonoBehaviour {
 
     } else {
 
+      readyToSave = true;
+
       InitLevel ();
 
     }
@@ -70,6 +73,8 @@ public class SaveManager : MonoBehaviour {
 
   public void Save () {
 
+    if (LevelMakerConfig.Data == null) return;
+
     if (!LevelMakerConfig.Data.CanSave) return;
 
     if (isLoading) return;
@@ -87,7 +92,7 @@ public class SaveManager : MonoBehaviour {
 
     var allBlocksData = Array.ConvertAll (allBlocks, a => a.data);
 
-    var allBlocksDataJson = Zipper.Zip (JsonConvert.SerializeObject (allBlocksData));
+    var allBlocksDataJson = Zip.CompressToString (JsonConvert.SerializeObject (allBlocksData));
 
     var allBlocksDataJsonSplitted = SplitStringInChunks (allBlocksDataJson, 9999);
 
@@ -159,7 +164,9 @@ public class SaveManager : MonoBehaviour {
 
     if (LevelMakerConfig.Data.AvailableOffline) {
 
-      LoadLevel (Zipper.Unzip (LevelMakerConfig.Data.LevelData));
+      var unZip = Zip.Decompress (LevelMakerConfig.Data.LevelData);
+
+      LoadLevel (unZip);
 
     } else {
 
@@ -209,7 +216,9 @@ public class SaveManager : MonoBehaviour {
 
     isLoading = false;
 
-    LoadLevel (Zipper.Unzip (levelJson));
+    var levelUnZip = Zip.Decompress (levelJson);
+
+    LoadLevel (levelUnZip);
 
   }
 
@@ -249,6 +258,8 @@ public class SaveManager : MonoBehaviour {
   }
 
   void OnLoginSuccess (LoginResult result) {
+
+    readyToSave = true;
 
     Debug.Log ("LoginSuccess");
 

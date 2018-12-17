@@ -19,6 +19,7 @@ public class GenerateText : MonoBehaviour {
 
   public void LoadScene () {
 
+    print ("SceneManager.LoadScene (" + nextScene + ");");
     SceneManager.LoadScene (nextScene);
 
   }
